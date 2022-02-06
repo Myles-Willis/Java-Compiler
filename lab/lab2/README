@@ -1,0 +1,4 @@
+I have put parts one and two of lab2 into two seperate directories
+(to simplify makfiles in regard to flex).
+
+Their respective executable files created from the make are lab2_1 lab2_2.
