@@ -6,6 +6,9 @@ extern int yylex();
 extern char *yytext;
 
 int main(int argc, char *argv[]) {
+
+    // if (argv == 1) {
+    // }
     yyin = fopen(argv[1], "r");
     yylex();
     printf("\t%d\t%d\t%d\n", rows, words, chars);
