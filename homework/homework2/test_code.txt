@@ -1,0 +1,8 @@
+public class HelloWorld {
+   public static void main(String[] args) {
+      boolean hello = true;
+      char c = 'hhh';
+      float f = 123.456;
+      System.out.println("Hello, World");
+   }
+}
