@@ -6,6 +6,7 @@
 
 %%
 \n                           { rows++; }
+^#.+                         { /* no-op, discard comment */ }
 "/*"([^*]|"*"+[^/*])*"*"+"/" { /* no-op, discard multi-line comment */ }
 [ \t\r\f]+                   { /* no-op, discard whitespace */ }
 
