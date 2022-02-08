@@ -1,10 +1,5 @@
 public class hello {
    public static void main(String argv[]) {
-      # Testing line comment
-      # Testing line comment
-      # Testing line comment
-      # Testing line comment
-      # Testing line comment
       System.out.println("hello, jzero!");
    }
 }

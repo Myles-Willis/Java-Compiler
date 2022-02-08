@@ -1,8 +1,13 @@
 /* -*-bison-*- */
 /* Simple wc implementation in Flex */
 %option noyywrap
-            #include "defs.h"
-            int rows = 0, words = 0, chars = 0;
+%option noinput
+%option nounput
+
+%{
+#include "defs.h"
+int rows = 0, words = 0, chars = 0;
+%}
 
 %%
 \n                           { rows++; }

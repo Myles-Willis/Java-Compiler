@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include<string.h>
 #include "defs.h"
 
 extern FILE *yyin;
@@ -23,9 +24,12 @@ struct tokenlist {
    struct tokenlist *next;
 };
 
+// extern struct token *yytoken;
 struct token *yytoken;
+//extern void create_token();
 
 void handle_token(int value, char *argv[]);
+void print_tokenlist(struct tokenlist* head);
 
 int main(int argc, char *argv[]) {
 
@@ -50,8 +54,9 @@ int main(int argc, char *argv[]) {
 
 
     // Malloc tokenlist
-    struct tokenlist* head_token = (struct tokenlist*)malloc(sizeof(struct tokenlist));
-    struct tokenlist* tail_token = (struct tokenlist*)malloc(sizeof(struct tokenlist));
+    struct tokenlist* head_token;// = (struct tokenlist*)malloc(sizeof(struct tokenlist));
+    struct tokenlist* tail_token;//= (struct tokenlist*)malloc(sizeof(struct tokenlist));
+    // struct tokenlist* temp = (struct tokenlist*)malloc(sizeof(struct tokenlist));
 
       //YYLEX RETURNS 0 AT EOF
     while((value = yylex()) != 0) {
@@ -71,6 +76,7 @@ int main(int argc, char *argv[]) {
         tail_token = temp;
       }
     }
+    print_tokenlist(head_token);
   }
 
     fclose(yyin);
@@ -99,11 +105,23 @@ void handle_token(int value, char *argv[]) {
       // Malloc new token struct for entry
       yytoken = (struct token*)malloc(sizeof(struct token));
       yytoken->category = value;
-      yytoken->text = yytext;
+      yytoken->text = strdup(yytext);//free memory
       yytoken->lineno = rows + 1;
       yytoken->filename = argv[1]; //Need to modify to support multiple files
 
       //printf("%d\t\t%s\t\t%d\t\t%s\n",value, yytext, rows + 1, argv[1]);
-      printf("linkedlist: %d\t\t%s\t\t%d\t\t%s\n",yytoken->category, yytoken->text, yytoken->lineno, yytoken->filename);
+      //printf("linkedlist: %d\t\t%s\t\t%d\t\t%s\n",yytoken->category, yytoken->text, yytoken->lineno, yytoken->filename);
+  }
+}
+
+void print_tokenlist(struct tokenlist* head) {
+  //printf("in function!\n");
+  struct tokenlist *current = head;
+    //printf(" function!\n");
+    //printf("%d\n",current->t->category);
+  while (current != NULL) {
+    //printf("%d\t%10d\n", current->t->category, current->t->lineno);
+    printf("%d\t\t%s\t\t%d\t\t%s\n", current->t->category, current->t->text, current->t->lineno, current->t->filename);
+    current = current->next;
   }
 }
