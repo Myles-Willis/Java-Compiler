@@ -1,3 +1,13 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+extern FILE *yyin;
+extern int rows, words, chars;
+extern int yylex();
+extern int yylineno;
+extern char *yytext;
+
 struct token {
    int category;   /* the integer code returned by yylex */
    char *text;     /* the actual string (lexeme) matched */
@@ -13,6 +23,11 @@ struct tokenlist {
    struct token *t;
    struct tokenlist *next;
 };
+
+struct token *yytoken;
+struct tokenlist* head_token;
+struct tokenlist* tail_token;
+extern char *filename;
 
 #define WORD          257
 

@@ -163,8 +163,27 @@ extern FILE *yyin, *yyout;
 #define EOB_ACT_END_OF_FILE 1
 #define EOB_ACT_LAST_MATCH 2
     
-    #define YY_LESS_LINENO(n)
-    #define YY_LINENO_REWIND_TO(ptr)
+    /* Note: We specifically omit the test for yy_rule_can_match_eol because it requires
+     *       access to the local variable yy_act. Since yyless() is a macro, it would break
+     *       existing scanners that call yyless() from OUTSIDE yylex.
+     *       One obvious solution it to make yy_act a global. I tried that, and saw
+     *       a 5% performance hit in a non-yylineno scanner, because yy_act is
+     *       normally declared as a register variable-- so it is not worth it.
+     */
+    #define  YY_LESS_LINENO(n) \
+            do { \
+                yy_size_t yyl;\
+                for ( yyl = n; yyl < yyleng; ++yyl )\
+                    if ( yytext[yyl] == '\n' )\
+                        --yylineno;\
+            }while(0)
+    #define YY_LINENO_REWIND_TO(dst) \
+            do {\
+                const char *p;\
+                for ( p = yy_cp-1; p >= (dst); --p)\
+                    if ( *p == '\n' )\
+                        --yylineno;\
+            }while(0)
     
 /* Return all but the first "n" matched characters back to the input stream. */
 #define yyless(n) \
@@ -698,6 +717,16 @@ static const flex_int16_t yy_chk[703] =
       347,  347
     } ;
 
+/* Table of booleans, true if rule could match eol. */
+static const flex_int32_t yy_rule_can_match_eol[107] =
+    {   0,
+1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0,     };
+
 static yy_state_type yy_last_accepting_state;
 static char *yy_last_accepting_cpos;
 
@@ -716,11 +745,12 @@ char *yytext;
 /* -*-bison-*- */
 /* Simple wc implementation in Flex */
 #define YY_NO_INPUT 1
-#line 8 "jzero.l"
+#line 9 "jzero.l"
 #include "defs.h"
+extern int handle_token(int category_value);
 int rows = 0, words = 0, chars = 0;
-#line 722 "lex.yy.c"
-#line 723 "lex.yy.c"
+#line 752 "lex.yy.c"
+#line 753 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -938,9 +968,9 @@ YY_DECL
 		}
 
 	{
-#line 12 "jzero.l"
+#line 14 "jzero.l"
 
-#line 943 "lex.yy.c"
+#line 973 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -987,6 +1017,16 @@ yy_find_action:
 
 		YY_DO_BEFORE_ACTION;
 
+		if ( yy_act != YY_END_OF_BUFFER && yy_rule_can_match_eol[yy_act] )
+			{
+			yy_size_t yyl;
+			for ( yyl = 0; yyl < yyleng; ++yyl )
+				if ( yytext[yyl] == '\n' )
+					
+    yylineno++;
+;
+			}
+
 do_action:	/* This label is used only to access EOF actions. */
 
 		switch ( yy_act )
@@ -1001,537 +1041,537 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 13 "jzero.l"
+#line 15 "jzero.l"
 { rows++; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 14 "jzero.l"
+#line 16 "jzero.l"
 { /* no-op, discard comment */ }
 	YY_BREAK
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 15 "jzero.l"
+#line 17 "jzero.l"
 { /* no-op, discard multi-line comment */ }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 16 "jzero.l"
+#line 18 "jzero.l"
 { /* no-op, discard whitespace */ }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 19 "jzero.l"
-{ return BOOLEAN; }
+#line 21 "jzero.l"
+{ return handle_token(BOOLEAN); }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 20 "jzero.l"
-{ return BREAK; }
+#line 22 "jzero.l"
+{ return handle_token(BREAK); }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 21 "jzero.l"
-{ return CASE; }
+#line 23 "jzero.l"
+{ return handle_token(CASE); }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 22 "jzero.l"
-{ return CHAR; }
+#line 24 "jzero.l"
+{ return handle_token(CHAR); }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 23 "jzero.l"
-{ return CLASS; }
+#line 25 "jzero.l"
+{ return handle_token(CLASS); }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 24 "jzero.l"
-{ return CONTINUE; }
+#line 26 "jzero.l"
+{ return handle_token(CONTINUE); }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 25 "jzero.l"
-{ return DEFAULT; }
+#line 27 "jzero.l"
+{ return handle_token(DEFAULT); }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 26 "jzero.l"
-{ return DOUBLE; }
+#line 28 "jzero.l"
+{ return handle_token(DOUBLE); }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 27 "jzero.l"
-{ return ELSE; }
+#line 29 "jzero.l"
+{ return handle_token(ELSE); }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 28 "jzero.l"
-{ return FLOAT; }
+#line 30 "jzero.l"
+{ return handle_token(FLOAT); }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 29 "jzero.l"
-{ return FOR; }
+#line 31 "jzero.l"
+{ return handle_token(FOR); }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 30 "jzero.l"
-{ return IF; }
+#line 32 "jzero.l"
+{ return handle_token(IF); }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 31 "jzero.l"
-{ return INSTANCEOF; }
+#line 33 "jzero.l"
+{ return handle_token(INSTANCEOF); }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 32 "jzero.l"
-{ return INT; }
+#line 34 "jzero.l"
+{ return handle_token(INT); }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 33 "jzero.l"
-{ return LONG; }
+#line 35 "jzero.l"
+{ return handle_token(LONG); }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 34 "jzero.l"
-{ return NEW; }
+#line 36 "jzero.l"
+{ return handle_token(NEW); }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 35 "jzero.l"
-{ return PUBLIC; }
+#line 37 "jzero.l"
+{ return handle_token(PUBLIC); }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 36 "jzero.l"
-{ return RETURN; }
+#line 38 "jzero.l"
+{ return handle_token(RETURN); }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 37 "jzero.l"
-{ return STATIC; }
+#line 39 "jzero.l"
+{ return handle_token(STATIC); }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 38 "jzero.l"
-{ return SWITCH; }
+#line 40 "jzero.l"
+{ return handle_token(SWITCH); }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 39 "jzero.l"
-{ return VOID; }
+#line 41 "jzero.l"
+{ return handle_token(VOID); }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 40 "jzero.l"
-{ return WHILE; }
+#line 42 "jzero.l"
+{ return handle_token(WHILE); }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 42 "jzero.l"
-{return FLOAT_LITERAL; }
+#line 44 "jzero.l"
+{return handle_token(FLOAT_LITERAL); }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 43 "jzero.l"
-{ return INTEGER_LITERAL; }
+#line 45 "jzero.l"
+{ return handle_token(INTEGER_LITERAL); }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 45 "jzero.l"
-{ return EQUALS; }
+#line 47 "jzero.l"
+{ return handle_token(EQUALS); }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 46 "jzero.l"
-{ return PLUS; }
+#line 48 "jzero.l"
+{ return handle_token(PLUS); }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 47 "jzero.l"
-{ return MINUS; }
+#line 49 "jzero.l"
+{ return handle_token(MINUS); }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 48 "jzero.l"
-{ return MULTIPLY; }
+#line 50 "jzero.l"
+{ return handle_token(MULTIPLY); }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 49 "jzero.l"
-{ return DIVIDE; }
+#line 51 "jzero.l"
+{ return handle_token(DIVIDE); }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 50 "jzero.l"
-{ return MODULO; }
+#line 52 "jzero.l"
+{ return handle_token(MODULO); }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 51 "jzero.l"
-{ return INCREMENT; }
+#line 53 "jzero.l"
+{ return handle_token(INCREMENT); }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 52 "jzero.l"
-{ return DECREMENT; }
+#line 54 "jzero.l"
+{ return handle_token(DECREMENT); }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 53 "jzero.l"
-{ return IS_EQUAL_TO; }
+#line 55 "jzero.l"
+{ return handle_token(IS_EQUAL_TO); }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 54 "jzero.l"
-{ return NOT_EQUAL_TO; }
+#line 56 "jzero.l"
+{ return handle_token(NOT_EQUAL_TO); }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 55 "jzero.l"
-{ return GREATER_THAN; }
+#line 57 "jzero.l"
+{ return handle_token(GREATER_THAN); }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 56 "jzero.l"
-{ return LESS_THAN; }
+#line 58 "jzero.l"
+{ return handle_token(LESS_THAN); }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 57 "jzero.l"
-{ return GREATER_THAN_EQUAL; }
+#line 59 "jzero.l"
+{ return handle_token(GREATER_THAN_EQUAL); }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 58 "jzero.l"
-{ return LESS_THAN_EQUAL; }
+#line 60 "jzero.l"
+{ return handle_token(LESS_THAN_EQUAL); }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 59 "jzero.l"
-{ return LOGICAL_AND; }
+#line 61 "jzero.l"
+{ return handle_token(LOGICAL_AND); }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 60 "jzero.l"
-{ return LOGICAL_OR; }
+#line 62 "jzero.l"
+{ return handle_token(LOGICAL_OR); }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 61 "jzero.l"
-{ return LOGICAL_NOT; }
+#line 63 "jzero.l"
+{ return handle_token(LOGICAL_NOT); }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 62 "jzero.l"
-{ return LEFT_BRACKET; }
+#line 64 "jzero.l"
+{ return handle_token(LEFT_BRACKET); }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 63 "jzero.l"
-{ return RIGHT_BRACKET; }
+#line 65 "jzero.l"
+{ return handle_token(RIGHT_BRACKET); }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 64 "jzero.l"
-{ return DOT; }
+#line 66 "jzero.l"
+{ return handle_token(DOT); }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 65 "jzero.l"
-{ return TYPE; }
+#line 67 "jzero.l"
+{ return handle_token(TYPE); }
 	YY_BREAK
 case 50:
 /* rule 50 can match eol */
 YY_RULE_SETUP
-#line 68 "jzero.l"
-{ return STRING_LITERAL; }
+#line 70 "jzero.l"
+{ return handle_token(STRING_LITERAL); }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 69 "jzero.l"
-{ return CHAR_LITERAL; }
+#line 71 "jzero.l"
+{ return handle_token(CHAR_LITERAL); }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 70 "jzero.l"
-{ return CHAR_LITERAL; }
+#line 72 "jzero.l"
+{ return handle_token(CHAR_LITERAL); }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 71 "jzero.l"
-{ return CHAR_LITERAL; }
+#line 73 "jzero.l"
+{ return handle_token(CHAR_LITERAL); }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 72 "jzero.l"
-{ return CHAR_LITERAL; }
+#line 74 "jzero.l"
+{ return handle_token(CHAR_LITERAL); }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 73 "jzero.l"
-{ return CHAR_LITERAL; }
+#line 75 "jzero.l"
+{ return handle_token(CHAR_LITERAL); }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 74 "jzero.l"
-{ return INVALID_CHAR_LITERAL; }
+#line 76 "jzero.l"
+{ return handle_token(INVALID_CHAR_LITERAL); }
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 75 "jzero.l"
-{ return BOOLEAN_LITERAL; }
+#line 77 "jzero.l"
+{ return handle_token(BOOLEAN_LITERAL); }
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 76 "jzero.l"
-{ return BOOLEAN_LITERAL; }
+#line 78 "jzero.l"
+{ return handle_token(BOOLEAN_LITERAL); }
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 77 "jzero.l"
-{ return INVALID_CHAR_LITERAL; }
+#line 79 "jzero.l"
+{ return handle_token(INVALID_CHAR_LITERAL); }
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 80 "jzero.l"
-{ return LEFT_PARENTHESIS; }
+#line 82 "jzero.l"
+{ return handle_token(LEFT_PARENTHESIS); }
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 81 "jzero.l"
-{ return RIGHT_PARENTHESIS; }
+#line 83 "jzero.l"
+{ return handle_token(RIGHT_PARENTHESIS); }
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 82 "jzero.l"
-{ return COMMA; }
+#line 84 "jzero.l"
+{ return handle_token(COMMA); }
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 83 "jzero.l"
-{ return SEMICOLON; }
+#line 85 "jzero.l"
+{ return handle_token(SEMICOLON); }
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 84 "jzero.l"
-{ return LEFT_BRACE; }
+#line 86 "jzero.l"
+{ return handle_token(LEFT_BRACE); }
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 85 "jzero.l"
-{ return RIGHT_BRACE; }
+#line 87 "jzero.l"
+{ return handle_token(RIGHT_BRACE); }
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 86 "jzero.l"
-{ return COLON; }
+#line 88 "jzero.l"
+{ return handle_token(COLON); }
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 88 "jzero.l"
-{return INVALID_PUNCTUATION; }
+#line 90 "jzero.l"
+{return handle_token(INVALID_PUNCTUATION); }
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 89 "jzero.l"
-{return INVALID_PUNCTUATION; }
+#line 91 "jzero.l"
+{return handle_token(INVALID_PUNCTUATION); }
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 90 "jzero.l"
-{return INVALID_PUNCTUATION; }
+#line 92 "jzero.l"
+{return handle_token(INVALID_PUNCTUATION); }
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 91 "jzero.l"
-{return INVALID_PUNCTUATION; }
+#line 93 "jzero.l"
+{return handle_token(INVALID_PUNCTUATION); }
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 92 "jzero.l"
-{return INVALID_PUNCTUATION; }
+#line 94 "jzero.l"
+{return handle_token(INVALID_PUNCTUATION); }
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 96 "jzero.l"
-{ return NOT_IN_JZERO_RESERVED; }
+#line 98 "jzero.l"
+{ return handle_token(NOT_IN_JZERO_RESERVED); }
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 97 "jzero.l"
-{ return NOT_IN_JZERO_RESERVED; }
+#line 99 "jzero.l"
+{ return handle_token(NOT_IN_JZERO_RESERVED); }
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 98 "jzero.l"
-{ return NOT_IN_JZERO_RESERVED; }
+#line 100 "jzero.l"
+{ return handle_token(NOT_IN_JZERO_RESERVED); }
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 99 "jzero.l"
-{ return NOT_IN_JZERO_RESERVED; }
+#line 101 "jzero.l"
+{ return handle_token(NOT_IN_JZERO_RESERVED); }
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 100 "jzero.l"
-{ return NOT_IN_JZERO_RESERVED; }
+#line 102 "jzero.l"
+{ return handle_token(NOT_IN_JZERO_RESERVED); }
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 101 "jzero.l"
-{ return NOT_IN_JZERO_RESERVED; }
+#line 103 "jzero.l"
+{ return handle_token(NOT_IN_JZERO_RESERVED); }
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 102 "jzero.l"
-{ return NOT_IN_JZERO_RESERVED; }
+#line 104 "jzero.l"
+{ return handle_token(NOT_IN_JZERO_RESERVED); }
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 103 "jzero.l"
-{ return NOT_IN_JZERO_RESERVED; }
+#line 105 "jzero.l"
+{ return handle_token(NOT_IN_JZERO_RESERVED); }
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 104 "jzero.l"
-{ return NOT_IN_JZERO_RESERVED; }
+#line 106 "jzero.l"
+{ return handle_token(NOT_IN_JZERO_RESERVED); }
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 105 "jzero.l"
-{ return NOT_IN_JZERO_RESERVED; }
+#line 107 "jzero.l"
+{ return handle_token(NOT_IN_JZERO_RESERVED); }
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 106 "jzero.l"
-{ return NOT_IN_JZERO_RESERVED; }
+#line 108 "jzero.l"
+{ return handle_token(NOT_IN_JZERO_RESERVED); }
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 107 "jzero.l"
-{ return NOT_IN_JZERO_RESERVED; }
+#line 109 "jzero.l"
+{ return handle_token(NOT_IN_JZERO_RESERVED); }
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 108 "jzero.l"
-{ return NOT_IN_JZERO_RESERVED; }
+#line 110 "jzero.l"
+{ return handle_token(NOT_IN_JZERO_RESERVED); }
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 109 "jzero.l"
-{ return NOT_IN_JZERO_RESERVED; }
+#line 111 "jzero.l"
+{ return handle_token(NOT_IN_JZERO_RESERVED); }
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
-#line 110 "jzero.l"
-{ return NOT_IN_JZERO_RESERVED; }
+#line 112 "jzero.l"
+{ return handle_token(NOT_IN_JZERO_RESERVED); }
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
-#line 111 "jzero.l"
-{ return NOT_IN_JZERO_RESERVED; }
+#line 113 "jzero.l"
+{ return handle_token(NOT_IN_JZERO_RESERVED); }
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
-#line 112 "jzero.l"
-{ return NOT_IN_JZERO_RESERVED; }
+#line 114 "jzero.l"
+{ return handle_token(NOT_IN_JZERO_RESERVED); }
 	YY_BREAK
 case 89:
 YY_RULE_SETUP
-#line 113 "jzero.l"
-{ return NOT_IN_JZERO_RESERVED; }
+#line 115 "jzero.l"
+{ return handle_token(NOT_IN_JZERO_RESERVED); }
 	YY_BREAK
 case 90:
 YY_RULE_SETUP
-#line 114 "jzero.l"
-{ return NOT_IN_JZERO_RESERVED; }
+#line 116 "jzero.l"
+{ return handle_token(NOT_IN_JZERO_RESERVED); }
 	YY_BREAK
 case 91:
 YY_RULE_SETUP
-#line 115 "jzero.l"
-{ return NOT_IN_JZERO_RESERVED; }
+#line 117 "jzero.l"
+{ return handle_token(NOT_IN_JZERO_RESERVED); }
 	YY_BREAK
 case 92:
 YY_RULE_SETUP
-#line 116 "jzero.l"
-{ return NOT_IN_JZERO_RESERVED; }
+#line 118 "jzero.l"
+{ return handle_token(NOT_IN_JZERO_RESERVED); }
 	YY_BREAK
 case 93:
 YY_RULE_SETUP
-#line 117 "jzero.l"
-{ return NOT_IN_JZERO_RESERVED; }
+#line 119 "jzero.l"
+{ return handle_token(NOT_IN_JZERO_RESERVED); }
 	YY_BREAK
 case 94:
 YY_RULE_SETUP
-#line 118 "jzero.l"
-{ return NOT_IN_JZERO_RESERVED; }
+#line 120 "jzero.l"
+{ return handle_token(NOT_IN_JZERO_RESERVED); }
 	YY_BREAK
 case 95:
 YY_RULE_SETUP
-#line 119 "jzero.l"
-{ return NOT_IN_JZERO_RESERVED; }
+#line 121 "jzero.l"
+{ return handle_token(NOT_IN_JZERO_RESERVED); }
 	YY_BREAK
 case 96:
 YY_RULE_SETUP
-#line 120 "jzero.l"
-{ return NOT_IN_JZERO_RESERVED; }
+#line 122 "jzero.l"
+{ return handle_token(NOT_IN_JZERO_RESERVED); }
 	YY_BREAK
 case 97:
 YY_RULE_SETUP
-#line 121 "jzero.l"
-{ return NOT_IN_JZERO_RESERVED; }
+#line 123 "jzero.l"
+{ return handle_token(NOT_IN_JZERO_RESERVED); }
 	YY_BREAK
 case 98:
 YY_RULE_SETUP
-#line 122 "jzero.l"
-{ return NOT_IN_JZERO_RESERVED; }
+#line 124 "jzero.l"
+{ return handle_token(NOT_IN_JZERO_RESERVED); }
 	YY_BREAK
 case 99:
 YY_RULE_SETUP
-#line 123 "jzero.l"
-{ return NOT_IN_JZERO_RESERVED; }
+#line 125 "jzero.l"
+{ return handle_token(NOT_IN_JZERO_RESERVED); }
 	YY_BREAK
 case 100:
 YY_RULE_SETUP
-#line 124 "jzero.l"
-{ return NOT_IN_JZERO_RESERVED; }
+#line 126 "jzero.l"
+{ return handle_token(NOT_IN_JZERO_RESERVED); }
 	YY_BREAK
 case 101:
 YY_RULE_SETUP
-#line 125 "jzero.l"
-{ return NOT_IN_JZERO_RESERVED; }
+#line 127 "jzero.l"
+{ return handle_token(NOT_IN_JZERO_RESERVED); }
 	YY_BREAK
 case 102:
 YY_RULE_SETUP
-#line 126 "jzero.l"
-{ return NOT_IN_JZERO_RESERVED; }
+#line 128 "jzero.l"
+{ return handle_token(NOT_IN_JZERO_RESERVED); }
 	YY_BREAK
 case 103:
 YY_RULE_SETUP
-#line 127 "jzero.l"
-{ return NOT_IN_JZERO_RESERVED; }
+#line 129 "jzero.l"
+{ return handle_token(NOT_IN_JZERO_RESERVED); }
 	YY_BREAK
 case 104:
 YY_RULE_SETUP
-#line 129 "jzero.l"
-{ words++; chars += strlen(yytext); return WORD; }
+#line 131 "jzero.l"
+{ words++; chars += strlen(yytext); return handle_token(WORD); }
 	YY_BREAK
 case 105:
 YY_RULE_SETUP
-#line 130 "jzero.l"
-{ chars++; return UNRECOGNIZED_CHARACTER; }
+#line 132 "jzero.l"
+{ chars++; return handle_token(UNRECOGNIZED_CHARACTER); }
 	YY_BREAK
 case 106:
 YY_RULE_SETUP
-#line 131 "jzero.l"
+#line 133 "jzero.l"
 ECHO;
 	YY_BREAK
-#line 1534 "lex.yy.c"
+#line 1574 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1941,6 +1981,10 @@ static int yy_get_next_buffer (void)
 	(yy_hold_char) = *++(yy_c_buf_p);
 
 	YY_CURRENT_BUFFER_LVALUE->yy_at_bol = (c == '\n');
+	if ( YY_CURRENT_BUFFER_LVALUE->yy_at_bol )
+		
+    yylineno++;
+;
 
 	return c;
 }
@@ -2408,6 +2452,9 @@ static int yy_init_globals (void)
      * This function is called from yylex_destroy(), so don't allocate here.
      */
 
+    /* We do not touch yylineno unless the option is enabled. */
+    yylineno =  1;
+    
     (yy_buffer_stack) = NULL;
     (yy_buffer_stack_top) = 0;
     (yy_buffer_stack_max) = 0;
@@ -2502,6 +2549,6 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 131 "jzero.l"
+#line 133 "jzero.l"
 
 

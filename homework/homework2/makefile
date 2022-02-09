@@ -11,7 +11,8 @@ jzero_lexical : jzero.l
 j0 : jzero_lexical jmain.c
 	$(CC) $(CFLAGS) -c jmain.c
 	$(CC) $(CFLAGS) -c lex.yy.c
-	$(CC) $(CFLAGS) jmain.o lex.yy.o -o j0
+	$(CC) $(CFLAGS) -c token.c
+	$(CC) $(CFLAGS) jmain.o lex.yy.o token.c -o j0
 
 clean :
 	rm -f lex.yy.c
