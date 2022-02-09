@@ -1,5 +1,16 @@
+#test directive
+#test directive
+#test directive
+#test directive
+#test directive
+#test directive
+#test directive
+#test directive
+
 public class hello {
    public static void main(String argv[]) {
-      System.out.println("hello, jzero!");
+      int a = 10;
+      int b = 20;
+      System.out.println("hello jzero!");
    }
 }
