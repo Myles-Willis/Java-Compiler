@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 extern FILE *yyin;
 extern int rows, words, chars;
@@ -80,7 +81,7 @@ extern char *filename;
 #define DOT                 299
 #define TYPE                300
 
-//Jzero Operators
+//Jzero punctuation
 #define LEFT_PARENTHESIS    301
 #define RIGHT_PARENTHESIS   302
 #define COMMA               303
@@ -99,9 +100,17 @@ extern char *filename;
 
 //Jzero Literals
 #define INTEGER_LITERAL     311
-#define FLOAT_LITERAL       312
+#define REAL_LITERAL        312
 #define STRING_LITERAL      313
 #define CHAR_LITERAL        314
 #define BOOLEAN_LITERAL     315
 
 #define UNRECOGNIZED_CHARACTER 316
+#define IDENTIFIER 317
+#define NEW_LINE 318
+#define SINGLE_LINE_COMMENT 319
+#define MULTI_LINE_COMMENT 320
+
+#define INTEGER_LITERAL_RANGE_INVALID 321
+#define REAL_LITERAL_RANGE_INVALID 322
+#define INVALID_ESCAPE_IN_STRING 323

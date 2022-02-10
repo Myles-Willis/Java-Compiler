@@ -12,10 +12,10 @@ int rows = 0, words = 0, chars = 0;
 %}
 
 %%
-\n                           { rows++; }
-^#.+                         { /* no-op, discard comment */ }
-"/*"([^*]|"*"+[^/*])*"*"+"/" { /* no-op, discard multi-line comment */ }
-[ \t\r\f]+                   { /* no-op, discard whitespace */ }
+\n                           {/*discard comment */}
+"#".*\n                      { /* no-op, discard comment */ }
+"/*"([^*]|"*"+[^/*])*"*"+"/" { /*discard multi-line comment */ }
+[ \t\r\f]+                   { /*discard whitespace */ }
 
 
 "boolean"             { return handle_token(BOOLEAN); }
@@ -41,8 +41,6 @@ int rows = 0, words = 0, chars = 0;
 "void"                { return handle_token(VOID); }
 "while"               { return handle_token(WHILE); }
 
-([0-9]*"."[0-9]{1,7})        {return handle_token(FLOAT_LITERAL); }
--?[0-9]+              { return handle_token(INTEGER_LITERAL); }
 
 "="                   { return handle_token(EQUALS); }
 "+"                   { return handle_token(PLUS); }
@@ -67,18 +65,6 @@ int rows = 0, words = 0, chars = 0;
 "(type)"              { return handle_token(TYPE); }
 
 
-\"([^\"]*|(\\.)*)\"   { return handle_token(STRING_LITERAL); }
-'.'                   { return handle_token(CHAR_LITERAL); }
-'\\n'                 { return handle_token(CHAR_LITERAL); }
-'\\t'                 { return handle_token(CHAR_LITERAL); }
-'\\\''                { return handle_token(CHAR_LITERAL); }
-'\\\"'                { return handle_token(CHAR_LITERAL); }
-\'\'                  { return handle_token(INVALID_CHAR_LITERAL); }
-"true"                { return handle_token(BOOLEAN_LITERAL); }
-"false"               { return handle_token(BOOLEAN_LITERAL); }
-'.+'                  { return handle_token(INVALID_CHAR_LITERAL); }
-
-
 "("                   { return handle_token(LEFT_PARENTHESIS); }
 ")"                   { return handle_token(RIGHT_PARENTHESIS); }
 ","                   { return handle_token(COMMA); }
@@ -92,7 +78,6 @@ int rows = 0, words = 0, chars = 0;
 "@"                   {return handle_token(INVALID_PUNCTUATION); }
 "\\"                   {return handle_token(INVALID_PUNCTUATION); }
 "`"                   {return handle_token(INVALID_PUNCTUATION); }
-
 
 
 "abstract"            { return handle_token(NOT_IN_JZERO_RESERVED); }
@@ -128,6 +113,21 @@ int rows = 0, words = 0, chars = 0;
 "volatile"            { return handle_token(NOT_IN_JZERO_RESERVED); }
 "private"             { return handle_token(NOT_IN_JZERO_RESERVED); }
 
-[A-Za-z0-9]+          { words++; chars += strlen(yytext); return handle_token(WORD); }
+"-"?[0-9]+"."[0-9]*   {return handle_token(REAL_LITERAL); }
+"-"?[0-9]*"."[0-9]+   {return handle_token(REAL_LITERAL); }
+"-"?[0-9]+            { return handle_token(INTEGER_LITERAL); }
+\"([^"\n]|("\\\""))*\" { return handle_token(STRING_LITERAL); }
+"true"                { return handle_token(BOOLEAN_LITERAL); }
+"false"               { return handle_token(BOOLEAN_LITERAL); }
+'.'                   { return handle_token(CHAR_LITERAL); }
+'\\n'                 { return handle_token(CHAR_LITERAL); }
+'\\t'                 { return handle_token(CHAR_LITERAL); }
+'\\''                 { return handle_token(CHAR_LITERAL); }
+'\\\"'                { return handle_token(CHAR_LITERAL); }
+'\\\\'                { return handle_token(CHAR_LITERAL); }
+'\\.'                 { return handle_token(INVALID_CHAR_LITERAL); }
+"''"                  { return handle_token(INVALID_CHAR_LITERAL); }
+
 .                     { chars++; return handle_token(UNRECOGNIZED_CHARACTER); }
+[A-Za-z0-9][A-Za-z0-9_]*          { return handle_token(IDENTIFIER); }
 %%
