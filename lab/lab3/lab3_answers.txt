@@ -1,0 +1,48 @@
+Myles Willis
+Lab 3 part 1
+
+1. When you run flex nnws.l, what output file does flex write?
+
+    lex.yy.c
+
+2. When you run gcc -c lex.yy.c, what do you get?
+
+    nnws.l:3:10: error: use of undeclared identifier 'NAME'
+    { return NAME; }
+           ^
+    nnws.l:4:10: error: use of undeclared identifier 'NUMBER'
+    { return NUMBER; }
+
+3. When you run bison ns.y, what output file does Bison write?
+
+    ns.tab.c
+
+4. Devise a command line for compiling the bison output to a .o file.
+   Fix warnings by added extern prototypes for yylex() and yyerror().
+
+   %{
+       #include <stdio.h>
+       extern int yylex();
+       extern int yyerror(char*s);
+   %}
+
+	 gcc -Wall -c ns.tab.c
+
+5. When you run bison -d ns.y, what header file does Bison generate?
+
+    ns.tab.h
+
+10. Devise a command line for linking the lex and bison output .o
+files with main.o to make an executable named ns (short for "name sequence")
+
+		created makefile to handle this.
+
+
+11. Run your program on itself with ./ns nnws.l. What does it write out?
+
+		bad char
+		syntax error
+
+12. Run your program on an input file containing DrJ 1 Evil 0. Output?
+
+		yyparse returns 0
