@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include "tree.h"
+#include "j0gram.tab.h"
 
 extern FILE *yyin;
 extern int rows, words, chars;
@@ -19,7 +21,7 @@ struct token {
    int ival;       /* for integer constants, store binary value here */
    double dval;	   /* for real constants, store binary value here */
    char *sval;     /* for string constants, malloc space, de-escape, store */
-                   /*    the string (less quotes and after escapes) here */
+                   /* the string (less quotes and after escapes) here */
 };
 
 struct tokenlist {

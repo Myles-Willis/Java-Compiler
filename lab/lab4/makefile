@@ -12,7 +12,7 @@ jzero_bison :
 jzero_lexical : j0lex.l
 	flex j0lex.l
 
-j0 : jzero_bison jzero_lexical jmain.c
+j0 : jzero_bison jzero_lexical jmain.c defs.h tree.h
 	$(CC) $(CFLAGS) -c jmain.c
 	$(CC) $(CFLAGS) -c lex.yy.c
 	$(CC) $(CFLAGS) -c token.c

@@ -6,6 +6,7 @@
 %option yylineno
 
 %{
+#include "defs.h"
 #include "j0gram.tab.h"
 extern int handle_token(int category_value);
 int rows = 0, words = 0, chars = 0;
@@ -14,7 +15,6 @@ int rows = 0, words = 0, chars = 0;
 %%
 \n                           {/*discard comment */}
 "#".*\n                      { /* no-op, discard comment */ }
-"/*"([^*]|"*"+[^/*])*"*"+"/" { /*discard multi-line comment */ }
 [ \t\r\f]+                   { /*discard whitespace */ }
 
 <<EOF>>								{ return YYEOF; }
@@ -40,38 +40,40 @@ int rows = 0, words = 0, chars = 0;
 "switch"              { return handle_token(SWITCH); }
 "void"                { return handle_token(VOID); }
 "while"               { return handle_token(WHILE); }
+"null"								{ return handle_token(NULLVAL);}
+"String"							{ return handle_token(STRING); }
 
 
-"="                   { return handle_token(atoi("=")); }
-"+"                   { return handle_token(atoi("+")); }
-"-"                   { return handle_token(atoi("-")); }
-"*"                   { return handle_token(atoi("")); }
-"/"                   { return handle_token(atoi("/")); }
-"%"                   { return handle_token(atoi("%")); }
+"="                   { return handle_token('='); }
+"+"                   { return handle_token('+'); }
+"-"                   { return handle_token('-'); }
+"*"                   { return handle_token('*'); }
+"/"                   { return handle_token('/'); }
+"%"                   { return handle_token('%'); }
 "++"                  { return handle_token(INCREMENT); } // remove based off txtbook?
 "--"                  { return handle_token(DECREMENT); } // remove based off txtbook?
 "=="                  { return handle_token(ISEQUALTO); }
 "!="                  { return handle_token(NOTEQUALTO); }
-">"                   { return handle_token(atoi(">")); }
-"<"                   { return handle_token(atoi("<")); }
+">"                   { return handle_token('>'); }
+"<"                   { return handle_token('<'); }
 ">="                  { return handle_token(GREATERTHANOREQUAL); }
 "<="                  { return handle_token(LESSTHANOREQUAL); }
 "&&"                  { return handle_token(LOGICALAND); }
 "||"                  { return handle_token(LOGICALOR); }
 "!"                   { return handle_token(LOGICALNOT); }
-"["                   { return handle_token(atoi("[")); }
-"]"                   { return handle_token(atoi("]")); }
-"."                   { return handle_token(atoi(".")); }
+"["                   { return handle_token('['); }
+"]"                   { return handle_token(']'); }
+"."                   { return handle_token('.'); }
 "(type)"              { return handle_token(TYPE); }
 
 
-"("                   { return handle_token(atoi("(")); }
-")"                   { return handle_token(atoi(")")); }
-","                   { return handle_token(atoi(",")); }
-";"                   { return handle_token(atoi(";")); }
-"{"                   { return handle_token(atoi("{")); }
-"}"                   { return handle_token(atoi("}")); }
-":"                   { return handle_token(atoi(":")); }
+"("                   { return handle_token('('); }
+")"                   { return handle_token(')'); }
+","                   { return handle_token(','); }
+";"                   { return handle_token(';'); }
+"{"                   { return handle_token('{'); }
+"}"                   { return handle_token('}'); }
+":"                   { return handle_token(':'); }
 
 "#"                   {return handle_token(INVALID_PUNCTUATION); }
 "$"                   {return handle_token(INVALID_PUNCTUATION); }
@@ -128,6 +130,6 @@ int rows = 0, words = 0, chars = 0;
 '\\.'                 { return handle_token(INVALIDCHARLIT); }
 "''"                  { return handle_token(INVALIDCHARLIT); }
 
+[A-Za-z_$][A-Za-z0-9_$]*          { return handle_token(IDENTIFIER); }
 .                     { chars++; return handle_token(UNRECOGNIZED_CHARACTER); }
-[A-Za-z0-9][A-Za-z0-9_]*          { return handle_token(IDENTIFIER); }
 %%

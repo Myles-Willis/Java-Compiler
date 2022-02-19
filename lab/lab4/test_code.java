@@ -1,6 +1,5 @@
 public class hello {
-    int a = 10;
-    int b = 20.123455;
-    System.out.println("hello\njzero!");
-    System.out.println("hello");
+   public static void main(String argv[]) {
+      System.out.println("hello, jzero!");
+   }
 }

@@ -1,11 +1,15 @@
 %{
     #include <stdio.h>
+		#include "tree.h"
 		#define YYDEBUG 1
     int yylex();
 		int yyparse();
 		extern int yyerror(char *s);
 %}
 
+%union {
+   struct tree *treeptr;
+}
 // Originally in j0gram.y but not in j0lex.l
 %token CLASSNAME STRING DOUBLELIT NULLVAL
 
@@ -25,9 +29,10 @@
 
 // j0 Errors
 %token INVALIDCHARLIT INVALID_PUNCTUATION NOT_IN_JZERO_RESERVED
-%token UNRECOGNIZED_CHARACTER INTLIT_RANGE_INVALID REALLIT_RANGE_INVALID
-%token INVALID_ESCAPE_IN_STRING
+%token UNRECOGNIZED_CHARACTER INTLIT_RANGE_INVALID
+%token INVALID_ESCAPE_IN_STRING REALLIT_RANGE_INVALID
 %%
+
 ClassDecl: PUBLIC CLASS IDENTIFIER ClassBody;
 ClassBody: '{' ClassBodyDecls '}' | '{' '}' ;
 ClassBodyDecls: ClassBodyDecl | ClassBodyDecls ClassBodyDecl ;
