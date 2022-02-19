@@ -40,7 +40,7 @@ ClassBodyDecl: FieldDecl | MethodDecl | ConstructorDecl ;
 FieldDecl: Type VarDecls ';' ;
 Type: INT | DOUBLE | BOOL | STRING | Name | LONG | FLOAT | CHAR ;
 
-Name: IDENTIFIER | QualifiedName ;
+Name: IDENTIFIER  | QualifiedName ;
 QualifiedName: Name '.' IDENTIFIER ;
 
 VarDecls: VarDeclarator | VarDecls ',' VarDeclarator ;
