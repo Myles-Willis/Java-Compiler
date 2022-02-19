@@ -1,4 +1,5 @@
 #include "defs.h"
+#include "j0gram.tab.h"
 
 void create_token(int category_value) {
 
@@ -29,22 +30,22 @@ int handle_token(int category_value) { //need to handle cases where tokens arent
       exit(1);
       break;
 
-    case INVALID_CHAR_LITERAL: {
+    case INVALIDCHARLIT: {
       printf("\n%s:%d: error: %s Invalid char literal\n\n", filename, yylineno, yytext);
       exit(1);
       break; }
 
-    case INTEGER_LITERAL: {
+    case INTLIT: {
       long number =  strtol(yytoken->text, NULL, 10);
       //Validate number with min and max allowed INT in Java
       if (number > 2147483647 || number < -2147483648) {
-        yytoken->category = INTEGER_LITERAL_RANGE_INVALID;
+        yytoken->category = INTLIT_RANGE_INVALID;
         return yytoken->category;
       }
       yytoken->ival = number;
       break; }
 
-    case STRING_LITERAL: {
+    case STRINGLIT: {
       char *str_buffer = malloc((strlen(yytext) + 1) * sizeof(char));
       char has_escape = 0;
       int char_position = 0;
@@ -91,13 +92,13 @@ int handle_token(int category_value) { //need to handle cases where tokens arent
       free(str_buffer);
       break; }
 
-    case REAL_LITERAL: {
+    case REALLIT: {
       // clear errno to catch potential strtof() error
       errno = 0;
       float float_value = strtof(yytoken->text, NULL);
       // detect range error from errno.h
       if (float_value == ERANGE) {
-        yytoken->category = REAL_LITERAL_RANGE_INVALID;
+        yytoken->category = REALLIT_RANGE_INVALID;
         return yytoken->category;
       }
       yytoken->dval = float_value;

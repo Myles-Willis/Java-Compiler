@@ -1,11 +1,13 @@
 #include "defs.h"
-//#include "token.c"
-
+#include "j0gram.tab.h"
+// include and set yydebug to 1 to enable error tracing
+extern int yydebug;
 char *filename;
 //extern void handle_token(int value, char *argv[]);
 void print_tokenlist(struct tokenlist* head);
 void free_tokenlist(struct tokenlist* head);
 int check_file_extension(char *file);
+int yyerror(char *s);
 
 int main(int argc, char *argv[]) {
 
@@ -22,33 +24,35 @@ int main(int argc, char *argv[]) {
     tail_token = NULL;
     filename = argv[1];
 
-    int value = 0;
+    //int value = 0;
 
     printf("\n\nCategory\tText\t\tLineno\t\tFilename\tIval/Sval\n");
     printf("-------------------------------------------------------------------------\n");
 
     //YYLEX RETURNS 0 AT EOF
-    while((value = yylex()) != 0) {
+    //while((value = yylex()) != 0) {
+		yydebug = 1;
+		yyparse();
 
-      struct tokenlist* temp = (struct tokenlist*)malloc(sizeof(struct tokenlist));
-      temp->t = NULL;
-      temp->next = NULL;
+    struct tokenlist* temp = (struct tokenlist*)malloc(sizeof(struct tokenlist));
+    temp->t = NULL;
+    temp->next = NULL;
 
-      // Create linked list of tokens
-      temp->t = yytoken;
-      temp->next = NULL;
+    // Create linked list of tokens
+    temp->t = yytoken;
+    temp->next = NULL;
 
-      if (head_token == NULL) {
-        head_token = temp;
-      }
-
-      if (tail_token != NULL) {
-      	tail_token->next = temp;
-      }
-
-      tail_token = temp;
-
+    if (head_token == NULL) {
+      head_token = temp;
     }
+
+    if (tail_token != NULL) {
+    	tail_token->next = temp;
+    }
+
+    tail_token = temp;
+
+    //}
 
   }
     print_tokenlist(head_token);
@@ -57,16 +61,20 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
+int yyerror(char *s) {
+   fprintf(stderr, "%s\n", s); exit(1);
+}
+
 void print_tokenlist(struct tokenlist* head) {
   //printf("in function!\n");
   struct tokenlist *current = head;
 
   while (current != NULL) {
-    if (current->t->category == INTEGER_LITERAL) {
+    if (current->t->category == INTLIT) {
       printf("%d\t\t%-16s%d\t\t%s\t\t%d\n", current->t->category, current->t->text, current->t->lineno, current->t->filename, current->t->ival);
-    } else if (current->t->category == STRING_LITERAL) {
+    } else if (current->t->category == STRINGLIT) {
       printf("%d\t\t%-16s%d\t\t%s\t\t%s\n", current->t->category, current->t->text, current->t->lineno, current->t->filename, current->t->sval);
-    } else if (current->t->category == REAL_LITERAL){
+    } else if (current->t->category == REALLIT){
       printf("%d\t\t%-16s%d\t\t%s\t\t%f\n", current->t->category, current->t->text, current->t->lineno, current->t->filename, current->t->dval);
     } else {
       printf("%d\t\t%-16s%d\t\t%s\n", current->t->category, current->t->text, current->t->lineno, current->t->filename);
