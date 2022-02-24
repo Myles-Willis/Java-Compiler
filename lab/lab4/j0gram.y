@@ -32,15 +32,14 @@
 %token UNRECOGNIZED_CHARACTER INTLIT_RANGE_INVALID
 %token INVALID_ESCAPE_IN_STRING REALLIT_RANGE_INVALID
 %%
-
 ClassDecl: PUBLIC CLASS IDENTIFIER ClassBody;
 ClassBody: '{' ClassBodyDecls '}' | '{' '}' ;
 ClassBodyDecls: ClassBodyDecl | ClassBodyDecls ClassBodyDecl ;
 ClassBodyDecl: FieldDecl | MethodDecl | ConstructorDecl ;
 FieldDecl: Type VarDecls ';' ;
-Type: INT | DOUBLE | BOOL | STRING | Name | LONG | FLOAT | CHAR ;
+Type: INT | DOUBLE | BOOL | STRING | Name ;
 
-Name: IDENTIFIER  | QualifiedName ;
+Name: IDENTIFIER | QualifiedName ;
 QualifiedName: Name '.' IDENTIFIER ;
 
 VarDecls: VarDeclarator | VarDecls ',' VarDeclarator ;
@@ -96,7 +95,7 @@ ReturnStmt: RETURN ExprOpt ';' ;
 Primary:  Literal | '(' Expr ')' | FieldAccess | MethodCall ;
 Literal: INTLIT	| DOUBLELIT | BOOLLIT | STRINGLIT | NULLVAL ;
 
-InstantiationExpr: Name '(' ArgListOpt ')' ;
+InstantiationExpr: NEW Name '(' ArgListOpt ')' ;
 ArgList: Expr | ArgList ',' Expr ;
 FieldAccess: Primary '.' IDENTIFIER ;
 

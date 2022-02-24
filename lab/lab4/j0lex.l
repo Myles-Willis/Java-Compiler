@@ -17,7 +17,6 @@ int rows = 0, words = 0, chars = 0;
 "#".*\n                      { /* no-op, discard comment */ }
 [ \t\r\f]+                   { /*discard whitespace */ }
 
-<<EOF>>								{ return YYEOF; }
 "boolean"             { return handle_token(BOOL); }
 "break"               { return handle_token(BREAK); }
 "case"                { return handle_token(CASE); }
