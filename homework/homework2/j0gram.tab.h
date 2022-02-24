@@ -35,8 +35,8 @@
    especially those whose name start with YY_ or yy_.  They are
    private implementation details that can be changed or removed.  */
 
-#ifndef YY_YY_J0GRAMUPDATE_TAB_H_INCLUDED
-# define YY_YY_J0GRAMUPDATE_TAB_H_INCLUDED
+#ifndef YY_YY_J0GRAM_TAB_H_INCLUDED
+# define YY_YY_J0GRAM_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
@@ -111,11 +111,11 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 10 "j0gramupdate.y"
+#line 10 "j0gram.y"
 
    struct tree *treeptr;
 
-#line 119 "j0gramupdate.tab.h"
+#line 119 "j0gram.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -130,4 +130,4 @@ extern YYSTYPE yylval;
 int yyparse (void);
 
 
-#endif /* !YY_YY_J0GRAMUPDATE_TAB_H_INCLUDED  */
+#endif /* !YY_YY_J0GRAM_TAB_H_INCLUDED  */
