@@ -97,36 +97,36 @@
 %type <treeptr> AssignOp
 %%
 
-ClassDecl
-	: PUBLIC CLASS IDENTIFIER ClassBody
+ClassDecl:
+	PUBLIC CLASS IDENTIFIER ClassBody
 		{}
 	;
-ClassBody
-	: '{' ClassBodyDecls '}'
+ClassBody:
+	'{' ClassBodyDecls '}'
 		{}
 	| '{' '}'
 		{}
 	;
-ClassBodyDecls
-	: ClassBodyDecl
+ClassBodyDecls:
+	ClassBodyDecl
 		{}
 	| ClassBodyDecls ClassBodyDecl
-		{} //$$ = create_branch();
+		{} //$$ = create_branch(prodR_,"temp",2, $1,$2);
 	;
-ClassBodyDecl
-	: FieldDecl
+ClassBodyDecl:
+	FieldDecl
 		{}
 	| MethodDecl
 		{}
 	| ConstructorDecl
 		{}
 	;
-FieldDecl
-	: Type VarDecls ';'
+FieldDecl:
+	Type VarDecls ';'
 		{}
 	;
-Type
-	: INT
+Type:
+	INT
 		{}
 	| DOUBLE
 		{}
@@ -138,114 +138,114 @@ Type
 		{}
 	;
 
-Name
-	: IDENTIFIER
+Name:
+	IDENTIFIER
 		{}
 	| QualifiedName
 		{}
 	;
-QualifiedName
-	: Name '.' IDENTIFIER
+QualifiedName:
+	Name '.' IDENTIFIER
 		{}
 	;
 
-VarDecls
-	: VarDeclarator
+VarDecls:
+	VarDeclarator
 		{}
 	| VarDecls ',' VarDeclarator
 		{}
 	;
-VarDeclarator
-	: IDENTIFIER
+VarDeclarator:
+	IDENTIFIER
 		{}
 	| VarDeclarator '[' ']'
 		{}
 	;
 
-MethodReturnVal
-	: Type
+MethodReturnVal:
+	Type
 		{}
 	| VOID
 		{}
 	;
-MethodDecl
-	: MethodHeader Block
+MethodDecl:
+	MethodHeader Block
 		{}
 	;
-MethodHeader
-	: PUBLIC STATIC MethodReturnVal MethodDeclarator
+MethodHeader:
+	PUBLIC STATIC MethodReturnVal MethodDeclarator
 		{}
 	;
-MethodDeclarator
-	: IDENTIFIER '(' FormalParmListOpt ')'
+MethodDeclarator:
+	IDENTIFIER '(' FormalParmListOpt ')'
 		{}
 	;
-FormalParmListOpt
-	: FormalParmList
+FormalParmListOpt:
+	FormalParmList
 		{}
 	|
 		{}
 	;
-FormalParmList
-	: FormalParm
+FormalParmList:
+	FormalParm
 		{}
 	| FormalParmList ',' FormalParm
 		{}
 	;
-FormalParm
-	: Type VarDeclarator
+FormalParm:
+	Type VarDeclarator
 		{}
 	;
 
-ConstructorDecl
-	: ConstructorDeclarator Block
+ConstructorDecl:
+	ConstructorDeclarator Block
 		{}
 	;
-ConstructorDeclarator
-	: IDENTIFIER '(' FormalParmListOpt ')'
+ConstructorDeclarator:
+	IDENTIFIER '(' FormalParmListOpt ')'
 		{}
 	;
-ArgListOpt
-	:  ArgList
+ArgListOpt:
+	 ArgList
 		{}
 	|
 		{}
 	;
 
-Block
-	: '{' BlockStmtsOpt '}'
+Block:
+	'{' BlockStmtsOpt '}'
 		{}
 	;
-BlockStmtsOpt
-	: BlockStmts
+BlockStmtsOpt:
+	BlockStmts
 		{}
 	|
 		{}
 	;
-BlockStmts
-	:  BlockStmt
+BlockStmts:
+	 BlockStmt
 		{}
 	| BlockStmts BlockStmt
 		{}
 	;
-BlockStmt
-	:   LocalVarDeclStmt
+BlockStmt:
+	  LocalVarDeclStmt
 		{}
 	| Stmt
 		{}
 	;
 
-LocalVarDeclStmt
-	: LocalVarDecl ';'
+LocalVarDeclStmt:
+	LocalVarDecl ';'
 		{}
 	;
-LocalVarDecl
-	: Type VarDecls
+LocalVarDecl:
+	Type VarDecls
 		{}
 	;
 
-Stmt
-	: Block
+Stmt:
+	Block
 		{}
 	| ';'
 		{}
@@ -255,7 +255,6 @@ Stmt
 		{}
 	| ReturnStmt
 		{}
-	|
 
 	| IfThenStmt
 		{}
@@ -270,13 +269,13 @@ Stmt
 		{}
 	;
 
-ExprStmt
-	: StmtExpr ';'
+ExprStmt:
+	StmtExpr ';'
 		{}
 	;
 
-StmtExpr
-	: Assignment
+StmtExpr:
+	Assignment
 		{}
 	| MethodCall
 		{}
@@ -284,82 +283,82 @@ StmtExpr
 		{}
 	;
 
-IfThenStmt
-	: IF '(' Expr ')' Block
+IfThenStmt:
+	IF '(' Expr ')' Block
 		{}
 	;
-IfThenElseStmt
-	: IF '(' Expr ')' Block ELSE Block
+IfThenElseStmt:
+	IF '(' Expr ')' Block ELSE Block
 		{}
 	;
-IfThenElseIfStmt
-	: IF '(' Expr ')' Block ElseIfSequence
+IfThenElseIfStmt:
+	IF '(' Expr ')' Block ElseIfSequence
 		{}
 
   |  IF '(' Expr ')' Block ElseIfSequence ELSE Block
 		{}
   ;
 
-ElseIfSequence
-	: ElseIfStmt
+ElseIfSequence:
+	ElseIfStmt
 		{}
 	| ElseIfSequence ElseIfStmt
 		{}
 	;
-ElseIfStmt
-	: ELSE IfThenStmt
+ElseIfStmt:
+	ELSE IfThenStmt
 		{}
 	;
-WhileStmt
-	: WHILE '(' Expr ')' Stmt
+WhileStmt:
+	WHILE '(' Expr ')' Stmt
 		{}
 	;
 
-ForStmt
-	: FOR '(' ForInit ';' ExprOpt ';' ForUpdate ')' Block
+ForStmt:
+	FOR '(' ForInit ';' ExprOpt ';' ForUpdate ')' Block
 		{}
 	;
-ForInit
-	: StmtExprList
+ForInit:
+	StmtExprList
 		{}
 	| LocalVarDecl
 		{}
 	|
 		{}
 	;
-ExprOpt
-	: Expr
+ExprOpt:
+	Expr
 		{}
 	|
 		{}
 	;
-ForUpdate
-	: StmtExprList
+ForUpdate:
+	StmtExprList
 		{}
 	|
 		{}
 	;
 
-StmtExprList
-	: StmtExpr
+StmtExprList:
+	StmtExpr
 		{}
 	| StmtExprList ',' StmtExpr
 		{}
 	;
 
-BreakStmt
-	: BREAK ';'
+BreakStmt:
+	BREAK ';'
 		{}
 	| BREAK IDENTIFIER ';'
 		{}
 	;
-ReturnStmt
-	: RETURN ExprOpt ';'
+ReturnStmt:
+	RETURN ExprOpt ';'
 		{}
 	;
 
-Primary
-	:  Literal
+Primary:
+	 Literal
 		{}
 	| '(' Expr ')'
 		{}
@@ -368,8 +367,8 @@ Primary
 	| MethodCall
 		{}
 	;
-Literal
-	: INTLIT
+Literal:
+	INTLIT
 		{}
 	| DOUBLELIT
 		{}
@@ -381,23 +380,23 @@ Literal
 		{}
 	;
 
-InstantiationExpr
-	: NEW Name '(' ArgListOpt ')'
+InstantiationExpr:
+	NEW Name '(' ArgListOpt ')'
 		{}
 	;
-ArgList
-	: Expr
+ArgList:
+	Expr
 		{}
 	| ArgList ',' Expr
 		{}
 	;
-FieldAccess
-	: Primary '.' IDENTIFIER
+FieldAccess:
+	Primary '.' IDENTIFIER
 		{}
 	;
 
-MethodCall
-	: Name '(' ArgListOpt ')'
+MethodCall:
+	Name '(' ArgListOpt ')'
 		{}
 
 	| Name '{' ArgListOpt '}'
@@ -410,22 +409,22 @@ MethodCall
 		{}
 	;
 
-PostFixExpr
-	: Primary
+PostFixExpr:
+	Primary
 		{}
 	| Name
 		{}
 	;
-UnaryExpr
-	:  '-' UnaryExpr
+UnaryExpr:
+	 '-' UnaryExpr
 		{}
 	| '!' UnaryExpr
 		{}
 	| PostFixExpr
 		{}
 	;
-MulExpr
-	: UnaryExpr
+MulExpr:
+	UnaryExpr
 		{}
 	| MulExpr '*' UnaryExpr
 		{}
@@ -435,16 +434,16 @@ MulExpr
 	| MulExpr '%' UnaryExpr
 		{}
 	;
-AddExpr
-	: MulExpr
+AddExpr:
+	MulExpr
 		{}
 	| AddExpr '+' MulExpr
 		{}
 	| AddExpr '-' MulExpr
 		{}
 	;
-RelOp
-	: LESSTHANOREQUAL
+RelOp:
+	LESSTHANOREQUAL
 		{}
 	| GREATERTHANOREQUAL
 		{}
@@ -453,52 +452,52 @@ RelOp
 	| '>'
 		{}
 	;
-RelExpr
-	: AddExpr
+RelExpr:
+	AddExpr
 		{}
 	| RelExpr RelOp AddExpr
 		{}
 	;
 
-EqExpr
-	: RelExpr
+EqExpr:
+	RelExpr
 		{}
 	| EqExpr ISEQUALTO RelExpr
 		{}
 	| EqExpr NOTEQUALTO RelExpr
 		{}
 	;
-CondAndExpr
-	: EqExpr
+CondAndExpr:
+	EqExpr
 		{}
 	| CondAndExpr LOGICALAND EqExpr
 		{}
 	;
-CondOrExpr
-	: CondAndExpr
+CondOrExpr:
+	CondAndExpr
 		{}
 	| CondOrExpr LOGICALOR CondAndExpr
 		{}
 	;
 
-Expr
-	: CondOrExpr
+Expr:
+	CondOrExpr
 		{}
 	| Assignment
 		{}
 	;
-Assignment
-	: LeftHandSide AssignOp Expr
+Assignment:
+	LeftHandSide AssignOp Expr
 		{}
 	;
-LeftHandSide
-	: Name
+LeftHandSide:
+	Name
 		{}
 	| FieldAccess
 		{}
 	;
-AssignOp
-	: '='
+AssignOp:
+	'='
 		{}
 	| INCREMENT
 		{}
