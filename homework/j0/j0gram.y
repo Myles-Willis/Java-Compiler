@@ -111,7 +111,7 @@ ClassBodyDecls:
 	ClassBodyDecl
 		{}
 	| ClassBodyDecls ClassBodyDecl
-		{} //$$ = create_branch(prodR_,"temp",2, $1,$2);
+		{$$ = create_branch(prodR_ClassBodyDecls,"ClassBodyDecls",2, $1,$2);}
 	;
 ClassBodyDecl:
 	FieldDecl
@@ -121,9 +121,9 @@ ClassBodyDecl:
 	| ConstructorDecl
 		{}
 	;
-FieldDecl:
+FieldDecl: //Case?
 	Type VarDecls ';'
-		{}
+		{$$ = create_branch(prodR_FieldDecl,"FieldDecl",2, $1,$2);}
 	;
 Type:
 	INT
@@ -153,9 +153,9 @@ VarDecls:
 	VarDeclarator
 		{}
 	| VarDecls ',' VarDeclarator
-		{}
+		{$$ = create_branch(prodR_VarDecls,"VarDecls_multi",2, $1,$3);}
 	;
-VarDeclarator:
+VarDeclarator: //case?
 	IDENTIFIER
 		{}
 	| VarDeclarator '[' ']'
@@ -174,7 +174,7 @@ MethodDecl:
 	;
 MethodHeader:
 	PUBLIC STATIC MethodReturnVal MethodDeclarator
-		{}
+		{$$ = create_branch(prodR_MethodHeader,"MethodHeader",2, $3,$4);}
 	;
 MethodDeclarator:
 	IDENTIFIER '(' FormalParmListOpt ')'
@@ -190,7 +190,7 @@ FormalParmList:
 	FormalParm
 		{}
 	| FormalParmList ',' FormalParm
-		{}
+		{$$ = create_branch(prodR_FormalParmList,"FormalParmList",2, $1,$3);}
 	;
 FormalParm:
 	Type VarDeclarator
@@ -199,7 +199,7 @@ FormalParm:
 
 ConstructorDecl:
 	ConstructorDeclarator Block
-		{}
+		{$$ = create_branch(prodR_ConstructorDecl,"ConstructorDecl",2, $1,$2);}
 	;
 ConstructorDeclarator:
 	IDENTIFIER '(' FormalParmListOpt ')'
@@ -226,7 +226,7 @@ BlockStmts:
 	 BlockStmt
 		{}
 	| BlockStmts BlockStmt
-		{}
+		{$$ = create_branch(prodR_BlockStmts,"BlockStmts",2, $1,$2);}
 	;
 BlockStmt:
 	  LocalVarDeclStmt
@@ -285,25 +285,25 @@ StmtExpr:
 
 IfThenStmt:
 	IF '(' Expr ')' Block
-		{}
+		{$$ = create_branch(prodR_IfThenStmt,"IfThenStmt",2, $3,$5);}
 	;
 IfThenElseStmt:
 	IF '(' Expr ')' Block ELSE Block
-		{}
+		{$$ = create_branch(prodR_IfThenElseStmt, "IfThenElseStmt",3, $3,$5, $7);}
 	;
 IfThenElseIfStmt:
 	IF '(' Expr ')' Block ElseIfSequence
-		{}
+		{$$ = create_branch(prodR_IfThenElseIfStmt,"IfThenElseIfStmt",3,$5,$6);}
 
   |  IF '(' Expr ')' Block ElseIfSequence ELSE Block
-		{}
+		{$$ = create_branch(prodR_IfThenElseIfStmt,"IfThenElseIf_Else_Stmt",4, $3,$5,$6,$8);}
   ;
 
 ElseIfSequence:
 	ElseIfStmt
 		{}
 	| ElseIfSequence ElseIfStmt
-		{}
+		{$$ = create_branch(prodR_ElseIfSequence,"ElseIfSequence",2, $1,$2);}
 	;
 ElseIfStmt:
 	ELSE IfThenStmt
@@ -311,12 +311,12 @@ ElseIfStmt:
 	;
 WhileStmt:
 	WHILE '(' Expr ')' Stmt
-		{}
+		{$$ = create_branch(prodR_WhileStmt,"WhileStmt",2, $3,$5);}
 	;
 
 ForStmt:
 	FOR '(' ForInit ';' ExprOpt ';' ForUpdate ')' Block
-		{}
+		{$$ = create_branch(prodR_ForStmt,"ForStmt",4, $3,$5,$7,$9);}
 	;
 ForInit:
 	StmtExprList
@@ -343,7 +343,7 @@ StmtExprList:
 	StmtExpr
 		{}
 	| StmtExprList ',' StmtExpr
-		{}
+		{$$ = create_branch(prodR_StmtExprList,"StmtExprList",2, $1,$3);}
 	;
 
 BreakStmt:
@@ -382,13 +382,13 @@ Literal:
 
 InstantiationExpr:
 	NEW Name '(' ArgListOpt ')'
-		{}
+		{$$ = create_branch(prodR_InstantiationExpr,"InstantiationExpr",2, $2,$4);}
 	;
 ArgList:
 	Expr
 		{}
 	| ArgList ',' Expr
-		{}
+		{$$ = create_branch(prodR_ArgList,"ArgList",2, $1,$3);}
 	;
 FieldAccess:
 	Primary '.' IDENTIFIER
@@ -397,16 +397,16 @@ FieldAccess:
 
 MethodCall:
 	Name '(' ArgListOpt ')'
-		{}
+		{$$ = create_branch(prodR_MethodCall,"MethodCall_parens",2, $1,$3);}
 
 	| Name '{' ArgListOpt '}'
-		{}
+		{$$ = create_branch(prodR_MethodCall,"MethodCall_curly",2, $1,$3);}
 
 	| Primary '.' IDENTIFIER '(' ArgListOpt ')'
-		{}
+		{$$ = create_branch(prodR_MethodCall,"MethodCall_primary_parens",3, $1,$3,$5);}
 
 	| Primary '.' IDENTIFIER '{' ArgListOpt '}'
-		{}
+		{$$ = create_branch(prodR_MethodCall,"MethodCall_primary_curly",3, $1,$3,$5);}
 	;
 
 PostFixExpr:
@@ -427,20 +427,20 @@ MulExpr:
 	UnaryExpr
 		{}
 	| MulExpr '*' UnaryExpr
-		{}
+		{$$ = create_branch(prodR_MulExpr,"MulExpr_multiply",2, $1,$3);}
 
 	| MulExpr '/' UnaryExpr
-		{}
+		{$$ = create_branch(prodR_MulExpr,"MulExpr_divide",2, $1,$3);}
 	| MulExpr '%' UnaryExpr
-		{}
+		{$$ = create_branch(prodR_MulExpr,"MulExpr_modulus",2, $1,$3);}
 	;
 AddExpr:
 	MulExpr
 		{}
 	| AddExpr '+' MulExpr
-		{}
+		{$$ = create_branch(prodR_AddExpr,"AddExpr_add",2, $1,$3);}
 	| AddExpr '-' MulExpr
-		{}
+		{$$ = create_branch(prodR_AddExpr,"AddExpr_subtract",2, $1,$3);}
 	;
 RelOp:
 	LESSTHANOREQUAL
@@ -456,28 +456,28 @@ RelExpr:
 	AddExpr
 		{}
 	| RelExpr RelOp AddExpr
-		{}
+		{$$ = create_branch(prodR_RelExpr,"RelExpr",3, $1,$2,$3);}
 	;
 
 EqExpr:
 	RelExpr
 		{}
 	| EqExpr ISEQUALTO RelExpr
-		{}
+		{$$ = create_branch(prodR_EqExpr,"EqExpr_isequal",2, $1,$3);}
 	| EqExpr NOTEQUALTO RelExpr
-		{}
+		{$$ = create_branch(prodR_EqExpr,"EqExpr_notequal",2, $1,$3}
 	;
 CondAndExpr:
 	EqExpr
 		{}
 	| CondAndExpr LOGICALAND EqExpr
-		{}
+		{$$ = create_branch(prodR_CondAndExpr,"CondAndExpr",2, $1,$3);}
 	;
 CondOrExpr:
 	CondAndExpr
 		{}
 	| CondOrExpr LOGICALOR CondAndExpr
-		{}
+		{$$ = create_branch(prodR_CondOrExpr,"CondOrExpr",2, $1,$3);}
 	;
 
 Expr:
@@ -488,7 +488,7 @@ Expr:
 	;
 Assignment:
 	LeftHandSide AssignOp Expr
-		{}
+		{$$ = create_branch(prodR_Assignment,"Assignment",3, $1,$2,$3);}
 	;
 LeftHandSide:
 	Name
