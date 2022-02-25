@@ -30,7 +30,7 @@ struct tree *create_leaf(int category_value, char* yytext, int lineno, char* fil
 
 }
 
-struct tree *create_branch(prodrule prodrule, char *symbolname, int nkids, ...){
+struct tree *create_branch(prodrule prodrule, char *symbolname, int nkids, ...) {
 
 	struct tree *branch = allocate_tree();
 
@@ -50,6 +50,86 @@ struct tree *create_branch(prodrule prodrule, char *symbolname, int nkids, ...){
 	return branch;
 
 }
+
+char* humanreadable(prodrule rule) {
+
+	switch (rule) {
+
+		case TOKEN : return "Token";
+		case prodR_ClassDecl : return "ClassDecl";
+		case prodR_ClassBodyDecls : return "ClassBodyDecls";
+		case prodR_FieldDecl : return "FieldDecl";
+		case prodR_QualifiedName : return "QualifiedName";
+		case prodR_VarDecls : return "VarDecls";
+		case prodR_MethodDecl : return "MethodDecl";
+		case prodR_MethodHeader : return "MethodHeader";
+		case prodR_MethodDeclarator : return "MethodDeclarator";
+		case prodR_FormalParmList : return "FormalParmList";
+		case prodR_FormalParm : return "FormalParm";
+		case prodR_ConstructorDecl : return "ConstructorDecl";
+		case prodR_ConstructorDeclarator : return "ConstructorDeclarator";
+		case prodR_BlockStmts : return "BlockStmts";
+		case prodR_LocalVarDecl : return "LocalVarDecl";
+		case prodR_IfThenStmt : return "IfThenStmt";
+		case prodR_IfThenElseStmt : return "IfThenElseStmt";
+		case prodR_IfThenElseIfStmt : return "IfThenElseIfStmt";
+		case prodR_ElseIfSequence : return "ElseIfSequence";
+		case prodR_WhileStmt : return "WhileStmt";
+		case prodR_ForStmt : return "ForStmt";
+		case prodR_StmtExprList : return "StmtExprList";
+		case prodR_InstantiationExpr : return "InstantiationExpr";
+		case prodR_ArgList : return "ArgList";
+		case prodR_FieldAccess : return "FieldAccess";
+		case prodR_MethodCall : return "MethodCall";
+		case prodR_UnaryExpr : return "UnaryExpr";
+		case prodR_MulExpr : return "MulExpr";
+		case prodR_AddExpr : return "AddExpr";
+		case prodR_RelExpr : return "RelExpr";
+		case prodR_EqExpr : return "EqExpr";
+		case prodR_CondAndExpr : return "CondAndExpr";
+		case prodR_CondOrExpr : return "CondOrExpr";
+		case prodR_Assignment : return "Assignment";
+
+	}
+}
+
+int print_tree(struct tree* tree, int depth) {
+
+	int i;
+
+	if (tree->nkids == 0) {
+
+		switch (tree->leaf->category) {
+
+			case INTLIT:
+				printf("%*s %s: %d\n", depth*4, " ", humanreadable(tree->prodrule), tree->leaf->ival);
+
+			case STRINGLIT:
+				printf("%*s %s: %s\n", depth*4, " ", humanreadable(tree->prodrule), tree->leaf->sval);
+
+			case REALLIT:
+				printf("%*s %s: %f\n", depth*4, " ", humanreadable(tree->prodrule), tree->leaf->dval);
+
+			default:
+				printf("%*s %s: %s\n", depth*4, " ", humanreadable(tree->prodrule), tree->leaf->text);
+		}
+
+		i = 0;
+		return i;
+
+	}
+
+	printf("%*s %s: %d\n", depth*4, " ", humanreadable(tree->prodrule), tree->nkids);
+
+	for(i=0; i < tree->nkids; i++) {
+		print_tree(tree->kids[i], depth+1);
+	}
+
+	i = 0;
+	return i;
+
+}
+
 
 void print_node(struct tree* tree) {
 

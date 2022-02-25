@@ -7,7 +7,7 @@
 		extern int yyparse();
 
 		#include "tree.h"
-		extern struct tree *root;
+		struct tree *root;
 %}
 %union {
    struct tree *treeptr;
@@ -33,6 +33,7 @@
 %token <treeptr> INVALIDCHARLIT INVALID_PUNCTUATION NOT_IN_JZERO_RESERVED
 %token <treeptr> UNRECOGNIZED_CHARACTER INTLIT_RANGE_INVALID
 %token <treeptr> INVALID_ESCAPE_IN_STRING REALLIT_RANGE_INVALID
+%token <treeptr> '-' '+' '!'
 
 %type <treeptr> ClassDecl
 %type <treeptr> ClassBody
@@ -99,11 +100,11 @@
 
 ClassDecl:
 	PUBLIC CLASS IDENTIFIER ClassBody
-		{}
+		{root = create_branch(prodR_ClassDecl, "ClassDecl", 4, $1,$2,$3,$4);}
 	;
 ClassBody:
 	'{' ClassBodyDecls '}'
-		{}
+		{$$ = $2;}
 	| '{' '}'
 		{}
 	;
@@ -146,7 +147,7 @@ Name:
 	;
 QualifiedName:
 	Name '.' IDENTIFIER
-		{}
+		{$$ = create_branch(prodR_QualifiedName,"QualifiedName",2, $1,$3);}
 	;
 
 VarDecls:
@@ -170,15 +171,15 @@ MethodReturnVal:
 	;
 MethodDecl:
 	MethodHeader Block
-		{}
+		{$$ = create_branch(prodR_MethodDecl,"MethodDecl",2, $1,$2);}
 	;
 MethodHeader:
 	PUBLIC STATIC MethodReturnVal MethodDeclarator
-		{$$ = create_branch(prodR_MethodHeader,"MethodHeader",2, $3,$4);}
+		{$$ = create_branch(prodR_MethodHeader,"MethodHeader",4, $1,$2,$3,$4);}
 	;
 MethodDeclarator:
 	IDENTIFIER '(' FormalParmListOpt ')'
-		{}
+		{$$ = create_branch(prodR_MethodDeclarator, "MethodDeclarator", 2, $1, $3);}
 	;
 FormalParmListOpt:
 	FormalParmList
@@ -194,7 +195,7 @@ FormalParmList:
 	;
 FormalParm:
 	Type VarDeclarator
-		{}
+		{$$ = create_branch(prodR_FormalParm,"FormalParm",2, $1,$2);}
 	;
 
 ConstructorDecl:
@@ -203,7 +204,7 @@ ConstructorDecl:
 	;
 ConstructorDeclarator:
 	IDENTIFIER '(' FormalParmListOpt ')'
-		{}
+		{$$ = create_branch(prodR_ConstructorDeclarator,"ConstructorDeclarator",2, $1,$3);}
 	;
 ArgListOpt:
 	 ArgList
@@ -214,7 +215,7 @@ ArgListOpt:
 
 Block:
 	'{' BlockStmtsOpt '}'
-		{}
+		{$$ = $2;}
 	;
 BlockStmtsOpt:
 	BlockStmts
@@ -241,7 +242,7 @@ LocalVarDeclStmt:
 	;
 LocalVarDecl:
 	Type VarDecls
-		{}
+		{$$ = create_branch(prodR_LocalVarDecl,"LocalVarDecl",2, $1,$2);}
 	;
 
 Stmt:
@@ -307,7 +308,7 @@ ElseIfSequence:
 	;
 ElseIfStmt:
 	ELSE IfThenStmt
-		{}
+		{$$ = $2;}
 	;
 WhileStmt:
 	WHILE '(' Expr ')' Stmt
@@ -350,18 +351,18 @@ BreakStmt:
 	BREAK ';'
 		{}
 	| BREAK IDENTIFIER ';'
-		{}
+		{$$ = $2;}
 	;
 ReturnStmt:
 	RETURN ExprOpt ';'
-		{}
+		{$$ = $2;}
 	;
 
 Primary:
 	 Literal
 		{}
 	| '(' Expr ')'
-		{}
+		{$$ = $2;}
 	| FieldAccess
 		{}
 	| MethodCall
@@ -392,7 +393,7 @@ ArgList:
 	;
 FieldAccess:
 	Primary '.' IDENTIFIER
-		{}
+		{$$ = create_branch(prodR_FieldAccess,"FieldAccess",2, $1,$3);}
 	;
 
 MethodCall:
@@ -417,9 +418,9 @@ PostFixExpr:
 	;
 UnaryExpr:
 	 '-' UnaryExpr
-		{}
+		{$$ = create_branch(prodR_UnaryExpr, "UnaryExpr_Neg", 2, $1, $2);}
 	| '!' UnaryExpr
-		{}
+		{$$ = create_branch(prodR_UnaryExpr, "UnaryExpr_Excl", 2, $1, $2);}
 	| PostFixExpr
 		{}
 	;

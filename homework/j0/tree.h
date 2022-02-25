@@ -13,4 +13,7 @@ struct tree {
 struct tree *allocate_tree();
 struct tree *create_leaf(int category_value, char* yytext, int lineno, char* filename);
 struct tree *create_branch(prodrule prodrule, char *symbolname, int nkids, ...);
+
 void print_node(struct tree* tree);
+//void print_leaf(struct tree* tree);
+int print_tree(struct tree* tree, int depth);

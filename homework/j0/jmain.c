@@ -1,11 +1,12 @@
 #include "defs.h"
 #include "tree.h"
 #include "j0gram.tab.h"
+
 // include and set yydebug to 1 to enable error tracing
 extern int yydebug;
 char *filename;
-//extern void handle_token(int value, char *argv[]);
-//void print_tokenlist(struct tokenlist* head);
+extern struct tree *root;
+
 void free_tokenlist(struct tokenlist* head);
 int check_file_extension(char *file);
 int yyerror(char *s);
@@ -25,12 +26,16 @@ int main(int argc, char *argv[]) {
     tail_token = NULL;
     filename = argv[1];
 
-    printf("\n\nPrinting Tree Nodes After Allocation of Each\n");
-    printf("-------------------------------------------------------------------------\n");
-    printf("Category\tText\t\tLineno\t\tFilename\tIval/Sval\n");
-    printf("-------------------------------------------------------------------------\n");
+    // printf("\n\nPrinting Tree Nodes After Allocation of Each\n");
+    // printf("-------------------------------------------------------------------------\n");
+    // printf("Category\tText\t\tLineno\t\tFilename\tIval/Sval\n");
+    // printf("-------------------------------------------------------------------------\n");
+
 		//yydebug = 1;
 		yyparse();
+		printf("\n");
+		print_tree(root, 0);
+		printf("\n");
 
 	}
 }

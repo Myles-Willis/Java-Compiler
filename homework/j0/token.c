@@ -106,7 +106,7 @@ int handle_token(int category_value) { //need to handle cases where tokens arent
       break; }
   }
 
-	print_node(yylval.treeptr); //lab4 print call
+	//print_node(yylval.treeptr); //lab4 print call
   return yylval.treeptr->leaf->category;
 
 }
