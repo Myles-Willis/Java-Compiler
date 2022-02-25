@@ -1,3 +1,6 @@
+#include "defs.h"
+#include <stdarg.h>
+
 struct tree {
    int prodrule;
    char *symbolname;
@@ -6,6 +9,7 @@ struct tree {
    struct token *leaf;   /* if nkids == 0; NULL for ε productions */
 };
 
-// public void initialize_node() {
-//
-// }
+struct tree *allocate_tree();
+struct tree *create_leaf(int category_value, char* yytext, int lineno, char* filename);
+struct tree *create_branch(int prodrule, char *symbolname, int nkids, ...);
+void print_node(struct tree* tree);

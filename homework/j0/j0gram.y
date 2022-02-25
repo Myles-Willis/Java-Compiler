@@ -1,122 +1,507 @@
 %{
     #include <stdio.h>
-		#include "tree.h"
 		#define YYDEBUG 1
-    int yylex();
-		int yyparse();
-		extern int yyerror(char *s);
-%}
 
+		extern int yyerror(char *s);
+		extern int yylex();
+		extern int yyparse();
+
+		#include "tree.h"
+		extern struct tree *root;
+%}
 %union {
    struct tree *treeptr;
 }
 // Originally in j0gram.y but not in j0lex.l
-%token CLASSNAME STRING DOUBLELIT NULLVAL
+%token <treeptr> CLASSNAME STRING DOUBLELIT NULLVAL
 
 // j0 Reserved Words
-%token BOOL BREAK CASE CHAR CLASS CONTINUE DEFAULT DOUBLE ELSE FLOAT FOR IF
-%token INSTANCEOF INT LONG NEW PUBLIC RETURN STATIC SWITCH VOID WHILE
+%token <treeptr> BOOL BREAK CASE CHAR CLASS CONTINUE DEFAULT DOUBLE ELSE FLOAT FOR IF
+%token <treeptr> INSTANCEOF INT LONG NEW PUBLIC RETURN STATIC SWITCH VOID WHILE
 
 // j0 Literals
-%token REALLIT INTLIT STRINGLIT BOOLLIT CHARLIT
+%token <treeptr> REALLIT INTLIT STRINGLIT BOOLLIT CHARLIT
 
 // j0 Comparison/Operators
-%token INCREMENT DECREMENT ISEQUALTO NOTEQUALTO GREATERTHANOREQUAL
-%token LESSTHANOREQUAL LOGICALAND LOGICALOR LOGICALNOT TYPE
+%token <treeptr> INCREMENT DECREMENT ISEQUALTO NOTEQUALTO GREATERTHANOREQUAL
+%token <treeptr> LESSTHANOREQUAL LOGICALAND LOGICALOR LOGICALNOT TYPE
 
 //Indentifier
-%token IDENTIFIER
+%token <treeptr> IDENTIFIER
 
 // j0 Errors
-%token INVALIDCHARLIT INVALID_PUNCTUATION NOT_IN_JZERO_RESERVED
-%token UNRECOGNIZED_CHARACTER INTLIT_RANGE_INVALID
-%token INVALID_ESCAPE_IN_STRING REALLIT_RANGE_INVALID
+%token <treeptr> INVALIDCHARLIT INVALID_PUNCTUATION NOT_IN_JZERO_RESERVED
+%token <treeptr> UNRECOGNIZED_CHARACTER INTLIT_RANGE_INVALID
+%token <treeptr> INVALID_ESCAPE_IN_STRING REALLIT_RANGE_INVALID
+
+%type <treeptr> ClassDecl
+%type <treeptr> ClassBody
+%type <treeptr> ClassBodyDecls
+%type <treeptr> ClassBodyDecl
+%type <treeptr> FieldDecl
+%type <treeptr> Type
+%type <treeptr> Name
+%type <treeptr> QualifiedName
+%type <treeptr> VarDecls
+%type <treeptr> VarDeclarator
+%type <treeptr> MethodReturnVal
+%type <treeptr> MethodDecl
+%type <treeptr> MethodHeader
+%type <treeptr> MethodDeclarator
+%type <treeptr> FormalParmListOpt
+%type <treeptr> FormalParmList
+%type <treeptr> FormalParm
+%type <treeptr> ConstructorDecl
+%type <treeptr> ConstructorDeclarator
+%type <treeptr> ArgListOpt
+%type <treeptr> Block
+%type <treeptr> BlockStmtsOpt
+%type <treeptr> BlockStmts
+%type <treeptr> BlockStmt
+%type <treeptr> LocalVarDeclStmt
+%type <treeptr> LocalVarDecl
+%type <treeptr> Stmt
+%type <treeptr> ExprStmt
+%type <treeptr> StmtExpr
+%type <treeptr> IfThenStmt
+%type <treeptr> IfThenElseStmt
+%type <treeptr> IfThenElseIfStmt
+%type <treeptr> ElseIfSequence
+%type <treeptr> ElseIfStmt
+%type <treeptr> WhileStmt
+%type <treeptr> ForStmt
+%type <treeptr> ForInit
+%type <treeptr> ExprOpt
+%type <treeptr> ForUpdate
+%type <treeptr> StmtExprList
+%type <treeptr> BreakStmt
+%type <treeptr> ReturnStmt
+%type <treeptr> Primary
+%type <treeptr> Literal
+%type <treeptr> InstantiationExpr
+%type <treeptr> ArgList
+%type <treeptr> FieldAccess
+%type <treeptr> MethodCall
+%type <treeptr> PostFixExpr
+%type <treeptr> UnaryExpr
+%type <treeptr> MulExpr
+%type <treeptr> AddExpr
+%type <treeptr> RelOp
+%type <treeptr> RelExpr
+%type <treeptr> EqExpr
+%type <treeptr> CondAndExpr
+%type <treeptr> CondOrExpr
+%type <treeptr> Expr
+%type <treeptr> Assignment
+%type <treeptr> LeftHandSide
+%type <treeptr> AssignOp
 %%
-ClassDecl: PUBLIC CLASS IDENTIFIER ClassBody;
-ClassBody: '{' ClassBodyDecls '}' | '{' '}' ;
-ClassBodyDecls: ClassBodyDecl | ClassBodyDecls ClassBodyDecl ;
-ClassBodyDecl: FieldDecl | MethodDecl | ConstructorDecl ;
-FieldDecl: Type VarDecls ';' ;
-Type: INT | DOUBLE | BOOL | STRING | Name ;
 
-Name: IDENTIFIER | QualifiedName ;
-QualifiedName: Name '.' IDENTIFIER ;
+ClassDecl
+	: PUBLIC CLASS IDENTIFIER ClassBody
+		{}
+	;
+ClassBody
+	: '{' ClassBodyDecls '}'
+		{}
+	| '{' '}'
+		{}
+	;
+ClassBodyDecls
+	: ClassBodyDecl
+		{}
+	| ClassBodyDecls ClassBodyDecl
+		{} //$$ = create_branch();
+	;
+ClassBodyDecl
+	: FieldDecl
+		{}
+	| MethodDecl
+		{}
+	| ConstructorDecl
+		{}
+	;
+FieldDecl
+	: Type VarDecls ';'
+		{}
+	;
+Type
+	: INT
+		{}
+	| DOUBLE
+		{}
+	| BOOL
+		{}
+	| STRING
+		{}
+	| Name
+		{}
+	;
 
-VarDecls: VarDeclarator | VarDecls ',' VarDeclarator ;
-VarDeclarator: IDENTIFIER | VarDeclarator '[' ']' ;
+Name
+	: IDENTIFIER
+		{}
+	| QualifiedName
+		{}
+	;
+QualifiedName
+	: Name '.' IDENTIFIER
+		{}
+	;
 
-MethodReturnVal : Type | VOID ;
-MethodDecl: MethodHeader Block ;
-MethodHeader: PUBLIC STATIC MethodReturnVal MethodDeclarator ;
-MethodDeclarator: IDENTIFIER '(' FormalParmListOpt ')' ;
-FormalParmListOpt: FormalParmList | ;
-FormalParmList: FormalParm | FormalParmList ',' FormalParm ;
-FormalParm: Type VarDeclarator ;
+VarDecls
+	: VarDeclarator
+		{}
+	| VarDecls ',' VarDeclarator
+		{}
+	;
+VarDeclarator
+	: IDENTIFIER
+		{}
+	| VarDeclarator '[' ']'
+		{}
+	;
 
-ConstructorDecl: ConstructorDeclarator Block ;
-ConstructorDeclarator: IDENTIFIER '(' FormalParmListOpt ')' ;
-ArgListOpt:  ArgList | ;
+MethodReturnVal
+	: Type
+		{}
+	| VOID
+		{}
+	;
+MethodDecl
+	: MethodHeader Block
+		{}
+	;
+MethodHeader
+	: PUBLIC STATIC MethodReturnVal MethodDeclarator
+		{}
+	;
+MethodDeclarator
+	: IDENTIFIER '(' FormalParmListOpt ')'
+		{}
+	;
+FormalParmListOpt
+	: FormalParmList
+		{}
+	|
+		{}
+	;
+FormalParmList
+	: FormalParm
+		{}
+	| FormalParmList ',' FormalParm
+		{}
+	;
+FormalParm
+	: Type VarDeclarator
+		{}
+	;
 
-Block: '{' BlockStmtsOpt '}' ;
-BlockStmtsOpt: BlockStmts | ;
-BlockStmts:  BlockStmt | BlockStmts BlockStmt ;
-BlockStmt:   LocalVarDeclStmt | Stmt ;
+ConstructorDecl
+	: ConstructorDeclarator Block
+		{}
+	;
+ConstructorDeclarator
+	: IDENTIFIER '(' FormalParmListOpt ')'
+		{}
+	;
+ArgListOpt
+	:  ArgList
+		{}
+	|
+		{}
+	;
 
-LocalVarDeclStmt: LocalVarDecl ';' ;
-LocalVarDecl: Type VarDecls ;
+Block
+	: '{' BlockStmtsOpt '}'
+		{}
+	;
+BlockStmtsOpt
+	: BlockStmts
+		{}
+	|
+		{}
+	;
+BlockStmts
+	:  BlockStmt
+		{}
+	| BlockStmts BlockStmt
+		{}
+	;
+BlockStmt
+	:   LocalVarDeclStmt
+		{}
+	| Stmt
+		{}
+	;
 
-Stmt: Block | ';' | ExprStmt | BreakStmt | ReturnStmt |
-      | IfThenStmt | IfThenElseStmt | IfThenElseIfStmt
-      | WhileStmt | ForStmt ;
+LocalVarDeclStmt
+	: LocalVarDecl ';'
+		{}
+	;
+LocalVarDecl
+	: Type VarDecls
+		{}
+	;
 
-ExprStmt: StmtExpr ';' ;
+Stmt
+	: Block
+		{}
+	| ';'
+		{}
+	| ExprStmt
+		{}
+	| BreakStmt
+		{}
+	| ReturnStmt
+		{}
+	|
 
-StmtExpr: Assignment | MethodCall | InstantiationExpr ;
+	| IfThenStmt
+		{}
+	| IfThenElseStmt
+		{}
+	| IfThenElseIfStmt
+		{}
 
-IfThenStmt: IF '(' Expr ')' Block ;
-IfThenElseStmt: IF '(' Expr ')' Block ELSE Block ;
-IfThenElseIfStmt: IF '(' Expr ')' Block ElseIfSequence
-       |  IF '(' Expr ')' Block ElseIfSequence ELSE Block ;
+	| WhileStmt
+		{}
+	| ForStmt
+		{}
+	;
 
-ElseIfSequence: ElseIfStmt | ElseIfSequence ElseIfStmt ;
-ElseIfStmt: ELSE IfThenStmt ;
-WhileStmt: WHILE '(' Expr ')' Stmt ;
+ExprStmt
+	: StmtExpr ';'
+		{}
+	;
 
-ForStmt: FOR '(' ForInit ';' ExprOpt ';' ForUpdate ')' Block ;
-ForInit: StmtExprList | LocalVarDecl | ;
-ExprOpt: Expr |  ;
-ForUpdate: StmtExprList | ;
+StmtExpr
+	: Assignment
+		{}
+	| MethodCall
+		{}
+	| InstantiationExpr
+		{}
+	;
 
-StmtExprList: StmtExpr | StmtExprList ',' StmtExpr ;
+IfThenStmt
+	: IF '(' Expr ')' Block
+		{}
+	;
+IfThenElseStmt
+	: IF '(' Expr ')' Block ELSE Block
+		{}
+	;
+IfThenElseIfStmt
+	: IF '(' Expr ')' Block ElseIfSequence
+		{}
 
-BreakStmt: BREAK ';' | BREAK IDENTIFIER ';' ;
-ReturnStmt: RETURN ExprOpt ';' ;
+  |  IF '(' Expr ')' Block ElseIfSequence ELSE Block
+		{}
+  ;
 
-Primary:  Literal | '(' Expr ')' | FieldAccess | MethodCall ;
-Literal: INTLIT	| DOUBLELIT | BOOLLIT | STRINGLIT | NULLVAL ;
+ElseIfSequence
+	: ElseIfStmt
+		{}
+	| ElseIfSequence ElseIfStmt
+		{}
+	;
+ElseIfStmt
+	: ELSE IfThenStmt
+		{}
+	;
+WhileStmt
+	: WHILE '(' Expr ')' Stmt
+		{}
+	;
 
-InstantiationExpr: NEW Name '(' ArgListOpt ')' ;
-ArgList: Expr | ArgList ',' Expr ;
-FieldAccess: Primary '.' IDENTIFIER ;
+ForStmt
+	: FOR '(' ForInit ';' ExprOpt ';' ForUpdate ')' Block
+		{}
+	;
+ForInit
+	: StmtExprList
+		{}
+	| LocalVarDecl
+		{}
+	|
+		{}
+	;
+ExprOpt
+	: Expr
+		{}
+	|
+		{}
+	;
+ForUpdate
+	: StmtExprList
+		{}
+	|
+		{}
+	;
 
-MethodCall: Name '(' ArgListOpt ')'
+StmtExprList
+	: StmtExpr
+		{}
+	| StmtExprList ',' StmtExpr
+		{}
+	;
+
+BreakStmt
+	: BREAK ';'
+		{}
+	| BREAK IDENTIFIER ';'
+		{}
+	;
+ReturnStmt
+	: RETURN ExprOpt ';'
+		{}
+	;
+
+Primary
+	:  Literal
+		{}
+	| '(' Expr ')'
+		{}
+	| FieldAccess
+		{}
+	| MethodCall
+		{}
+	;
+Literal
+	: INTLIT
+		{}
+	| DOUBLELIT
+		{}
+	| BOOLLIT
+		{}
+	| STRINGLIT
+		{}
+	| NULLVAL
+		{}
+	;
+
+InstantiationExpr
+	: NEW Name '(' ArgListOpt ')'
+		{}
+	;
+ArgList
+	: Expr
+		{}
+	| ArgList ',' Expr
+		{}
+	;
+FieldAccess
+	: Primary '.' IDENTIFIER
+		{}
+	;
+
+MethodCall
+	: Name '(' ArgListOpt ')'
+		{}
+
 	| Name '{' ArgListOpt '}'
+		{}
+
 	| Primary '.' IDENTIFIER '(' ArgListOpt ')'
-	| Primary '.' IDENTIFIER '{' ArgListOpt '}' ;
+		{}
 
-PostFixExpr: Primary | Name ;
-UnaryExpr:  '-' UnaryExpr | '!' UnaryExpr | PostFixExpr ;
-MulExpr: UnaryExpr | MulExpr '*' UnaryExpr
-    | MulExpr '/' UnaryExpr | MulExpr '%' UnaryExpr ;
-AddExpr: MulExpr | AddExpr '+' MulExpr | AddExpr '-' MulExpr ;
-RelOp: LESSTHANOREQUAL | GREATERTHANOREQUAL | '<' | '>' ;
-RelExpr: AddExpr | RelExpr RelOp AddExpr ;
+	| Primary '.' IDENTIFIER '{' ArgListOpt '}'
+		{}
+	;
 
-EqExpr: RelExpr | EqExpr ISEQUALTO RelExpr | EqExpr NOTEQUALTO RelExpr ;
-CondAndExpr: EqExpr | CondAndExpr LOGICALAND EqExpr ;
-CondOrExpr: CondAndExpr | CondOrExpr LOGICALOR CondAndExpr ;
+PostFixExpr
+	: Primary
+		{}
+	| Name
+		{}
+	;
+UnaryExpr
+	:  '-' UnaryExpr
+		{}
+	| '!' UnaryExpr
+		{}
+	| PostFixExpr
+		{}
+	;
+MulExpr
+	: UnaryExpr
+		{}
+	| MulExpr '*' UnaryExpr
+		{}
 
-Expr: CondOrExpr | Assignment ;
-Assignment: LeftHandSide AssignOp Expr ;
-LeftHandSide: Name | FieldAccess ;
-AssignOp: '=' | INCREMENT | DECREMENT ;
+	| MulExpr '/' UnaryExpr
+		{}
+	| MulExpr '%' UnaryExpr
+		{}
+	;
+AddExpr
+	: MulExpr
+		{}
+	| AddExpr '+' MulExpr
+		{}
+	| AddExpr '-' MulExpr
+		{}
+	;
+RelOp
+	: LESSTHANOREQUAL
+		{}
+	| GREATERTHANOREQUAL
+		{}
+	| '<'
+		{}
+	| '>'
+		{}
+	;
+RelExpr
+	: AddExpr
+		{}
+	| RelExpr RelOp AddExpr
+		{}
+	;
+
+EqExpr
+	: RelExpr
+		{}
+	| EqExpr ISEQUALTO RelExpr
+		{}
+	| EqExpr NOTEQUALTO RelExpr
+		{}
+	;
+CondAndExpr
+	: EqExpr
+		{}
+	| CondAndExpr LOGICALAND EqExpr
+		{}
+	;
+CondOrExpr
+	: CondAndExpr
+		{}
+	| CondOrExpr LOGICALOR CondAndExpr
+		{}
+	;
+
+Expr
+	: CondOrExpr
+		{}
+	| Assignment
+		{}
+	;
+Assignment
+	: LeftHandSide AssignOp Expr
+		{}
+	;
+LeftHandSide
+	: Name
+		{}
+	| FieldAccess
+		{}
+	;
+AssignOp
+	: '='
+		{}
+	| INCREMENT
+		{}
+	| DECREMENT
+		{}
+	;

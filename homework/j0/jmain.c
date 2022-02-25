@@ -1,4 +1,5 @@
 #include "defs.h"
+#include "tree.h"
 #include "j0gram.tab.h"
 // include and set yydebug to 1 to enable error tracing
 extern int yydebug;
@@ -56,18 +57,18 @@ int yyerror(char *s) {
 //   }
 // }
 
-void free_tokenlist(struct tokenlist* head) {
-
-  struct tokenlist *current;
-
-  while (head != NULL) {
-  	current = head;
-		head = head->next;
-		free(current->t->text);
-		free(current->t);
-		free(current);
-  }
-}
+// void free_tokenlist(struct tokenlist* head) {
+//
+//   struct tokenlist *current;
+//
+//   while (head != NULL) {
+//   	current = head;
+// 		head = head->next;
+// 		free(current->t->text);
+// 		free(current->t);
+// 		free(current);
+//   }
+// }
 
 int check_file_extension(char *file) {
   if (strlen(file) >= 6) {

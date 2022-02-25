@@ -1,44 +1,18 @@
 #include "defs.h"
+#include "tree.h"
+#include "token.h"
 #include "j0gram.tab.h"
 
-void create_token(int category_value) {
+struct token *allocate_token() {
 
-	yylval.treeptr = malloc(sizeof (struct tree));
-	yylval.treeptr->prodrule = category_value;
-	yylval.treeptr->nkids = 0;
-	yylval.treeptr->symbolname = NULL;
+	struct token *token = malloc(sizeof (struct token));
+	memset(token, 0, sizeof(struct token));
 
-	for(int i = 0; i < 9; i++) {
-		yylval.treeptr->kids[i] = NULL;
-	}
+	return token;
 
-	yylval.treeptr->leaf = malloc(sizeof(struct token));
-  // yylval.treeptr->leaf = new_token;
-  yylval.treeptr->leaf->category = category_value;
-  yylval.treeptr->leaf->text = strdup(yytext);
-  yylval.treeptr->leaf->lineno = yylineno;
-  yylval.treeptr->leaf->filename = filename;
-  yylval.treeptr->leaf->ival = 0;
-  yylval.treeptr->leaf->dval = 0;
-  yylval.treeptr->leaf->sval = NULL;
-}
-
-void print_node(struct tree* tree) {
-
-  if (tree->leaf->category == INTLIT) {
-    printf("%d\t\t%-16s%d\t\t%s\t\t%d\n", tree->leaf->category, tree->leaf->text, tree->leaf->lineno, tree->leaf->filename, tree->leaf->ival);
-  } else if (tree->leaf->category == STRINGLIT) {
-    printf("%d\t\t%-16s%d\t\t%s\t\t%s\n", tree->leaf->category, tree->leaf->text, tree->leaf->lineno, tree->leaf->filename, tree->leaf->sval);
-  } else if (tree->leaf->category == REALLIT){
-    printf("%d\t\t%-16s%d\t\t%s\t\t%f\n", tree->leaf->category, tree->leaf->text, tree->leaf->lineno, tree->leaf->filename, tree->leaf->dval);
-  } else {
-    printf("%d\t\t%-16s%d\t\t%s\n", tree->leaf->category, tree->leaf->text, tree->leaf->lineno, tree->leaf->filename);
-  }
 }
 
 int handle_token(int category_value) { //need to handle cases where tokens arent required
-
-  create_token(category_value);
 
   switch (category_value) {
 
@@ -56,7 +30,12 @@ int handle_token(int category_value) { //need to handle cases where tokens arent
       printf("\n%s:%d: error: %s Invalid char literal\n\n", filename, yylineno, yytext);
       exit(1);
       break; }
+	}
 
+	yylval.treeptr = create_leaf(category_value, yytext, yylineno, filename);
+
+	//Switch fo after potential errors
+	switch (category_value) {
     case INTLIT: {
       long number =  strtol(yylval.treeptr->leaf->text, NULL, 10);
       //Validate number with min and max allowed INT in Java
@@ -126,6 +105,8 @@ int handle_token(int category_value) { //need to handle cases where tokens arent
       yylval.treeptr->leaf->dval = float_value;
       break; }
   }
-	print_node(yylval.treeptr);
+
+	print_node(yylval.treeptr); //lab4 print call
   return yylval.treeptr->leaf->category;
+
 }
