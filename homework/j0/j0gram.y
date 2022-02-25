@@ -465,7 +465,7 @@ EqExpr:
 	| EqExpr ISEQUALTO RelExpr
 		{$$ = create_branch(prodR_EqExpr,"EqExpr_isequal",2, $1,$3);}
 	| EqExpr NOTEQUALTO RelExpr
-		{$$ = create_branch(prodR_EqExpr,"EqExpr_notequal",2, $1,$3}
+		{$$ = create_branch(prodR_EqExpr,"EqExpr_notequal",2, $1,$3);}
 	;
 CondAndExpr:
 	EqExpr

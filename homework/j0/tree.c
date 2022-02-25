@@ -15,7 +15,7 @@ struct tree *create_leaf(int category_value, char* yytext, int lineno, char* fil
 	struct tree *tree = allocate_tree();
 	struct token *leaf_token = allocate_token();
 
-	tree->prodrule = 0; //What is the prodrule?
+	tree->prodrule = TOKEN; //What is the prodrule?
 	tree->leaf = leaf_token;
 
 	leaf_token->category = category_value;
@@ -30,7 +30,7 @@ struct tree *create_leaf(int category_value, char* yytext, int lineno, char* fil
 
 }
 
-struct tree *create_branch(int prodrule, char *symbolname, int nkids, ...){
+struct tree *create_branch(prodrule prodrule, char *symbolname, int nkids, ...){
 
 	struct tree *branch = allocate_tree();
 

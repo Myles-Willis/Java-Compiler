@@ -1,4 +1,5 @@
 #include "defs.h"
+#include "prodrules.h"
 #include <stdarg.h>
 
 struct tree {
@@ -11,5 +12,5 @@ struct tree {
 
 struct tree *allocate_tree();
 struct tree *create_leaf(int category_value, char* yytext, int lineno, char* filename);
-struct tree *create_branch(int prodrule, char *symbolname, int nkids, ...);
+struct tree *create_branch(prodrule prodrule, char *symbolname, int nkids, ...);
 void print_node(struct tree* tree);
