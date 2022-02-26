@@ -21,10 +21,12 @@ int main(int argc, char *argv[]) {
 			if ((yyin = fopen(*++argv, "r")) == NULL) {
 				printf("\nCan not open '%s': File does not exist\n\n", *argv);
 			} else if(check_file_extension(*argv) != 1) {
-		  	printf("\nCan not open '%s': File does not have .java extension\n\n", *argv);
+		  		printf("\nCan not open '%s': File does not have .java extension\n\n", *argv);
 			} else {
-	    	filename = *argv;
-				//yydebug = 1;
+
+	    		filename = *argv;
+				printf("\nBeginning Parse of: %s\n", filename);
+				// yydebug = 1;
 				yyparse();
 				printf("\n");
 				print_tree(root, 0);
@@ -35,7 +37,9 @@ int main(int argc, char *argv[]) {
 }
 
 int yyerror(char *s) {
-   fprintf(stderr, "%s\n", s); exit(1);
+   fprintf(stderr, "\n%s:%d: error: %s with token: %s \n\n", filename,
+	  yylineno, s, yytext);
+	 exit(1);
 }
 
 int check_file_extension(char *file) {

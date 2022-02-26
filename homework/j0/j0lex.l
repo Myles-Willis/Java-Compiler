@@ -15,6 +15,8 @@ int rows = 0, words = 0, chars = 0;
 %%
 \n                           {/*discard comment */}
 "#".*\n                      { /* no-op, discard comment */ }
+"//".*\r?\n					 {/* no-op, discard single line comment */}
+"/*"([^*]|"*"+[^/*])*"*"+"/" { /*discard multi-line comment */ }
 [ \t\r\f]+                   { /*discard whitespace */ }
 
 "boolean"             { return handle_token(BOOL); }
@@ -77,7 +79,7 @@ int rows = 0, words = 0, chars = 0;
 "#"                   {return handle_token(INVALID_PUNCTUATION); }
 "$"                   {return handle_token(INVALID_PUNCTUATION); }
 "@"                   {return handle_token(INVALID_PUNCTUATION); }
-"\\"                   {return handle_token(INVALID_PUNCTUATION); }
+"\\"                  {return handle_token(INVALID_PUNCTUATION); }
 "`"                   {return handle_token(INVALID_PUNCTUATION); }
 
 
@@ -126,8 +128,9 @@ int rows = 0, words = 0, chars = 0;
 '\\''                 { return handle_token(CHARLIT); }
 '\\\"'                { return handle_token(CHARLIT); }
 '\\\\'                { return handle_token(CHARLIT); }
-'\\.'                 { return handle_token(INVALIDCHARLIT); }
-"''"                  { return handle_token(INVALIDCHARLIT); }
+'\\.'                 { return handle_token(INVALID_CHARLIT_ESCAPE); }
+"''"                  { return handle_token(EMPTY_CHARLIT); }
+'[^']{2,}'			  { return handle_token(OPENENDED_CHARLIT); }
 
 [A-Za-z_$][A-Za-z0-9_$]*          { return handle_token(IDENTIFIER); }
 .                     { chars++; return handle_token(UNRECOGNIZED_CHARACTER); }

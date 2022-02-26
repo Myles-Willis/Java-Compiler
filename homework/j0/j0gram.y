@@ -33,6 +33,7 @@
 %token <treeptr> INVALIDCHARLIT INVALID_PUNCTUATION NOT_IN_JZERO_RESERVED
 %token <treeptr> UNRECOGNIZED_CHARACTER INTLIT_RANGE_INVALID
 %token <treeptr> INVALID_ESCAPE_IN_STRING REALLIT_RANGE_INVALID
+%token <treeptr> INVALID_CHARLIT_ESCAPE EMPTY_CHARLIT OPENENDED_CHARLIT
 %token <treeptr> '-' '+' '!' '='
 
 %left ELSE
@@ -194,7 +195,7 @@ FormalParmListOpt:
 	FormalParmList
 		{}
 	|
-		{}
+		{$$ = NULL;}
 	;
 FormalParmList:
 	FormalParm
@@ -219,7 +220,7 @@ ArgListOpt:
 	 ArgList
 		{}
 	|
-		{}
+		{$$ = NULL;}
 	;
 
 Block:
@@ -230,7 +231,7 @@ BlockStmtsOpt:
 	BlockStmts
 		{}
 	|
-		{}
+		{$$ = NULL;}
 	;
 BlockStmts:
 	 BlockStmt
@@ -334,19 +335,19 @@ ForInit:
 	| LocalVarDecl
 		{}
 	|
-		{}
+		{$$ = NULL;}
 	;
 ExprOpt:
 	Expr
 		{}
 	|
-		{}
+		{$$ = NULL;}
 	;
 ForUpdate:
 	StmtExprList
 		{}
 	|
-		{}
+		{$$ = NULL;}
 	;
 
 StmtExprList:
