@@ -34,7 +34,7 @@ int handle_token(int category_value) { //need to handle cases where tokens arent
 
 	yylval.treeptr = create_leaf(category_value, yytext, yylineno, filename);
 
-	//Switch fo after potential errors
+	//Switch after potential error checking
 	switch (category_value) {
     case INTLIT: {
       long number =  strtol(yylval.treeptr->leaf->text, NULL, 10);

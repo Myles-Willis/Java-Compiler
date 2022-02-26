@@ -33,7 +33,16 @@
 %token <treeptr> INVALIDCHARLIT INVALID_PUNCTUATION NOT_IN_JZERO_RESERVED
 %token <treeptr> UNRECOGNIZED_CHARACTER INTLIT_RANGE_INVALID
 %token <treeptr> INVALID_ESCAPE_IN_STRING REALLIT_RANGE_INVALID
-%token <treeptr> '-' '+' '!'
+%token <treeptr> '-' '+' '!' '='
+
+%left ELSE
+%left LOGICALOR
+%left LOGICALAND
+%left ISEQUALTO NOTEQUALTO
+%left '<' GREATERTHANOREQUAL '>' LESSTHANOREQUAL
+%left '+' '-'
+%left '*' '/' '%'
+%left LOGICALNOT
 
 %type <treeptr> ClassDecl
 %type <treeptr> ClassBody

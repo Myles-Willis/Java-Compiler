@@ -1,5 +1,9 @@
 public class hello {
+    int a;
+    int i = 9;
    public static void main(String argv[]) {
-      System.out.println("hello, jzero!");
+      while(a){
+          System.out.println("juicy\t");
+      }
    }
 }

@@ -49,8 +49,8 @@ int rows = 0, words = 0, chars = 0;
 "*"                   { return handle_token('*'); }
 "/"                   { return handle_token('/'); }
 "%"                   { return handle_token('%'); }
-"++"                  { return handle_token(INCREMENT); } // remove based off txtbook?
-"--"                  { return handle_token(DECREMENT); } // remove based off txtbook?
+"++"                  { return handle_token(INCREMENT); }
+"--"                  { return handle_token(DECREMENT); }
 "=="                  { return handle_token(ISEQUALTO); }
 "!="                  { return handle_token(NOTEQUALTO); }
 ">"                   { return handle_token('>'); }

@@ -95,38 +95,44 @@ char* humanreadable(prodrule rule) {
 
 int print_tree(struct tree* tree, int depth) {
 
-	int i;
+
+	if (tree == NULL) {
+		return 0;
+	}
 
 	if (tree->nkids == 0) {
+		printf("%*s %s %d: %s\n", depth*4, " ", humanreadable(tree->prodrule),tree->leaf->category, tree->leaf->text);
 
-		switch (tree->leaf->category) {
+		// switch (tree->leaf->category) {
+		//
+		// 	case INTLIT:
+		// 		printf("%*s %s %d: %d\n", depth*4, " ", humanreadable(tree->prodrule),tree->leaf->category, tree->leaf->ival);
+		// 		break;
+		//
+		// 	case STRINGLIT:
+		// 		printf("%*s %s %d: %s\n", depth*4, " ", humanreadable(tree->prodrule),tree->leaf->category, tree->leaf->sval);
+		// 		break;
+		//
+		// 	case REALLIT:
+		// 		printf("%*s %s %d: %f\n", depth*4, " ", humanreadable(tree->prodrule),tree->leaf->category, tree->leaf->dval);
+		// 		break;
+		//
+		// 	default:
+		// 		printf("%*s %s %d: %s\n", depth*4, " ", humanreadable(tree->prodrule),tree->leaf->category, tree->leaf->text);
+		// 		break;
+		// }
 
-			case INTLIT:
-				printf("%*s %s: %d\n", depth*4, " ", humanreadable(tree->prodrule), tree->leaf->ival);
-
-			case STRINGLIT:
-				printf("%*s %s: %s\n", depth*4, " ", humanreadable(tree->prodrule), tree->leaf->sval);
-
-			case REALLIT:
-				printf("%*s %s: %f\n", depth*4, " ", humanreadable(tree->prodrule), tree->leaf->dval);
-
-			default:
-				printf("%*s %s: %s\n", depth*4, " ", humanreadable(tree->prodrule), tree->leaf->text);
-		}
-
-		i = 0;
-		return i;
+		return 0;
 
 	}
 
 	printf("%*s %s: %d\n", depth*4, " ", humanreadable(tree->prodrule), tree->nkids);
 
-	for(i=0; i < tree->nkids; i++) {
+	for(int i = 0; i < tree->nkids; i++) {
 		print_tree(tree->kids[i], depth+1);
 	}
 
-	i = 0;
-	return i;
+	return 0;
 
 }
 
