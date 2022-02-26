@@ -16,20 +16,21 @@ int main(int argc, char *argv[]) {
   if (argc == 1) {
     printf("Must provide file name as command line argument\n");
     return 0;
-  } else if ((yyin = fopen(argv[1], "r")) == NULL) {
-    printf("\nCan not open '%s': File does not exist\n\n", argv[1]);
-  } else if (check_file_extension(argv[1]) != 1) {
-    printf("\nCan not open '%s': File does not have .java extension\n\n", argv[1]);
   } else {
-
-    filename = argv[1];
-
-		//yydebug = 1;
-		yyparse();
-		printf("\n");
-		print_tree(root, 0);
-		printf("\n");
-
+		while (--argc > 0) {
+			if ((yyin = fopen(*++argv, "r")) == NULL) {
+				printf("\nCan not open '%s': File does not exist\n\n", *argv);
+			} else if(check_file_extension(*argv) != 1) {
+		  	printf("\nCan not open '%s': File does not have .java extension\n\n", *argv);
+			} else {
+	    	filename = *argv;
+				//yydebug = 1;
+				yyparse();
+				printf("\n");
+				print_tree(root, 0);
+				printf("\n");
+			}
+		}
 	}
 }
 
