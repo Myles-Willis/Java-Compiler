@@ -1,17 +1,20 @@
 %{
-	#include <stdio.h>
 	#define YYDEBUG 1
 
-	extern int yyerror(char *s);
 	extern int yylex();
-	extern int yyparse();
+	extern int yyerror(char *s);
 
+
+	#include <stdio.h>
 	#include "tree.h"
+
 	struct tree *root;
 %}
+
 %union {
    struct tree *treeptr;
 }
+
 // Originally in j0gram.y but not in j0lex.l
 %token <treeptr> CLASSNAME STRING DOUBLELIT NULLVAL
 
@@ -383,7 +386,11 @@ Literal:
 		{}
 	| DOUBLELIT
 		{}
+	| REALLIT
+		{}
 	| BOOLLIT
+		{}
+	| CHARLIT
 		{}
 	| STRINGLIT
 		{}
@@ -500,6 +507,8 @@ Expr:
 Assignment:
 	LeftHandSide AssignOp Expr
 		{$$ = create_branch(prodR_Assignment,"Assignment",3, $1,$2,$3);}
+	| LeftHandSide AssignOp
+		{$$ = create_branch(prodR_Assignment,"Assignment_Unary",2, $1,$2);}
 	;
 LeftHandSide:
 	Name

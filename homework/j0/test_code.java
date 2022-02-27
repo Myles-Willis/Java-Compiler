@@ -8,8 +8,8 @@ public class HelloWorld {
 	  x = 3 * 6;
 	  c = null;
 
-	  while (x < 18) {
-	     if (x == 9) {
+	  while (x < 10) {
+	     if (x == 9.5552525546468468468468468464684646546546546546546546546465465465464654664564) {
 	     break;
 	     } else if (x <= 5) {
 	     break;
@@ -19,8 +19,8 @@ public class HelloWorld {
 	     x = 1;
 	     }
 	     }
-	  for (x=0; x < 3; x=1) { x = x + 5; }
-	  for (x=3; x > 0; x=1) { x = x - 2; }
+	  for (x=0; x < 3; x=1) { x++; }
+	  for (x=3; x > 0; x=1) { x--; }
 	  // L[1] = 5 * 5 / x % 5;
 	  // L[1] = x;
 	  if (x<=y && y>=0 || y!=-1) { System.out.println("hello\n"); }

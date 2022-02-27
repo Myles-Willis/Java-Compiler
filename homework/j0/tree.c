@@ -14,7 +14,7 @@ struct tree *create_leaf(int category_value, char* yytext, int lineno, char* fil
 	struct tree *tree = allocate_tree();
 	struct token *leaf_token = allocate_token();
 
-	tree->prodrule = TOKEN; //What is the prodrule?
+	tree->prodrule = TOKEN;
 	tree->leaf = leaf_token;
 
 	leaf_token->category = category_value;
@@ -100,52 +100,21 @@ int print_tree(struct tree* tree, int depth) {
 	}
 
 	if (tree->nkids == 0) {
-		printf("%*s %s %d: %s\n", depth*4, " ", humanreadable(tree->prodrule),tree->leaf->category, tree->leaf->text);
 
-		// switch (tree->leaf->category) {
-		//
-		// 	case INTLIT:
-		// 		printf("%*s %s %d: %d\n", depth*4, " ", humanreadable(tree->prodrule),tree->leaf->category, tree->leaf->ival);
-		// 		break;
-		//
-		// 	case STRINGLIT:
-		// 		printf("%*s %s %d: %s\n", depth*4, " ", humanreadable(tree->prodrule),tree->leaf->category, tree->leaf->sval);
-		// 		break;
-		//
-		// 	case REALLIT:
-		// 		printf("%*s %s %d: %f\n", depth*4, " ", humanreadable(tree->prodrule),tree->leaf->category, tree->leaf->dval);
-		// 		break;
-		//
-		// 	default:
-		// 		printf("%*s %s %d: %s\n", depth*4, " ", humanreadable(tree->prodrule),tree->leaf->category, tree->leaf->text);
-		// 		break;
-		// }
+		printf("%*s %s %d: %s\n", depth*4, " ", humanreadable(tree->prodrule),
+		tree->leaf->category, tree->leaf->text);
 
 		return 0;
 
 	}
 
-	printf("%*s %s: %d\n", depth*4, " ", humanreadable(tree->prodrule), tree->nkids);
+	printf("%*s %s: %d\n", depth*4, " ", humanreadable(tree->prodrule),
+	 tree->nkids);
 
 	for(int i = 0; i < tree->nkids; i++) {
 		print_tree(tree->kids[i], depth+1);
 	}
 
 	return 0;
-
-}
-
-
-void print_node(struct tree* tree) {
-
-  if (tree->leaf->category == INTLIT) {
-    printf("%d\t\t%-16s%d\t\t%s\t\t%d\n", tree->leaf->category, tree->leaf->text, tree->leaf->lineno, tree->leaf->filename, tree->leaf->ival);
-  } else if (tree->leaf->category == STRINGLIT) {
-    printf("%d\t\t%-16s%d\t\t%s\t\t%s\n", tree->leaf->category, tree->leaf->text, tree->leaf->lineno, tree->leaf->filename, tree->leaf->sval);
-  } else if (tree->leaf->category == REALLIT){
-    printf("%d\t\t%-16s%d\t\t%s\t\t%f\n", tree->leaf->category, tree->leaf->text, tree->leaf->lineno, tree->leaf->filename, tree->leaf->dval);
-  } else {
-    printf("%d\t\t%-16s%d\t\t%s\n", tree->leaf->category, tree->leaf->text, tree->leaf->lineno, tree->leaf->filename);
-  }
 
 }

@@ -3,7 +3,7 @@
 
 typedef enum {
 
-	TOKEN = 100,
+	TOKEN = 1000,
 	prodR_ClassDecl,
 	prodR_ClassBodyDecls,
 	prodR_FieldDecl,
