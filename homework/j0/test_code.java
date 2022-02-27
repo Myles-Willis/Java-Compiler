@@ -1,15 +1,17 @@
 public class HelloWorld {
+	int a = 5;
 	public static void main() {
 	  double d;
 	  int x, y;
 	  int T;
 	  String s;
 	  C c;
-	  x = 3 * 6;
+	  int b = 3 * 6;
+	  char k = 'z';
 	  c = null;
 
 	  while (x < 10) {
-	     if (x == 9.5552525546468468468468468464684646546546546546546546546465465465464654664564) {
+	     if (x == 9.55) {
 	     break;
 	     } else if (x <= 5) {
 	     break;

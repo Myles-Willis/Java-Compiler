@@ -1,5 +1,7 @@
 #include "tree.h"
 
+// extern struct tree_list *trees;
+
 struct tree *allocate_tree() {
 
 	struct tree *tree = malloc(sizeof (struct tree));
@@ -24,6 +26,12 @@ struct tree *create_leaf(int category_value, char* yytext, int lineno, char* fil
 	leaf_token->ival = 0;
 	leaf_token->dval = 0;
 	leaf_token->sval = NULL;
+
+	// if(trees->tree_node == NULL) {
+	// 	trees->tree_node = tree;
+	// } else {
+	// 	trees->next
+	// }
 
 	return tree;
 
@@ -88,6 +96,7 @@ char* humanreadable(prodrule rule) {
 		case prodR_CondAndExpr : return "CondAndExpr";
 		case prodR_CondOrExpr : return "CondOrExpr";
 		case prodR_Assignment : return "Assignment";
+		default: return "";
 
 	}
 }
@@ -118,3 +127,31 @@ int print_tree(struct tree* tree, int depth) {
 	return 0;
 
 }
+
+// int free_tree(struct tree* tree, int depth) {
+//
+// 	if (tree == NULL) {
+// 		return 0;
+// 	}
+//
+// 	if (tree->nkids == 0) {
+// 		free(tree->leaf->text);
+// 		free(tree);
+//
+// 		return 0;
+//
+// 	}
+//
+// 	for(int i = 0; i < tree->nkids; i++) {
+// 		if (tree->kids[i] != NULL) {
+// 			free(tree->leaf->text);
+// 			free_tree(tree->, depth+1);
+// 		}
+// 	}
+//
+// 	free(tree->leaf->text);
+// 	//free(tree);
+//
+// 	return 0;
+//
+// }

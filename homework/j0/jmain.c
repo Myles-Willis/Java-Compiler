@@ -6,7 +6,7 @@ extern int yydebug;
 char *filename;
 extern struct tree *root;
 
-void free_tokenlist(struct tokenlist* head);
+// struct tree_list *trees;
 int check_file_extension(char *file);
 
 int main(int argc, char *argv[]) {
@@ -23,12 +23,18 @@ int main(int argc, char *argv[]) {
 			} else {
 
 	    		filename = *argv;
+
+				// initialize trees linked list.
+				// trees = malloc(sizeof (struct tree_list));
+				// memset(trees, 0, sizeof(struct tree_list));
+
 				printf("\nBeginning Parse of: %s\n", filename);
 				// yydebug = 1;
 				yyparse();
 				printf("\n");
 				print_tree(root, 0);
 				printf("\n");
+				//free_tree(root, 0);
 			}
 		}
 	}

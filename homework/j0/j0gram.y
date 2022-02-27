@@ -109,7 +109,10 @@
 %type <treeptr> Assignment
 %type <treeptr> LeftHandSide
 %type <treeptr> AssignOp
+
+%start ClassDecl
 %%
+
 
 ClassDecl:
 	PUBLIC CLASS IDENTIFIER ClassBody
@@ -138,6 +141,8 @@ ClassBodyDecl:
 FieldDecl: //Case?
 	Type VarDecls ';'
 		{$$ = create_branch(prodR_FieldDecl,"FieldDecl",2, $1,$2);}
+	| Type VarDeclarator '=' Literal ';'
+		{$$ = create_branch(prodR_FieldDecl,"FieldDeclAssignment",3, $1,$2,$4);}
 	;
 Type:
 	INT
@@ -149,6 +154,8 @@ Type:
 	| STRING
 		{}
 	| Name
+		{}
+	| CHAR
 		{}
 	;
 
@@ -509,6 +516,8 @@ Assignment:
 		{$$ = create_branch(prodR_Assignment,"Assignment",3, $1,$2,$3);}
 	| LeftHandSide AssignOp
 		{$$ = create_branch(prodR_Assignment,"Assignment_Unary",2, $1,$2);}
+	| Type VarDeclarator AssignOp Expr
+		{$$ = create_branch(prodR_Assignment,"Assignment_Type",4, $1,$2,$3,$4);}
 	;
 LeftHandSide:
 	Name

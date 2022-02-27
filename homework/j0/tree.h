@@ -13,10 +13,16 @@ struct tree {
    struct token *leaf;   /* if nkids == 0; NULL for ε productions */
 };
 
+// struct tree_list {
+// 	struct tree *tree_node;
+// 	struct tree_list *next;
+// };
+
 struct tree *allocate_tree();
 struct tree *create_leaf(int category_value, char* yytext, int lineno, char* filename);
 struct tree *create_branch(prodrule prodrule, char *symbolname, int nkids, ...);
 
 int print_tree(struct tree* tree, int depth);
+int free_tree(struct tree* tree, int depth);
 
 #endif
