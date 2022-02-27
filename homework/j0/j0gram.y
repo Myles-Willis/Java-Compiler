@@ -1,13 +1,13 @@
 %{
-    #include <stdio.h>
-		#define YYDEBUG 1
+	#include <stdio.h>
+	#define YYDEBUG 1
 
-		extern int yyerror(char *s);
-		extern int yylex();
-		extern int yyparse();
+	extern int yyerror(char *s);
+	extern int yylex();
+	extern int yyparse();
 
-		#include "tree.h"
-		struct tree *root;
+	#include "tree.h"
+	struct tree *root;
 %}
 %union {
    struct tree *treeptr;

@@ -1,6 +1,6 @@
 #include "defs.h"
 #include "tree.h"
-#include "j0gram.tab.h"
+#include "error.h"
 
 extern int yydebug;
 char *filename;
@@ -8,8 +8,6 @@ extern struct tree *root;
 
 void free_tokenlist(struct tokenlist* head);
 int check_file_extension(char *file);
-int yyerror(char *s);
-
 
 int main(int argc, char *argv[]) {
 
@@ -34,12 +32,6 @@ int main(int argc, char *argv[]) {
 			}
 		}
 	}
-}
-
-int yyerror(char *s) {
-   fprintf(stderr, "\n%s:%d: error: %s with token: %s \n\n", filename,
-	  yylineno, s, yytext);
-	 exit(1);
 }
 
 int check_file_extension(char *file) {

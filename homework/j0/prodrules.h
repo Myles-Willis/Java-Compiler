@@ -1,3 +1,6 @@
+#ifndef PRODRULES_H
+#define PRODRULES_H
+
 typedef enum {
 
 	TOKEN = 100,
@@ -34,5 +37,7 @@ typedef enum {
 	prodR_CondAndExpr,
 	prodR_CondOrExpr,
 	prodR_Assignment,
-	
+
 } prodrule;
+
+#endif

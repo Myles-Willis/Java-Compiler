@@ -1,4 +1,10 @@
+#ifndef TOKEN_H
+#define TOKEN_H
+
 #include "defs.h"
+#include "tree.h"
+#include "error.h"
+#include "j0gram.tab.h"
 
 struct token {
    int category;   /* the integer code returned by yylex */
@@ -18,3 +24,5 @@ struct tokenlist {
 
 struct token *allocate_token();
 int handle_token(int category_value);
+
+#endif

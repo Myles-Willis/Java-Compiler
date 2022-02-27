@@ -7,6 +7,7 @@ public class HelloWorld {
 	  C c;
 	  x = 3 * 6;
 	  c = null;
+
 	  while (x < 18) {
 	     if (x == 9) {
 	     break;

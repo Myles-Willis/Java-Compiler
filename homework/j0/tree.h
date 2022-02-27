@@ -1,5 +1,8 @@
+#ifndef TREE_H
+#define TREE_H
+
 #include "defs.h"
-#include "prodrules.h"
+#include "token.h"
 #include <stdarg.h>
 
 struct tree {
@@ -17,3 +20,5 @@ struct tree *create_branch(prodrule prodrule, char *symbolname, int nkids, ...);
 void print_node(struct tree* tree);
 //void print_leaf(struct tree* tree);
 int print_tree(struct tree* tree, int depth);
+
+#endif

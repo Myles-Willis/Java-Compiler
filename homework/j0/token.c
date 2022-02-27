@@ -1,7 +1,4 @@
-#include "defs.h"
-#include "tree.h"
 #include "token.h"
-#include "j0gram.tab.h"
 
 struct token *allocate_token() {
 
@@ -14,30 +11,59 @@ struct token *allocate_token() {
 
 int handle_token(int category_value) { //need to handle cases where tokens arent required
 
-  switch (category_value) {
+	switch (category_value) {
 
-    case NOT_IN_JZERO_RESERVED:
-      printf("\n%s:%d: error: '%s' is not supported in jzero\n\n", filename, yylineno, yytext);
-      exit(1);
-      break;
+		case NOT_IN_JZERO_RESERVED:
 
-    case INVALID_PUNCTUATION:
-      printf("\n%s:%d: error: '%s' is not supported in jzero\n\n", filename, yylineno, yytext);
-      exit(1);
-      break;
+			print_error("not supported in jzero");
+			exit(1);
+			break;
 
-    case INVALIDCHARLIT: {
-      printf("\n%s:%d: error: %s Invalid char literal\n\n", filename, yylineno, yytext);
-      exit(1);
-      break; }
+		case INVALID_PUNCTUATION:
+
+ 			print_error("is invalid jzero punctuation");
+	  		exit(1);
+	  		break;
+
+		case INVALID_CHARLIT_ESCAPE:
+
+ 			print_error("has invalid char literal escape");
+			exit(1);
+			break;
+
+	    case INVALIDCHARLIT:
+
+ 			print_error("is invalid char literal");
+			exit(1);
+			break;
+
+		case EMPTY_CHARLIT:
+
+ 			print_error("is empty char literal");
+			exit(1);
+			break;
+
+		case OPENENDED_CHARLIT:
+
+ 			print_error("is open-ended char literal");
+			exit(1);
+			break;
+
+		case UNRECOGNIZED_CHARACTER:
+
+			print_error("is unrecognized character");
+			exit(1);
+			break;
+
+
 	}
 
 	yylval.treeptr = create_leaf(category_value, yytext, yylineno, filename);
 
 	//Switch after potential error checking
 	switch (category_value) {
-    case INTLIT: {
-      long number =  strtol(yylval.treeptr->leaf->text, NULL, 10);
+		case INTLIT: {
+		long number =  strtol(yylval.treeptr->leaf->text, NULL, 10);
       //Validate number with min and max allowed INT in Java
       if (number > 2147483647 || number < -2147483648) {
         yylval.treeptr->leaf->category = INTLIT_RANGE_INVALID;

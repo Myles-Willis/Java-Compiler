@@ -4,6 +4,7 @@
 #include <errno.h>
 
 #include "j0gram.tab.h"
+#include "prodrules.h"
 
 extern FILE *yyin;
 extern int rows, words, chars;

@@ -1,5 +1,4 @@
 #include "tree.h"
-#include "token.h"
 
 struct tree *allocate_tree() {
 
