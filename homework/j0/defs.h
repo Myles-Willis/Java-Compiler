@@ -10,7 +10,7 @@ extern FILE *yyin;
 extern int rows, words, chars;
 extern int yylex();
 extern int yyparse();
-extern int yyerror(char *s);
+extern int yyerror(const char *s);
 extern int yylineno;
 extern char *yytext;
 extern char *filename;

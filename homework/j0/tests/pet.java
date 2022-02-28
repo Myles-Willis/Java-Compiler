@@ -18,7 +18,7 @@ System.out.println("Roll over?  Really?");
    }
 }
 
-public static void main(String[]argv) {
+public static void main(String argv[]) {
   pet myDog = new pet();
   myDog.play();
 }

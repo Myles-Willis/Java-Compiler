@@ -2,7 +2,7 @@
 	#define YYDEBUG 1
 
 	extern int yylex();
-	extern int yyerror(char *s);
+	extern int yyerror(const char *s);
 
 
 	#include <stdio.h>
@@ -14,6 +14,8 @@
 %union {
    struct tree *treeptr;
 }
+
+%glr-parser
 
 // Originally in j0gram.y but not in j0lex.l
 %token <treeptr> CLASSNAME STRING DOUBLELIT NULLVAL
@@ -194,10 +196,14 @@ MethodDecl:
 		{$$ = create_branch(prodR_MethodDecl,"MethodDecl",2, $1,$2);}
 	;
 MethodHeader:
-	PUBLIC STATIC MethodReturnVal MethodDeclarator
-		{$$ = create_branch(prodR_MethodHeader,"MethodHeader",4, $1,$2,$3,$4);}
+	MethodReturnVal MethodDeclarator
+		{$$ = create_branch(prodR_MethodHeader,"MethodHeader",2, $1,$2);}
 	| STATIC MethodReturnVal MethodDeclarator
 		{$$ = create_branch(prodR_MethodHeader,"MethodHeaderStatic",3, $1,$2,$3);}
+	| PUBLIC MethodReturnVal MethodDeclarator
+		{$$ = create_branch(prodR_MethodHeader,"MethodHeader",3, $1,$2,$3);}
+	| PUBLIC STATIC MethodReturnVal MethodDeclarator
+		{$$ = create_branch(prodR_MethodHeader,"MethodHeader",4, $1,$2,$3,$4);}
 	;
 MethodDeclarator:
 	IDENTIFIER '(' FormalParmListOpt ')'

@@ -2,7 +2,7 @@
 #define ERROR_H
 
 #include "defs.h"
-int yyerror(char *s);
+int yyerror(const char *s);
 void print_error(char *errorMsg);
 
 #endif
