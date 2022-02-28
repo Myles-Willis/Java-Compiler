@@ -1,0 +1,3 @@
+public class test0 { int main() {
+  "lexical error...
+} }

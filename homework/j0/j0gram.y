@@ -196,6 +196,8 @@ MethodDecl:
 MethodHeader:
 	PUBLIC STATIC MethodReturnVal MethodDeclarator
 		{$$ = create_branch(prodR_MethodHeader,"MethodHeader",4, $1,$2,$3,$4);}
+	| STATIC MethodReturnVal MethodDeclarator
+		{$$ = create_branch(prodR_MethodHeader,"MethodHeaderStatic",3, $1,$2,$3);}
 	;
 MethodDeclarator:
 	IDENTIFIER '(' FormalParmListOpt ')'
