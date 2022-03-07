@@ -1,10 +1,14 @@
 #include "defs.h"
 #include "tree.h"
 #include "error.h"
+#include "symboltable.h"
 
 extern int yydebug;
 char *filename;
 extern struct tree *root;
+
+extern SymbolTable globals;
+extern SymbolTable current;
 
 // struct tree_list *trees;
 int check_file_extension(char *file);
@@ -33,7 +37,15 @@ int main(int argc, char *argv[]) {
 				yyparse();
 				printf("\n");
 				print_tree(root, 0);
+				printf("\nprint_symbols() output:\n\n");
+				printsyms(root);
+				globals = make_sym_table(20);
+				current = globals;
+				populate_symbol_tables(root);
+				printf("\nSymbol table output:\n\n");
+				printsymbols(globals, 1);
 				printf("\n");
+				// populate_symbol_tables(root);
 				//free_tree(root, 0);
 			}
 		}

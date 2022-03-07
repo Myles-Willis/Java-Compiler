@@ -7,6 +7,7 @@
 
 	#include <stdio.h>
 	#include "tree.h"
+	#include "symboltable.h"
 
 	struct tree *root;
 %}
@@ -163,7 +164,7 @@ Type:
 
 Name:
 	IDENTIFIER
-		{}
+		{} //
 	| QualifiedName
 		{}
 	;
@@ -174,9 +175,9 @@ QualifiedName:
 
 VarDecls:
 	VarDeclarator
-		{}
+		{$$ = create_branch(prodR_VarDecls,"VarDecls",1, $1);} //need to add prodRule for this case: 1, $1
 	| VarDecls ',' VarDeclarator
-		{$$ = create_branch(prodR_VarDecls,"VarDecls_multi",2, $1,$3);}
+		{$$ = create_branch(prodR_MultiVarDecls,"VarDecls_multi",2, $1,$3);}
 	;
 VarDeclarator: //case?
 	IDENTIFIER
@@ -525,7 +526,7 @@ Assignment:
 	| LeftHandSide AssignOp
 		{$$ = create_branch(prodR_Assignment,"Assignment_Unary",2, $1,$2);}
 	| Type VarDeclarator AssignOp Expr
-		{$$ = create_branch(prodR_Assignment,"Assignment_Type",4, $1,$2,$3,$4);}
+		{$$ = create_branch(prodR_TypeAssignment,"Assignment_Type",4, $1,$2,$3,$4);}
 	;
 LeftHandSide:
 	Name

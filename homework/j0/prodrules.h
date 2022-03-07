@@ -9,6 +9,7 @@ typedef enum {
 	prodR_FieldDecl,
 	prodR_QualifiedName,
 	prodR_VarDecls,
+	prodR_MultiVarDecls,
 	prodR_MethodDecl,
 	prodR_MethodHeader,
 	prodR_MethodDeclarator,
@@ -37,6 +38,7 @@ typedef enum {
 	prodR_CondAndExpr,
 	prodR_CondOrExpr,
 	prodR_Assignment,
+	prodR_TypeAssignment,
 
 } prodrule;
 

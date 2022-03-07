@@ -1,6 +1,7 @@
 public class hello {
     int a;
     int i;
+	int j, k, l, m;
     public static void main(String argv[]) {
         i = a * 4 + 2;
         a = 15;
