@@ -41,8 +41,8 @@ int main(int argc, char *argv[]) {
 				printsyms(root);
 				globals = make_sym_table(20);
 				current = globals;
-				populate_symbol_tables(root);
 				printf("\nSymbol table output:\n\n");
+				populate_symbol_tables(root);
 				printsymbols(globals, 1);
 				printf("\n");
 				// populate_symbol_tables(root);
