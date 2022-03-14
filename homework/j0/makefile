@@ -15,13 +15,16 @@ jzero_lexical : j0lex.l
 lex.yy.o : lex.yy.c tree.h
 	$(CC) $(CFLAGS) -c lex.yy.c
 
-j0 : jzero_bison jzero_lexical jmain.c lex.yy.o defs.h tree.h token.h error.h symboltable.h
+dot: dot.c dot.h
+	$(CC) $(CFLAGS) -c dot.c
+
+j0 : jzero_bison jzero_lexical jmain.c lex.yy.o defs.h tree.h token.h error.h symboltable.h dot
 	$(CC) $(CFLAGS) -c jmain.c
 	$(CC) $(CFLAGS) -c token.c
 	$(CC) $(CFLAGS) -c error.c
 	$(CC) $(CFLAGS) -c j0gram.tab.c
 	$(CC) $(CFLAGS) -c symboltable.c
-	$(CC) $(CFLAGS) jmain.o lex.yy.o j0gram.tab.o symboltable.o token.c error.c tree.c -o j0
+	$(CC) $(CFLAGS) jmain.o lex.yy.o j0gram.tab.o symboltable.o dot.o token.c error.c tree.c -o j0
 
 clean :
 	rm -f lex.yy.c

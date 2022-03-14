@@ -1,5 +1,5 @@
 #include "tree.h"
-
+#include "dot.h"
 // extern struct tree_list *trees;
 
 struct tree *allocate_tree() {
@@ -18,6 +18,7 @@ struct tree *create_leaf(int category_value, char* yytext, int lineno, char* fil
 
 	tree->prodrule = TOKEN;
 	tree->leaf = leaf_token;
+	tree->dotId = dot_serialId++;
 
 	leaf_token->category = category_value;
 	leaf_token->text = strdup(yytext);
@@ -26,12 +27,6 @@ struct tree *create_leaf(int category_value, char* yytext, int lineno, char* fil
 	leaf_token->ival = 0;
 	leaf_token->dval = 0;
 	leaf_token->sval = NULL;
-
-	// if(trees->tree_node == NULL) {
-	// 	trees->tree_node = tree;
-	// } else {
-	// 	trees->next
-	// }
 
 	return tree;
 
@@ -46,6 +41,7 @@ struct tree *create_branch(prodrule prodrule, char *symbolname, int nkids, ...) 
 
 	branch->prodrule = prodrule;
 	branch->nkids = nkids;
+	branch->dotId = dot_serialId++;
 	branch->symbolname = symbolname;
 
 	for(int i = 0; i < nkids; i++) {
