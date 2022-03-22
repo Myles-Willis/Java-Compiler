@@ -39,6 +39,8 @@ int insert_symbol(SymbolTable st, char *s) { // removed typeptr t for now.
 	//register int i;
    	int h;
    	struct sym_entry *se;
+	se = malloc(sizeof(struct sym_entry));
+	memset(se, 0, sizeof(struct sym_entry));
    	//int l;
 
    	h = hash(st, s);
@@ -218,7 +220,7 @@ void populate_symbol_tables(struct tree * n) {
 
 char *checked_alloc(int size) {
 
-	void *p = malloc(size);
+	char *p = calloc(size, sizeof(char));
 
 	if (p == NULL) {
 		fprintf(stderr, "Out of memory: %d bytes requested\n", size);
