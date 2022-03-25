@@ -217,10 +217,10 @@ void printsymbols(SymbolTable st, int level) {
 			for (j=0; j < level; j++) printf("  ");
 			printf("%s\n", ste->s);
 
-			if(!strcmp(ste->s, "a")) {
-				for (j=0; j < level; j++) printf("  ");
-			    printf("This is the parent symbol table of o: %s Level: %d\n", ste->table->table_name, level);
-			}
+			// if(!strcmp(ste->s, "a")) {
+			// 	for (j=0; j < level; j++) printf("  ");
+			//     printf("This is the parent symbol table of o: %s Level: %d\n", ste->table->table_name, level);
+			// }
 			/* if this symbol has a subscope,
 			 print it recursively, indented*/
 			if (!ste->type) continue;
@@ -230,15 +230,22 @@ void printsymbols(SymbolTable st, int level) {
 				case FUNC_TYPE:
 					// printf("Recursive!\n");
 					for (j=0; j < level+1; j++) printf("  ");
-					printf("--- symbol table for: %s\n", ste->s);
+					printf("--- symbol table for: %s %s\n", typename(ste->type), ste->s);
 					printsymbols(ste->type->table, level + 1);
 					for (j=0; j < level+1; j++) printf("  ");
 					printf("-----\n");
 					break;
 			}
-
       }
    }
+}
+
+void redeclaration_error(struct token *t){
+
+	fprintf(stderr, "\n%s:%d: semantic error: Redeclaration of variable: %s \n\n",
+	 t->filename, t->lineno, t->text);
+
+	exit(3);
 }
 
 void populate_symbol_tables(struct tree * n) {
@@ -251,20 +258,29 @@ void populate_symbol_tables(struct tree * n) {
 
 		/* whatever production rule(s) enter a function scope */
 		case prodR_ConstructorDecl: {
-			printf("prodR_ConstructorDeclarator case hit \n");
+			// printf("prodR_ConstructorDeclarator case hit \n");
+			if (lookup_st(current, n->kids[0]->kids[0]->leaf->text)) {
+				redeclaration_error(n->kids[0]->kids[0]->leaf);
+			}
 			enter_newscope(n->kids[0]->kids[0]->leaf->text, CONSTRUCT_TYPE);
 			break;
 		}
 
 		case prodR_MethodDecl: {
 
-			printf("prodR_MethodDeclarator case hit \n");
+			// printf("prodR_MethodDeclarator case hit \n");
+			if (lookup_st(current, n->kids[0]->kids[2]->kids[0]->leaf->text)) {
+				redeclaration_error(n->kids[0]->kids[2]->kids[0]->leaf);
+			}
 			enter_newscope(n->kids[0]->kids[2]->kids[0]->leaf->text, FUNC_TYPE);
 		 	break;
 		}
 
 		case prodR_ClassDecl: {
-			printf("prodR_ClassDecl case hit \n");
+			// printf("prodR_ClassDecl case hit \n");
+			if (lookup_st(current, n->kids[2]->leaf->text)) {
+				redeclaration_error(n->kids[2]->leaf);
+			}
 			enter_newscope(n->kids[2]->leaf->text, CLASS_TYPE);
 			break;
 		}
@@ -272,33 +288,31 @@ void populate_symbol_tables(struct tree * n) {
 		case prodR_FieldDecl:
 		case prodR_LocalVarDecl: {
 
-			printf("prodR_FieldDecl case hit \n");
+			// printf("prodR_FieldDecl case hit \n");
 		   	/* figure out which kid is a "list" of variables */
 			// typeptr t;
 			// t = alctype(NULL_TYPE);
 			//struct tree *var_list = n->kids[1];
 			int insert_result = insert_symbol(current, n->kids[1]->kids[0]->leaf->text, NULL);
-			printf("Inserting %s\n", n->kids[1]->kids[0]->leaf->text);
+			// printf("Inserting %s\n", n->kids[1]->kids[0]->leaf->text);
 
 			if (insert_result == 0) {
-				fprintf(stderr, "Error: %s already exists sym_table\n"
-					, n->symbolname);
+				redeclaration_error(n->kids[1]->kids[0]->leaf);
 			}
 			break;
 		}
 
-		// case prodR_TypeAssignment: {
-		// 	printf("prodR_TypeAssignment case hit \n");
-		// 	int insert_result = insert_symbol(current, n->kids[1]->kids[0]->leaf->text, NULL);
-		// 	printf("Inserting %s\n", n->kids[1]->kids[0]->leaf->text);
-		//
-		// 	if (insert_result == 0) {
-		// 		fprintf(stderr, "Error: %s already exists sym_table\n"
-		// 			, n->symbolname);
-		// 	}
-		//
-		// 	break;
-		// }
+		case prodR_TypeAssignment: {
+			// printf("prodR_TypeAssignment case hit \n");
+			int insert_result = insert_symbol(current, n->kids[1]->leaf->text, NULL);
+			// printf("Inserting %s\n", n->kids[1]->leaf->text);
+
+			if (insert_result == 0) {
+				redeclaration_error(n->kids[1]->leaf);
+			}
+
+			break;
+		}
 
 	}
 
@@ -313,7 +327,6 @@ void populate_symbol_tables(struct tree * n) {
 		case prodR_ConstructorDecl:
 		case prodR_MethodDecl:
 		case prodR_ClassDecl:
-			printf("popping scope\n");
 			popscope();
 			break;
 
@@ -338,7 +351,7 @@ char *checked_alloc(int size) {
 }
 
 void enter_newscope(char *s, int typ) {     // , int typ
-	printf("\nCurrent scope of :%s\n", current->table_name);
+	// printf("\nCurrent scope of :%s\n", current->table_name);
 	/* allocate a new symbol table */
 	typeptr t;
 	t = alctype(typ);
@@ -359,7 +372,11 @@ void enter_newscope(char *s, int typ) {     // , int typ
   	// new_st->parent = current;
   	// current = new_st;
   	pushscope(new_st);
-	printf("Entered scope of :%s\n", current->table_name);
-	printf("Type set to :%d\n", t->basetype);
+	// printf("Entered scope of :%s\n", current->table_name);
+	// printf("Type set to :%d\n", t->basetype);
 
 }
+
+// void load_builtins() {
+//
+// }

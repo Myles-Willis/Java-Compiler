@@ -25,11 +25,11 @@ struct field {			/* members (fields) of structs */
 #define INT_TYPE     1000001
 #define DOUBLE_TYPE  1000002
 #define FUNC_TYPE    1000003
-#define CLASS_TYPE   1000006
-#define CONSTRUCT_TYPE   1000007
-#define CHAR_TYPE    1000008
+#define CLASS_TYPE   1000004
+#define CONSTRUCT_TYPE   1000005
+#define CHAR_TYPE    1000006
 
-#define LAST_TYPE    1000008
+#define LAST_TYPE    1000006
 
 typedef struct typeinfo {
 	int basetype;

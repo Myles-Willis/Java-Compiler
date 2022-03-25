@@ -18,7 +18,7 @@ typeptr func_typeptr = &func_type;
 typeptr construct_typeptr = &construct_type;
 
 char *typenam[] =
-   {"null", "int", "double", "func", "char"};
+   {"null", "int", "double", "function", "class", "constructor", "char"};
 
 typeptr alctype(int base)
 {

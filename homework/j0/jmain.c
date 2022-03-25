@@ -28,20 +28,16 @@ int main(int argc, char *argv[]) {
 
 	    		filename = *argv;
 
-				printf("\nBeginning Parse of: %s\n", filename);
+				printf("\n\nOpened File: %s\n", filename);
 				// yydebug = 1;
 				yyparse();
 				printf("\n");
-				print_tree(root, 0);
-				printf("\nprint_symbols() output:\n\n");
-				printsyms(root);
+				//print_tree(root, 0);
 				globals = make_sym_table(20, "global");
 				current = globals;
-				printf("\n\npopulate_symbol_tables() output:\n");
-				printf("---------------------------------------\n\n");
 				populate_symbol_tables(root);
 				printf("\n\nprintsymbols() output:\n");
-				printf("---------------------------------------\n");
+				printf("---------------------------------------\n\n");
 				printsymbols(globals, 1);
 				printf("\n");
 				//free_tree(root, 0);

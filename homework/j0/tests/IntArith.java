@@ -13,5 +13,6 @@ public class hello {
 		a = 1 + (2 + 3 * (4 - 5));
 
 		int x = 5;
+		int x = 10;
     }
 }
