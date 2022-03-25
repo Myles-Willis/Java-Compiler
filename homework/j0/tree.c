@@ -1,7 +1,5 @@
 #include "tree.h"
 
-// extern struct tree_list *trees;
-
 struct tree *allocate_tree() {
 
 	struct tree *tree = malloc(sizeof (struct tree));

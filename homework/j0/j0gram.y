@@ -4,7 +4,6 @@
 	extern int yylex();
 	extern int yyerror(const char *s);
 
-
 	#include <stdio.h>
 	#include "tree.h"
 	#include "symboltable.h"
@@ -64,6 +63,9 @@
 %type <treeptr> MethodReturnVal
 %type <treeptr> MethodDecl
 %type <treeptr> MethodHeader
+%type <treeptr> HeaderPS
+%type <treeptr> HeaderOption
+%type <treeptr> HeaderOptions
 %type <treeptr> MethodDeclarator
 %type <treeptr> FormalParmListOpt
 %type <treeptr> FormalParmList
@@ -141,11 +143,11 @@ ClassBodyDecl:
 	| ConstructorDecl
 		{}
 	;
-FieldDecl: //Case?
+FieldDecl:
 	Type VarDecls ';'
 		{$$ = create_branch(prodR_FieldDecl,"FieldDecl",2, $1,$2);}
-	| Type VarDeclarator '=' Literal ';'
-		{$$ = create_branch(prodR_FieldDecl,"FieldDeclAssignment",3, $1,$2,$4);}
+	/* | Type VarDeclarator '=' Literal ';'
+		{$$ = create_branch(prodR_FieldDeclAssign,"FieldDeclAssignment",3, $1,$2,$4);} */
 	;
 Type:
 	INT
@@ -176,8 +178,8 @@ QualifiedName:
 VarDecls:
 	VarDeclarator
 		{$$ = create_branch(prodR_VarDecls,"VarDecls",1, $1);} //need to add prodRule for this case: 1, $1
-	| VarDecls ',' VarDeclarator
-		{$$ = create_branch(prodR_MultiVarDecls,"VarDecls_multi",2, $1,$3);}
+	/* | VarDecls ',' VarDeclarator
+		{$$ = create_branch(prodR_MultiVarDecls,"VarDecls_multi",2, $1,$3);} */
 	;
 VarDeclarator: //case?
 	IDENTIFIER
@@ -197,15 +199,31 @@ MethodDecl:
 		{$$ = create_branch(prodR_MethodDecl,"MethodDecl",2, $1,$2);}
 	;
 MethodHeader:
-	MethodReturnVal MethodDeclarator
-		{$$ = create_branch(prodR_MethodHeader,"MethodHeader",2, $1,$2);}
-	| STATIC MethodReturnVal MethodDeclarator
-		{$$ = create_branch(prodR_MethodHeader,"MethodHeaderStatic",3, $1,$2,$3);}
-	| PUBLIC MethodReturnVal MethodDeclarator
+	 HeaderPS MethodReturnVal MethodDeclarator
 		{$$ = create_branch(prodR_MethodHeader,"MethodHeader",3, $1,$2,$3);}
-	| PUBLIC STATIC MethodReturnVal MethodDeclarator
-		{$$ = create_branch(prodR_MethodHeader,"MethodHeader",4, $1,$2,$3,$4);}
 	;
+
+HeaderPS:
+	HeaderOptions
+		{}
+	|
+		{$$ = NULL;}
+	;
+
+HeaderOptions:
+	HeaderOption
+		{}
+	| HeaderOptions HeaderOption
+		{$$ = create_branch(prodR_HeaderOptions, "HeaderOptions", 2, $1,$2);}
+	;
+
+HeaderOption:
+	PUBLIC
+		{}
+	| STATIC
+		{}
+	;
+
 MethodDeclarator:
 	IDENTIFIER '(' FormalParmListOpt ')'
 		{$$ = create_branch(prodR_MethodDeclarator, "MethodDeclarator", 2, $1, $3);}
@@ -241,7 +259,6 @@ ArgListOpt:
 	|
 		{$$ = NULL;}
 	;
-
 Block:
 	'{' BlockStmtsOpt '}'
 		{$$ = $2;}

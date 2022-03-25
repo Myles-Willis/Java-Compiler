@@ -5,23 +5,42 @@ targets=lab2_2
 
 all: j0
 
-jzero_bison :
+j0gram.tab.c : j0gram.y
 	bison -d j0gram.y
 	bison j0gram.y
 
-jzero_lexical : j0lex.l
+j0gram.tab.o : j0gram.tab.c
+	$(CC) $(CFLAGS) -c j0gram.tab.c
+
+lex.yy.c : j0lex.l
 	flex j0lex.l
 
-lex.yy.o : lex.yy.c tree.h
+lex.yy.o : lex.yy.c
 	$(CC) $(CFLAGS) -c lex.yy.c
 
-j0 : jzero_bison jzero_lexical jmain.c lex.yy.o defs.h tree.h token.h error.h symboltable.h
+jmain.o : defs.h tree.h error.h symboltable.h jmain.c
 	$(CC) $(CFLAGS) -c jmain.c
+
+token.o : token.h token.c
 	$(CC) $(CFLAGS) -c token.c
+
+tree.o : tree.h tree.c
+	$(CC) $(CFLAGS) -c tree.c
+
+error.o : error.h error.c
 	$(CC) $(CFLAGS) -c error.c
-	$(CC) $(CFLAGS) -c j0gram.tab.c
+
+symboltable.o : symboltable.h symboltable.c
 	$(CC) $(CFLAGS) -c symboltable.c
-	$(CC) $(CFLAGS) jmain.o lex.yy.o j0gram.tab.o symboltable.o token.c error.c tree.c -o j0
+
+type.o : type.h type.c
+	$(CC) $(CFLAGS) -c type.c
+
+j0 : j0gram.tab.o lex.yy.o jmain.o type.o lex.yy.o token.o tree.o error.o \
+j0gram.tab.o symboltable.o
+
+	$(CC) $(CFLAGS) jmain.o lex.yy.o token.o tree.o error.o j0gram.tab.o \
+	symboltable.o type.o -o j0
 
 clean :
 	rm -f lex.yy.c

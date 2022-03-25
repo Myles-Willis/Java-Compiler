@@ -39,13 +39,15 @@ int main(int argc, char *argv[]) {
 				print_tree(root, 0);
 				printf("\nprint_symbols() output:\n\n");
 				printsyms(root);
-				globals = make_sym_table(20);
+				globals = make_sym_table(20, "global");
 				current = globals;
-				printf("\nSymbol table output:\n\n");
+				printf("\n\npopulate_symbol_tables() output:\n");
+				printf("---------------------------------------\n\n");
 				populate_symbol_tables(root);
+				printf("\n\nprintsymbols() output:\n");
+				printf("---------------------------------------\n");
 				printsymbols(globals, 1);
 				printf("\n");
-				// populate_symbol_tables(root);
 				//free_tree(root, 0);
 			}
 		}

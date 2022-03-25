@@ -4,14 +4,17 @@
 typedef enum {
 
 	TOKEN = 1000,
+	prodR_ScopeEnd,
 	prodR_ClassDecl,
 	prodR_ClassBodyDecls,
 	prodR_FieldDecl,
+	prodR_FieldDeclAssign,
 	prodR_QualifiedName,
 	prodR_VarDecls,
 	prodR_MultiVarDecls,
 	prodR_MethodDecl,
 	prodR_MethodHeader,
+	prodR_HeaderOptions,
 	prodR_MethodDeclarator,
 	prodR_FormalParmList,
 	prodR_FormalParm,

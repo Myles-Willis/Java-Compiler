@@ -11,12 +11,9 @@ struct tree {
    int nkids;
    struct tree *kids[9]; /* if nkids >0 */
    struct token *leaf;   /* if nkids == 0; NULL for ε productions */
+   int is_const;
+   struct sym_table *stab;
 };
-
-// struct tree_list {
-// 	struct tree *tree_node;
-// 	struct tree_list *next;
-// };
 
 struct tree *allocate_tree();
 struct tree *create_leaf(int category_value, char* yytext, int lineno, char* filename);
