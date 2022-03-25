@@ -28,10 +28,6 @@ int main(int argc, char *argv[]) {
 
 	    		filename = *argv;
 
-				// initialize trees linked list.
-				// trees = malloc(sizeof (struct tree_list));
-				// memset(trees, 0, sizeof(struct tree_list));
-
 				printf("\nBeginning Parse of: %s\n", filename);
 				// yydebug = 1;
 				yyparse();

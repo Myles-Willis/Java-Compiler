@@ -177,7 +177,7 @@ QualifiedName:
 
 VarDecls:
 	VarDeclarator
-		{$$ = create_branch(prodR_VarDecls,"VarDecls",1, $1);} //need to add prodRule for this case: 1, $1
+		{$$ = create_branch(prodR_VarDecls,"VarDecls",1, $1);}
 	/* | VarDecls ',' VarDeclarator
 		{$$ = create_branch(prodR_MultiVarDecls,"VarDecls_multi",2, $1,$3);} */
 	;

@@ -33,6 +33,8 @@ struct field {			/* members (fields) of structs */
 
 typedef struct typeinfo {
 	int basetype;
+	struct sym_table *table;
+
 	union {
 		struct arrayinfo {
 			int size;

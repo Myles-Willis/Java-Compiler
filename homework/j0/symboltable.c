@@ -1,9 +1,93 @@
 #include "symboltable.h"
 
+#define SBufSize 1024               /* initial size of the string buffer */
+
+/*
+ * str_buf references a string buffer. Strings are built a
+ *  character at a time. When a buffer "fragment" is filled,
+ *  another is allocated and the the current string copied to it.
+ */
+struct str_buf_frag {
+   struct str_buf_frag *next;     /* next buffer fragment */
+   char s[1];                     /* variable size buffer */
+};
+
+struct str_buf {
+   unsigned int size;             /* total size of current buffer */
+   char *p;                       /* next free character in buffer */
+   char *end;                     /* end of current buffer */
+   struct str_buf_frag *frag_lst; /* list of buffer fragments */
+};
+
+static struct str_buf buf;
+SymbolTable stringpool;
 SymbolTable globals;
 SymbolTable current;
 
+
+void init_sbuf(struct str_buf *);   /* initialize an sbuf struct */
+void clear_sbuf(struct str_buf *);  /* free struct buffer storage */
+void new_sbuf(struct str_buf *);    /* allocate add'l buffer */
 char *checked_alloc(int size);
+
+/*
+* init_sbuf - initialize a new sbuf struct, allocating an initial buffer.
+*/
+void init_sbuf(struct str_buf *sbuf) {
+	sbuf->size = SBufSize;
+	sbuf->frag_lst = (struct str_buf_frag *)checked_alloc((unsigned int)
+	(sizeof(struct str_buf_frag) + (SBufSize - 1)));
+	sbuf->frag_lst->next = NULL;
+	sbuf->p = sbuf->frag_lst->s;
+	sbuf->end = sbuf->p + SBufSize;
+}
+
+/*
+* clear_sbuf - free string buffer storage.
+*/
+void clear_sbuf(struct str_buf *sbuf) {
+	struct str_buf_frag *sbf, *sbf1;
+
+	for (sbf = sbuf->frag_lst; sbf != NULL; sbf = sbf1) {
+		sbf1 = sbf->next;
+		free((char *)sbf);
+	}
+	sbuf->frag_lst = NULL;
+	sbuf->p = NULL;
+	sbuf->end = NULL;
+}
+
+/*
+* new_sbuf - allocate a new buffer for a sbuf struct, copying the
+*   partially created string from the end of full buffer to the new one.
+*/
+void new_sbuf(struct str_buf *sbuf) {
+	struct str_buf_frag *sbf;
+
+	/*
+	* The new buffer is larger than the old one to insure that any
+	*  size string can be buffered.
+	*/
+	sbuf->size *= 2;
+	sbf = (struct str_buf_frag *)checked_alloc((unsigned int)
+	(sizeof(struct str_buf_frag) + (sbuf->size - 1)));
+	sbf->next = sbuf->frag_lst;
+	sbuf->frag_lst = sbf;
+	sbuf->p = sbf->s;
+	sbuf->end = sbuf->p + sbuf->size;
+}
+
+
+static char *insert_sbuf(struct str_buf *sb, char *s) {
+	char *rv;
+	int l = strlen(s);
+	if (sb->p + l + 1 >= sb->end)
+	new_sbuf(sb);
+	strcpy(sb->p, s);
+	rv = sb->p;
+	sb->p += l + 1;
+	return rv;
+}
 
 SymbolTable make_sym_table(int size, char* table_name) {
 
@@ -53,16 +137,17 @@ int insert_symbol(SymbolTable st, char *s, typeptr t) {
         }
 
    	/*
-    	* The string is not in the table. Add the copy from the
-    	*  buffer to the table.
+    * The string is not in the table. Add the copy from the
+    *  buffer to the table.
     */
 
    	se = (SymbolTableEntry) checked_alloc((unsigned int) sizeof (struct sym_entry));
    	se->next = st->tbl[h];
    	se->table = st;
    	st->tbl[h] = se;
-   	se->s = strdup(s);
-   	//se->type = t;    // add back function param upon implementation
+   	if (st ==stringpool) se->s = insert_sbuf(&buf, s);
+   	else se->s = s;
+	se->type = t;
    	st->nEntries++;
    	return 1;
 }
@@ -122,22 +207,36 @@ void printsyms(struct tree * n) {
 
 void printsymbols(SymbolTable st, int level) {
 
-	printf("--- symbol table for: %s\n", st->table_name);
+	// printf("--- symbol table for: %s\n", st->table_name);
 	int i,j;
    	SymbolTableEntry ste;
    	if (st == NULL) return;
    	for (i=0;i<st->nBuckets;i++) {
       	for (ste = st->tbl[i]; ste; ste=ste->next) {
-			for (j=0; j < level; j++) printf("  ");
-				/* if this symbol has a subscope,
-				 print it recursively, indented*/
-				if (ste->type){
-					printf("PRINT!\n");
-					printsymbols(ste->table, level + 1);
-				} else {
 
-					printf("%s\n", ste->s);
-				}
+			for (j=0; j < level; j++) printf("  ");
+			printf("%s\n", ste->s);
+
+			if(!strcmp(ste->s, "a")) {
+				for (j=0; j < level; j++) printf("  ");
+			    printf("This is the parent symbol table of o: %s Level: %d\n", ste->table->table_name, level);
+			}
+			/* if this symbol has a subscope,
+			 print it recursively, indented*/
+			if (!ste->type) continue;
+
+			switch (ste->type->basetype) {
+				case CLASS_TYPE:
+				case FUNC_TYPE:
+					// printf("Recursive!\n");
+					for (j=0; j < level+1; j++) printf("  ");
+					printf("--- symbol table for: %s\n", ste->s);
+					printsymbols(ste->type->table, level + 1);
+					for (j=0; j < level+1; j++) printf("  ");
+					printf("-----\n");
+					break;
+			}
+
       }
    }
 }
@@ -170,83 +269,35 @@ void populate_symbol_tables(struct tree * n) {
 			break;
 		}
 
-		// case FD_DS_FDE_CS: {
-		//    	/* construct a type for this function */
-		// 	n->type = alcfunctype(n->kids[0],
-		//  		n->kids[1]->kids[1] /* paramlist subtree */,
-		// 		NULL /* add parent symbol table */);
-		//    /* enter scope, inserting this function's type into the global */
-		//    enter_newscope(NULL /* function name found in $2 */, FUNC_TYPE);
-		// }
-
-		// case prodR_TypeAssignment :
-		// 	// insert_symbol(current, n->kids[1]->leaf->text);
-		// 	enter_newscope(n->kids[1]->leaf->text);
-		// 	break;
-
-		// case prodR_MultiVarDecls :
-		// 	// insert_symbol(current, n->kids[1]->leaf->text);
-		// 	enter_newscope(n->kids[1]->leaf->text);
-		// 	break;
-
-		// case /* whatever production rule(s) enter a struct scope */ : {
-		//  	enter_newscope(/* label of new struct */);
-		//  	break;
-		// }
-
-
-		/* whatever production rule(s) designate a variable declaration*/
-		// case prodR_FieldDecl:
-		// case prodR_LocalVarDecl:
-		//LocalVarDeclStmt
-
 		case prodR_FieldDecl:
 		case prodR_LocalVarDecl: {
 
 			printf("prodR_FieldDecl case hit \n");
 		   	/* figure out which kid is a "list" of variables */
-			typeptr t;
-			t = alctype(NULL_TYPE);
+			// typeptr t;
+			// t = alctype(NULL_TYPE);
 			//struct tree *var_list = n->kids[1];
-			int insert_result = insert_symbol(current, n->kids[1]->kids[0]->leaf->text, t);
+			int insert_result = insert_symbol(current, n->kids[1]->kids[0]->leaf->text, NULL);
 			printf("Inserting %s\n", n->kids[1]->kids[0]->leaf->text);
+
 			if (insert_result == 0) {
 				fprintf(stderr, "Error: %s already exists sym_table\n"
 					, n->symbolname);
 			}
-			/* walk through the subtree that is the list of variables */
-			// for (i = 0; i < var_list->nkids; i++) {
-			// 	/* for each variable, insert it into the current symbol table*/
-			// 	int insert_result = insert_symbol(current, var_list->kids[i]->leaf->text);
-			// 	printf("Inserting %s\n", var_list->kids[i]->leaf->text);
-			// 	if (insert_result == 0) {
-			// 		fprintf(stderr, "Error: %s already exists sym_table\n"
-			// 			, n->symbolname);
-			// 	}
-			// }
 			break;
 		}
 
-		// case  -10000/* whatever leaf denotes a variable name */: {
-		//
-		//   	//SymbolTableEntry ste = NULL;
-		//   	SymbolTable st = current;
-		//   	/* check if the symbol is already defined in current scope */
-		// 	SymbolTableEntry checked_entry = lookup_st(st, n->symbolname);
-		//   	/*   if it is, report a redeclaration error */
-		// 	if (checked_entry != NULL) {
-		// 		fprintf(stderr, "Redeclaration Error: %s already declared\n",
-		// 	 		checked_entry->s);
-		// 		exit(-1);
-		// 	}
-		//   	/*   if it is not, insert it into the current symbol table */
-		// 	int insert_result = insert_symbol(current, n->symbolname);
+		// case prodR_TypeAssignment: {
+		// 	printf("prodR_TypeAssignment case hit \n");
+		// 	int insert_result = insert_symbol(current, n->kids[1]->kids[0]->leaf->text, NULL);
+		// 	printf("Inserting %s\n", n->kids[1]->kids[0]->leaf->text);
 		//
 		// 	if (insert_result == 0) {
 		// 		fprintf(stderr, "Error: %s already exists sym_table\n"
 		// 			, n->symbolname);
 		// 	}
 		//
+		// 	break;
 		// }
 
 	}
@@ -257,8 +308,8 @@ void populate_symbol_tables(struct tree * n) {
 
 	/* post-order activity */
 	switch (n->prodrule) {
-		/* we are back out to a node where we entered a subscope */
 
+		/* we are back out to a node where we entered a subscope */
 		case prodR_ConstructorDecl:
 		case prodR_MethodDecl:
 		case prodR_ClassDecl:
@@ -293,6 +344,7 @@ void enter_newscope(char *s, int typ) {     // , int typ
 	t = alctype(typ);
 	//printf("Type set to :%d\n", t->basetype);
   	SymbolTable new_st = make_sym_table(20, s);
+	t->table = new_st;
 	new_st->scope = t;
   	new_st->parent = current;
 
