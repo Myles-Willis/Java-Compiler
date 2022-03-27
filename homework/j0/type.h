@@ -2,10 +2,6 @@
 #define TYPE_H
 
 #include "tree.h"
-// #include "token.h"
-// #include "j0gram.tab.h"
-// #include "symboltable.h"
-// #include "defs.h"
 
 typedef struct param {
 	char *name;
@@ -28,8 +24,11 @@ struct field {			/* members (fields) of structs */
 #define CLASS_TYPE   1000004
 #define CONSTRUCT_TYPE   1000005
 #define CHAR_TYPE    1000006
+#define BOOL_TYPE	 1000007
+#define STRING_TYPE  1000008
+#define NAME_TYPE    1000009
 
-#define LAST_TYPE    1000006
+#define LAST_TYPE    1000009
 
 typedef struct typeinfo {
 	int basetype;
@@ -50,27 +49,26 @@ typedef struct typeinfo {
 		}f;
 		struct classinfo {
 			char *name; /* ? */
-			int defined; /* 0 == prototype, 1 == not prototype */
 			struct sym_table *st;
-			int nparams;
-			struct param *parameters;
 		}c;
 
 	} u;
 } *typeptr;
 
+extern struct typeinfo integer_type;
 extern struct sym_table *globals;
 
 typeptr alctype(int);
-typeptr alcclasstype(struct tree * r, struct tree * p, struct sym_table * st);
-typeptr alcfunctype(struct tree * r, struct tree * p, struct sym_table * st);
+int conv_to_type(char* type_string);
 char *typename(typeptr t);
+// typeptr alcclasstype(struct tree * r, struct tree * p, struct sym_table * st);
+// typeptr alcfunctype(struct tree * r, struct tree * p, struct sym_table * st);
 
 extern typeptr integer_typeptr;
-extern typeptr double_typeptr;
-extern typeptr char_typeptr;
 extern typeptr null_typeptr;
 extern typeptr string_typeptr;
+extern typeptr double_typeptr;
+extern typeptr char_typeptr;
 extern typeptr class_typeptr;
 extern typeptr func_typeptr;
 extern typeptr construct_typeptr;

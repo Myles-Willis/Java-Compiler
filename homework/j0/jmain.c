@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
 				// yydebug = 1;
 				yyparse();
 				printf("\n");
-				//print_tree(root, 0);
+				print_tree(root, 0);
 				globals = make_sym_table(20, "global");
 				current = globals;
 				populate_symbol_tables(root);

@@ -1,7 +1,7 @@
 public class hello {
-    int a;
-    int i;
-	int j;
+    double a;
+    String i;
+	char j;
     public static void main(String argv[]) {
         i = a * 4 + 2;
         a = 15;
@@ -12,7 +12,6 @@ public class hello {
 		a = i--;
 		a = 1 + (2 + 3 * (4 - 5));
 
-		int x = 5;
-		int x = 10;
+		boolean x = 10;
     }
 }

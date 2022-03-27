@@ -215,12 +215,8 @@ void printsymbols(SymbolTable st, int level) {
       	for (ste = st->tbl[i]; ste; ste=ste->next) {
 
 			for (j=0; j < level; j++) printf("  ");
-			printf("%s\n", ste->s);
+			printf("%s %s\n", typename(ste->type),ste->s);
 
-			// if(!strcmp(ste->s, "a")) {
-			// 	for (j=0; j < level; j++) printf("  ");
-			//     printf("This is the parent symbol table of o: %s Level: %d\n", ste->table->table_name, level);
-			// }
 			/* if this symbol has a subscope,
 			 print it recursively, indented*/
 			if (!ste->type) continue;
@@ -289,12 +285,10 @@ void populate_symbol_tables(struct tree * n) {
 		case prodR_LocalVarDecl: {
 
 			// printf("prodR_FieldDecl case hit \n");
-		   	/* figure out which kid is a "list" of variables */
-			// typeptr t;
-			// t = alctype(NULL_TYPE);
-			//struct tree *var_list = n->kids[1];
-			int insert_result = insert_symbol(current, n->kids[1]->kids[0]->leaf->text, NULL);
+			typeptr t = alctype(conv_to_type(n->kids[0]->leaf->text));
+			int insert_result = insert_symbol(current, n->kids[1]->kids[0]->leaf->text, t);
 			// printf("Inserting %s\n", n->kids[1]->kids[0]->leaf->text);
+			// printf("Has type %s\n", n->kids[0]->leaf->text);
 
 			if (insert_result == 0) {
 				redeclaration_error(n->kids[1]->kids[0]->leaf);
@@ -304,8 +298,10 @@ void populate_symbol_tables(struct tree * n) {
 
 		case prodR_TypeAssignment: {
 			// printf("prodR_TypeAssignment case hit \n");
-			int insert_result = insert_symbol(current, n->kids[1]->leaf->text, NULL);
+			typeptr t = alctype(conv_to_type(n->kids[0]->leaf->text));
+			int insert_result = insert_symbol(current, n->kids[1]->leaf->text, t);
 			// printf("Inserting %s\n", n->kids[1]->leaf->text);
+			// printf("Has type %s\n", n->kids[0]->leaf->text);
 
 			if (insert_result == 0) {
 				redeclaration_error(n->kids[1]->leaf);
@@ -313,7 +309,6 @@ void populate_symbol_tables(struct tree * n) {
 
 			break;
 		}
-
 	}
 
 	/* visit children */
@@ -329,7 +324,6 @@ void populate_symbol_tables(struct tree * n) {
 		case prodR_ClassDecl:
 			popscope();
 			break;
-
 	}
 }
 
@@ -347,10 +341,10 @@ char *checked_alloc(int size) {
 	}
 
 	return p;
-
 }
 
-void enter_newscope(char *s, int typ) {     // , int typ
+void enter_newscope(char *s, int typ) {
+
 	// printf("\nCurrent scope of :%s\n", current->table_name);
 	/* allocate a new symbol table */
 	typeptr t;
@@ -361,7 +355,6 @@ void enter_newscope(char *s, int typ) {     // , int typ
 	new_st->scope = t;
   	new_st->parent = current;
 
-
 	/* insert s into current symbol table */
   	insert_symbol(current, s, t);
 
@@ -369,8 +362,6 @@ void enter_newscope(char *s, int typ) {     // , int typ
   	lookup_st(current, s)->table = new_st;
 
 	/* push new symbol on the stack, making it the current symbol table */
-  	// new_st->parent = current;
-  	// current = new_st;
   	pushscope(new_st);
 	// printf("Entered scope of :%s\n", current->table_name);
 	// printf("Type set to :%d\n", t->basetype);
