@@ -10,23 +10,47 @@ extern struct tree *root;
 extern SymbolTable globals;
 extern SymbolTable current;
 
-// struct tree_list *trees;
+//Flag set boolean values
+int symtab_print_flag = 0;
+
 int check_file_extension(char *file);
+void set_flag (char* flag);
 
 int main(int argc, char *argv[]) {
 
-  //int symtab_print = 0;
+	if (argc == 1) {
+		printf("Must provide file name as command line argument\n");
+    	return 0;
+  	} else {
 
-  if (argc == 1) {
-    printf("Must provide file name as command line argument\n");
-    return 0;
-  } else {
+	 	int flag_count = 0;
+		int nonflag = 0;
+
+		//set flags before running input files
+		for (int i = 1; i < argc; i++) {
+
+			if (nonflag && (argv[i][0] == '-')) {
+				printf("\nError: Flags not placed before input files\n");
+				printf("Usage: ./j0 [flags] [input files]\n\n");
+				exit(-1);
+			}
+
+			if (argv[i][0] == '-') {
+				// printf("Caught argv[%d] %s\n",i, argv[i]);
+				flag_count++;
+				set_flag(argv[i]);
+			} else {
+				nonflag = 1;
+				// printf("nonflag: %s\n", argv[i]);
+			}
+		}
+
+		argv += flag_count;
+		argc -= flag_count;
+
 		while (--argc > 0) {
-			//printf("While argv: %s\n", *++argv);
-			/* if (strcmp(*++argv, "-symtab") == 0) {
-				symtab_print = 1;
-				continue;
-			} else*/ if ((yyin = fopen(*++argv, "r")) == NULL) {
+
+			if ((yyin = fopen(*++argv, "r")) == NULL) {
 				printf("\nCan not open '%s': File does not exist\n\n", *argv);
 			} else if(check_file_extension(*argv) != 1) {
 		  		printf("\nCan not open '%s': File does not have .java extension\n\n", *argv);
@@ -34,7 +58,9 @@ int main(int argc, char *argv[]) {
 
 	    		filename = *argv;
 
-				printf("\n\nOpened File: %s\n", filename);
+				printf("\n\n---------------------------------------\n");
+				printf("Opened File: %s\n", filename);
+				printf("---------------------------------------\n");
 				// yydebug = 1;
 				yyparse();
 				printf("\n");
@@ -43,11 +69,11 @@ int main(int argc, char *argv[]) {
 				current = globals;
 				populate_symbol_tables(root);
 
-				// if (symtab_print) {
+				if (symtab_print_flag) {
 					printf("\n\nprintsymbols() output:\n");
 					printf("---------------------------------------\n\n");
 					printsymbols(globals, 1);
-				// }
+				}
 				printf("\n");
 				//free_tree(root, 0);
 			}
@@ -67,5 +93,16 @@ int check_file_extension(char *file) {
   }
 
   return 0;
+
+}
+
+void set_flag (char* flag) {
+	if (strcmp(flag, "-symtab") == 0) {
+		symtab_print_flag = 1;
+	} else {
+		printf("\nError: Unknown Flag %s\n", flag);
+		printf("Available flags include: -symtab\n\n");
+		exit(-1);
+	}
 
 }
