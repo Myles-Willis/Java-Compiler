@@ -46,3 +46,5 @@ clean :
 	rm -f lex.yy.c
 	rm -f j0gram.tab.h j0gram.tab.c
 	rm -f *.o
+	rm -f .DS_Store
+	rm j0

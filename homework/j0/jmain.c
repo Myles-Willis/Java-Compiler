@@ -15,12 +15,18 @@ int check_file_extension(char *file);
 
 int main(int argc, char *argv[]) {
 
+  //int symtab_print = 0;
+
   if (argc == 1) {
     printf("Must provide file name as command line argument\n");
     return 0;
   } else {
 		while (--argc > 0) {
-			if ((yyin = fopen(*++argv, "r")) == NULL) {
+			//printf("While argv: %s\n", *++argv);
+			/* if (strcmp(*++argv, "-symtab") == 0) {
+				symtab_print = 1;
+				continue;
+			} else*/ if ((yyin = fopen(*++argv, "r")) == NULL) {
 				printf("\nCan not open '%s': File does not exist\n\n", *argv);
 			} else if(check_file_extension(*argv) != 1) {
 		  		printf("\nCan not open '%s': File does not have .java extension\n\n", *argv);
@@ -36,9 +42,12 @@ int main(int argc, char *argv[]) {
 				globals = make_sym_table(20, "global");
 				current = globals;
 				populate_symbol_tables(root);
-				printf("\n\nprintsymbols() output:\n");
-				printf("---------------------------------------\n\n");
-				printsymbols(globals, 1);
+
+				// if (symtab_print) {
+					printf("\n\nprintsymbols() output:\n");
+					printf("---------------------------------------\n\n");
+					printsymbols(globals, 1);
+				// }
 				printf("\n");
 				//free_tree(root, 0);
 			}
