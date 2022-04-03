@@ -32,7 +32,7 @@ struct field {			/* members (fields) of structs */
 
 typedef struct typeinfo {
 	int basetype;
-	struct sym_table *table;
+	struct sym_table *type_sym_table;
 
 	union {
 		struct arrayinfo {
@@ -61,16 +61,16 @@ extern struct sym_table *globals;
 typeptr alctype(int);
 int conv_to_type(char* type_string);
 char *typename(typeptr t);
-// typeptr alcclasstype(struct tree * r, struct tree * p, struct sym_table * st);
-// typeptr alcfunctype(struct tree * r, struct tree * p, struct sym_table * st);
+typeptr alcclasstype(struct sym_table * st);
+typeptr alcfunctype(struct sym_table * st);
 
 extern typeptr integer_typeptr;
 extern typeptr null_typeptr;
 extern typeptr string_typeptr;
 extern typeptr double_typeptr;
 extern typeptr char_typeptr;
-extern typeptr class_typeptr;
-extern typeptr func_typeptr;
+// extern typeptr class_typeptr;
+// extern typeptr func_typeptr;
 extern typeptr construct_typeptr;
 
 extern char *typenam[];

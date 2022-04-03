@@ -7,9 +7,6 @@ extern int yydebug;
 char *filename;
 extern struct tree *root;
 
-extern SymbolTable globals;
-extern SymbolTable current;
-
 //Flag set boolean values
 int symtab_print_flag = 0;
 
@@ -68,6 +65,12 @@ int main(int argc, char *argv[]) {
 				globals = make_sym_table(20, "global");
 				current = globals;
 				populate_symbol_tables(root);
+
+
+				SymbolTableEntry hello = globals->tbl[0];
+				printf("\nhello: %d\n", hello->type->type_sym_table->nEntries);
+				SymbolTableEntry main = lookup_st(hello->type->type_sym_table, "main");
+				printf("Main's symbol table: %s\n", main->type->type_sym_table->table_name);
 
 				if (symtab_print_flag) {
 					printf("\n\nprintsymbols() output:\n");

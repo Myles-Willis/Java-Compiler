@@ -28,7 +28,7 @@ typedef struct sym_entry {
 SymbolTable make_sym_table(int size, char *table);
 
 void populate_symbol_tables(struct tree * n);
-void dovariabledeclarator(struct tree * n);
+// void dovariabledeclarator(struct tree * n);
 
 extern SymbolTable globals;	       /* global symbols */
 extern SymbolTable current;	       /* current */
@@ -36,6 +36,7 @@ extern SymbolTable current;	       /* current */
 void print_symbol(char *s, char *symbolname); //ONLY USED IN LAB #6
 void printsyms(struct tree *); //ONLY USED IN LAB #6
 void printsymbols(SymbolTable st, int level);
+SymbolTableEntry lookup_st(SymbolTable st, char *s);
 
 void enter_newscope(char *s, int typ);
 int insert_symbol(SymbolTable st, char *s, typeptr t);

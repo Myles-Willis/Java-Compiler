@@ -30,8 +30,8 @@ typeptr alctype(int base) {
    else if (base == INT_TYPE) return integer_typeptr;
    else if (base == DOUBLE_TYPE) return double_typeptr;
    else if (base == CHAR_TYPE) return char_typeptr;
-   else if (base == CLASS_TYPE) return class_typeptr;
-   else if (base == FUNC_TYPE) return func_typeptr;
+   // else if (base == CLASS_TYPE) return class_typeptr;
+   // else if (base == FUNC_TYPE) return func_typeptr;
 
    rv = (typeptr) calloc(1, sizeof(struct typeinfo));
    if (rv == NULL) return rv;
@@ -44,11 +44,21 @@ typeptr alctype(int base) {
  * for the return type (r) and the parameter list (p), but the calls to
  * to this function in the example are just passing NULL at present!
  */
-typeptr alcfunctype(struct tree * r, struct tree * p, SymbolTable st) {
+typeptr alcfunctype(SymbolTable st) {
 
    typeptr rv = alctype(FUNC_TYPE);
    if (rv == NULL) return NULL;
    rv->u.f.st = st;
+   /* fill in return type and paramlist by traversing subtrees */
+   /* rf->u.f.returntype = ... */
+   return rv;
+}
+
+typeptr alcclasstype(SymbolTable st) {
+
+   typeptr rv = alctype(CLASS_TYPE);
+   if (rv == NULL) return NULL;
+   rv->u.c.st = st;
    /* fill in return type and paramlist by traversing subtrees */
    /* rf->u.f.returntype = ... */
    return rv;
@@ -67,7 +77,7 @@ int conv_to_type(char* type_string) {
 
 	for (int i = 0; i < (typenamSize - 1); i++) {
 		if (strcmp(typenam[i], type_string) == 0) {
-			
+
 			switch (i) {
 				case 1:
 					return INT_TYPE;

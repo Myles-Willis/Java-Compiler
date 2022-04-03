@@ -162,6 +162,7 @@ Type:
 		{}
 	| CHAR
 		{}
+	| FLOAT
 	;
 
 Name:
