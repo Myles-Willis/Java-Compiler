@@ -8,6 +8,7 @@ struct typeinfo char_type = { CHAR_TYPE };
 struct typeinfo class_type = { CLASS_TYPE };
 struct typeinfo func_type = { FUNC_TYPE };
 struct typeinfo construct_type = { CONSTRUCT_TYPE };
+struct typeinfo builtin_funct_type = { BUILTIN_FUNCT };
 
 typeptr null_typeptr = &null_type;
 typeptr integer_typeptr = &integer_type;
@@ -16,6 +17,8 @@ typeptr char_typeptr = &char_type;
 typeptr class_typeptr = &class_type;
 typeptr func_typeptr = &func_type;
 typeptr construct_typeptr = &construct_type;
+typeptr builtin_typeptr = &builtin_funct_type;
+
 
 char *typenam[] =
    {"null", "int", "double", "function", "class", "constructor", "char",
@@ -30,6 +33,7 @@ typeptr alctype(int base) {
    else if (base == INT_TYPE) return integer_typeptr;
    else if (base == DOUBLE_TYPE) return double_typeptr;
    else if (base == CHAR_TYPE) return char_typeptr;
+   else if (base == BUILTIN_FUNCT) return builtin_typeptr;
    // else if (base == CLASS_TYPE) return class_typeptr;
    // else if (base == FUNC_TYPE) return func_typeptr;
 

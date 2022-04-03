@@ -2,9 +2,6 @@
 #define SYMBOLTABLE_H
 
 #include "type.h"
-// #include "prodrules.h"
-// #include "tree.h"
-// #include "defs.h"
 
 typedef struct sym_table {
 	char* table_name;
@@ -40,6 +37,7 @@ SymbolTableEntry lookup_st(SymbolTable st, char *s);
 
 void enter_newscope(char *s, int typ);
 int insert_symbol(SymbolTable st, char *s, typeptr t);
+void load_builtins();
 
 #define pushscope(stp) do { stp->parent = current; current = stp; } while (0)
 #define popscope() do { current = current->parent; } while(0)

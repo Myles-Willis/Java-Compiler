@@ -33,12 +33,10 @@ int main(int argc, char *argv[]) {
 			}
 
 			if (argv[i][0] == '-') {
-				// printf("Caught argv[%d] %s\n",i, argv[i]);
 				flag_count++;
 				set_flag(argv[i]);
 			} else {
 				nonflag = 1;
-				// printf("nonflag: %s\n", argv[i]);
 			}
 		}
 
@@ -64,13 +62,8 @@ int main(int argc, char *argv[]) {
 				print_tree(root, 0);
 				globals = make_sym_table(20, "global");
 				current = globals;
+				load_builtins();
 				populate_symbol_tables(root);
-
-
-				SymbolTableEntry hello = globals->tbl[0];
-				printf("\nhello: %d\n", hello->type->type_sym_table->nEntries);
-				SymbolTableEntry main = lookup_st(hello->type->type_sym_table, "main");
-				printf("Main's symbol table: %s\n", main->type->type_sym_table->table_name);
 
 				if (symtab_print_flag) {
 					printf("\n\nprintsymbols() output:\n");

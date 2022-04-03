@@ -27,8 +27,9 @@ struct field {			/* members (fields) of structs */
 #define BOOL_TYPE	 1000007
 #define STRING_TYPE  1000008
 #define NAME_TYPE    1000009
+#define BUILTIN_FUNCT 1000010
 
-#define LAST_TYPE    1000009
+#define LAST_TYPE    1000010
 
 typedef struct typeinfo {
 	int basetype;

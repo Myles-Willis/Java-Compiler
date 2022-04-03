@@ -123,7 +123,7 @@ int hash(SymbolTable st, char *s) {
 
 int insert_symbol(SymbolTable st, char *s, typeptr t) {
 
-	printf("inserting for %s inside %s\n", s, st->table_name);
+	// printf("inserting for %s inside %s\n", s, st->table_name);
 
    	int h;
    	struct sym_entry *se;
@@ -146,25 +146,17 @@ int insert_symbol(SymbolTable st, char *s, typeptr t) {
    	se = (SymbolTableEntry) checked_alloc((unsigned int) sizeof (struct sym_entry));
    	se->next = st->tbl[h];
    	se->table = st;
-	printf("\t%s->table = %s\n", s,st->table_name);
    	st->tbl[h] = se;
    	if (st ==stringpool) se->s = insert_sbuf(&buf, s);
    	else se->s = s;
-   	// se->s = strdup(s);
 	se->type = t;
-
-	//Debugging print
-	printf("\t%s->type = %s\n", s,typename(t));
-	if ((t->basetype == CLASS_TYPE) || (t->basetype == FUNC_TYPE)) {
-		printf("\t%s->type->type_sym_table = %s\n", s, t->type_sym_table->table_name);
-	}
-
    	st->nEntries++;
+
    	return 1;
 }
 
 SymbolTableEntry lookup_st(SymbolTable st, char *s) {
-   	//register int i;
+
    	int h;
    	SymbolTableEntry se;
 
@@ -176,15 +168,9 @@ SymbolTableEntry lookup_st(SymbolTable st, char *s) {
          	*/
         	return se;
         }
-	printf("\t%s NOT FOUND in %s\n", s, st->table_name);
+
    	return NULL;
 }
-
-// void print_symbol(char *s, char *symbolname) { 		//ONLY USED IN LAB #6...
-//
-//    printf("%s : %s\n", symbolname, s); fflush(stdout);
-//
-// }
 
 void printsymbols(SymbolTable st, int level) {
 
@@ -199,7 +185,6 @@ void printsymbols(SymbolTable st, int level) {
 			for (j=0; j < level; j++) printf("  ");
 			printf("%s %s\n", typename(ste->type),ste->s);
 			for (j=0; j < level; j++) printf("  ");
-			// printf("Belongs to: %s\n", ste->table->table_name);
 
 			/* if this symbol has a subscope,
 			 print it recursively, indented*/
@@ -209,9 +194,9 @@ void printsymbols(SymbolTable st, int level) {
 				case CLASS_TYPE:
 				case FUNC_TYPE:
 					for (j=0; j < level+1; j++) printf("  ");
-					printf("--- symbol table for: %s %s ---\n", typename(ste->type), ste->s);
+					printf("--- symbol table for: %s %s ---\n",
+					 typename(ste->type), ste->s);
 					for (j=0; j < level+1; j++) printf("  ");
-					// printf("now printing symbols for %s\n", ste->type->type_sym_table->table_name);
 					printsymbols(ste->type->type_sym_table, level + 1);
 					for (j=0; j < level+1; j++) printf("  ");
 					printf("-----\n");
@@ -256,8 +241,6 @@ void populate_symbol_tables(struct tree * n) {
 
 		case prodR_MethodDecl: {
 
-			printf("Method Declaration found for: %s\n", n->kids[0]->kids[2]->kids[0]->leaf->text);
-			printf("\tvvv redeclaration check\n");
 			if (lookup_st(current, n->kids[0]->kids[2]->kids[0]->leaf->text)) {
 				redeclaration_error(n->kids[0]->kids[2]->kids[0]->leaf);
 			}
@@ -284,13 +267,6 @@ void populate_symbol_tables(struct tree * n) {
 			 SymbolTableEntry testing = malloc(sizeof(SymbolTableEntry));
 			 testing = lookup_st(current, n->kids[1]->kids[0]->leaf->text);
 
-			 if(testing == NULL) {
-				 printf("NULL!\n");
-			 } else {
-				 printf("\tPOPInserted: %s to %s\n", testing->s, current->table_name);
-			 }
-
-
 			if (insert_result == 0) {
 				redeclaration_error(n->kids[1]->kids[0]->leaf);
 			}
@@ -303,21 +279,6 @@ void populate_symbol_tables(struct tree * n) {
 			typeptr t = alctype(conv_to_type(n->kids[0]->leaf->text));
 			int insert_result = insert_symbol(current,
 				 n->kids[1]->leaf->text, t);
-
-			SymbolTableEntry testing = malloc(sizeof(SymbolTableEntry));
-			testing = lookup_st(current, n->kids[1]->leaf->text);
-
-			if(testing == NULL) {
-				printf("NULL!\n");
-			} else {
-				printf("\tPOPInserted: %s to %s\n", testing->s, current->table_name);
-			}
-
-			// printf("Inserted: %s to %s\n", testing->s, current->table_name);
-			// struct sym_entry *test = malloc(sizeof(struct sym_entry));
-			// test = lookup_st(current, "a");
-			//
-			// printf("Found %s in table: %s\n", test->s, test->table->table_name);
 
 			if (insert_result == 0) {
 				redeclaration_error(n->kids[1]->leaf);
@@ -338,7 +299,6 @@ void populate_symbol_tables(struct tree * n) {
 		case prodR_MethodDecl:
 		case prodR_ClassDecl:
 			popscope();
-			printf("popping scope, now in scope: %s\n", current->table_name);
 			break;
 	}
 }
@@ -357,7 +317,6 @@ char *checked_alloc(int size) {
 
 void enter_newscope(char *s, int typ) {
 
-	printf("enterScope for: %s\n", s);
 	/* allocate a new symbol table */
   	SymbolTable new_st = make_sym_table(20, s);
 	struct typeinfo *t;
@@ -367,17 +326,9 @@ void enter_newscope(char *s, int typ) {
 	} else {
 		t = alcfunctype(new_st);
 	}
-	// if (t->type_sym_table == NULL) {
-	// 	printf("***FRESH*** symtab for %s\n", s);
-	// } else if (t->type_sym_table != NULL) {
-	// 	printf("***EXISTING*** symtab for %s\n", s);
-	// 	printf("***%s***\n", t->type_sym_table->table_name);
-	// }
+
 	t->type_sym_table = new_st;
 	new_st->scope = t;
-
-	// new_st->parent = current;
-	// printf("set parent table to %s\n", new_st->parent->table_name);
 
 	/* insert s into current symbol table */
   	insert_symbol(current, s, t);
@@ -385,21 +336,43 @@ void enter_newscope(char *s, int typ) {
 	SymbolTableEntry testing = malloc(sizeof(SymbolTableEntry));
 	testing = lookup_st(current, s);
 
-	if(testing == NULL) {
-		printf("NULL!\n");
-	} else {
-		printf("\tENTERInserted: %s to %s\n", testing->s, current->table_name);
-	}
-
-	/* attach new symbol table to s's symbol table in the current symbol table*/
-  	// lookup_st(current, s)->table = new_st;
-
-
 	/* push new symbol on the stack, making it the current symbol table */
   	pushscope(new_st);
-	printf("Scope pushed. Now in scope of: %s\n", current->table_name);
+
 }
 
-// void load_builtins() {
-//
-// }
+void load_builtins() {
+	/*
+		String, InputStream, PrintStream class types as load_builtins
+
+		String supports contatenation operator and  charAt(), equals(), length()
+		substring(b,e), valueOf()
+
+		InputStream supports read(), close()
+
+		PrintStream supports print(), println() and close()
+	*/
+
+	enter_newscope("String", CLASS_TYPE);
+	// typeptr t = alctype(BUILTIN_FUNCT);
+	insert_symbol(current, "charAt", NULL);
+	insert_symbol(current, "equals", NULL);
+	insert_symbol(current, "length", NULL);
+	insert_symbol(current, "substring", NULL);
+	insert_symbol(current, "valueOf", NULL);
+	popscope();
+
+	enter_newscope("System", CLASS_TYPE);
+
+		enter_newscope("out", CLASS_TYPE);
+		insert_symbol(current, "print", NULL);
+		insert_symbol(current, "println", NULL);
+		popscope();
+
+		enter_newscope("in", CLASS_TYPE);
+		insert_symbol(current, "read", NULL);
+		insert_symbol(current, "close", NULL);
+		popscope();
+
+
+}
