@@ -9,6 +9,7 @@ extern struct tree *root;
 
 //Flag set boolean values
 int symtab_print_flag = 0;
+int tree_print_flag = 0;
 
 int check_file_extension(char *file);
 void set_flag (char* flag);
@@ -58,8 +59,12 @@ int main(int argc, char *argv[]) {
 				printf("---------------------------------------\n");
 				// yydebug = 1;
 				yyparse();
-				printf("\n");
-				print_tree(root, 0);
+
+				if (tree_print_flag) {
+					printf("\n");
+					print_tree(root, 0);
+				}
+
 				globals = make_sym_table(20, "global");
 				current = globals;
 				load_builtins();
@@ -95,6 +100,8 @@ int check_file_extension(char *file) {
 void set_flag (char* flag) {
 	if (strcmp(flag, "-symtab") == 0) {
 		symtab_print_flag = 1;
+	} else if(strcmp(flag, "-tree") == 0) {
+		tree_print_flag = 1;
 	} else {
 		printf("\nError: Unknown Flag %s\n", flag);
 		printf("Available flags include: -symtab\n\n");

@@ -51,6 +51,7 @@ typedef struct typeinfo {
 		struct classinfo {
 			char *name; /* ? */
 			struct sym_table *st;
+			//lists of zero or more fields, methods, and constructors
 		}c;
 
 	} u;
