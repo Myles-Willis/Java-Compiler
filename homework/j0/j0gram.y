@@ -172,7 +172,7 @@ Name:
 		{}
 	;
 QualifiedName:
-	Name '.' IDENTIFIER
+	IDENTIFIER '.' Name
 		{$$ = create_branch(prodR_QualifiedName,"QualifiedName",2, $1,$3);}
 	;
 

@@ -216,10 +216,33 @@ void redeclaration_error(struct token *t) {
 
 void undeclared_error(struct token *t) {
 
-	fprintf(stderr, "\n%s:%d: semantic error: Undeclared of variable: %s \n\n"
+	fprintf(stderr, "\n%s:%d: semantic error: %s is undeclared \n\n"
 		, t->filename, t->lineno, t->text);
 
 	exit(3);
+}
+
+SymbolTableEntry check_if_undeclared(SymbolTable st, char* s) {
+	// Search through current symbol table. If s not found then search in
+	// parent symbol table
+	// continue until symbol is found or there are no more parent tables.
+
+	SymbolTableEntry search = lookup_st(st, s);
+
+	if (search != NULL) {
+		//symbol found in current table
+		// printf("Symbol: %s found in table %s\n", search->s, st->table_name);
+		return search;
+	} else if (st->parent == NULL) {
+		//No more parent tables to search
+		// printf("No Symbol tables left to search for %s\n", s);
+		return NULL;
+	} else if(search == NULL) {
+		//symbol not in current symbol table
+		search = check_if_undeclared(st->parent, s);
+	}
+
+	return search;
 }
 
 void populate_symbol_tables(struct tree * n) {
@@ -285,11 +308,94 @@ void populate_symbol_tables(struct tree * n) {
 			}
 			break;
 		}
+
+
+		case prodR_QualifiedName: {
+
+			//Copy current symbol table and tree (n) to traverse
+			SymbolTable traversal = current;
+			struct tree * tree_copy = n;
+
+
+			SymbolTableEntry name_search =
+				check_if_undeclared(traversal, tree_copy->kids[0]->leaf->text);
+
+			int end = 0;
+			char* next_thing;
+
+			while(name_search != NULL) {
+				// printf("HERE: %s\n", name_search->s);
+				// printf("%s\n", typename(name_search->type));
+
+				if(name_search->type == NULL){
+					// printf("Is not a class to dive into\n");
+					undeclared_error(tree_copy->leaf);
+				}
+
+				switch (name_search->type->basetype) {
+
+					case CLASS_TYPE:
+					case FUNC_TYPE:
+					case CONSTRUCT_TYPE: {
+						//enter scope of discovered entry
+						traversal = name_search->type->type_sym_table;
+
+						if (tree_copy->kids[1]->prodrule == prodR_QualifiedName) {
+
+							next_thing = tree_copy->kids[1]->kids[0]->leaf->text;
+							// printf("*Next thing:%s\n", next_thing);
+							name_search = lookup_st(traversal, next_thing);
+
+							if (name_search == NULL) {
+								undeclared_error(tree_copy->kids[1]->kids[0]->leaf);
+							}
+
+							tree_copy = tree_copy->kids[1];
+
+						} else {
+							next_thing = tree_copy->kids[1]->leaf->text;
+							// printf("**Next thing:%s\n", next_thing);
+							name_search = lookup_st(traversal, next_thing);
+
+							if (name_search == NULL) {
+								undeclared_error(tree_copy->kids[1]->leaf);
+							}
+
+							end = 1;
+						}
+						break;
+					}
+				}
+				//Break out of while loop if there are no more qualified names
+				if (end) {break;}
+			}
+			break;
+		}
+
+		case TOKEN: {
+
+			int category = n->leaf->category;
+
+			if (category == IDENTIFIER) {
+				SymbolTableEntry check = check_if_undeclared(current, n->leaf->text);
+				if (check == NULL) {
+					undeclared_error(n->leaf);
+				}
+			}
+			break;
+		}
 	}
 
 	/* visit children */
-	for (i = 0; i < n->nkids; i++)
-	 	populate_symbol_tables(n->kids[i]);
+	switch (n->prodrule) {
+		case prodR_QualifiedName:
+			break;
+		default:
+			for (i = 0; i < n->nkids; i++) {
+				populate_symbol_tables(n->kids[i]);
+			}
+			break;
+	}
 
 	/* post-order activity */
 	switch (n->prodrule) {
@@ -342,16 +448,6 @@ void enter_newscope(char *s, int typ) {
 }
 
 void load_builtins() {
-	/*
-		String, InputStream, PrintStream class types as load_builtins
-
-		String supports contatenation operator and  charAt(), equals(), length()
-		substring(b,e), valueOf()
-
-		InputStream supports read(), close()
-
-		PrintStream supports print(), println() and close()
-	*/
 
 	enter_newscope("String", CLASS_TYPE);
 	// typeptr t = alctype(BUILTIN_FUNCT);

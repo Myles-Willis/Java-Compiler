@@ -30,8 +30,6 @@ void populate_symbol_tables(struct tree * n);
 extern SymbolTable globals;	       /* global symbols */
 extern SymbolTable current;	       /* current */
 
-void print_symbol(char *s, char *symbolname); //ONLY USED IN LAB #6
-void printsyms(struct tree *); //ONLY USED IN LAB #6
 void printsymbols(SymbolTable st, int level);
 SymbolTableEntry lookup_st(SymbolTable st, char *s);
 
