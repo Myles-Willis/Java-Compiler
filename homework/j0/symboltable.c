@@ -223,9 +223,9 @@ void undeclared_error(struct token *t) {
 }
 
 SymbolTableEntry check_if_undeclared(SymbolTable st, char* s) {
-	// Search through current symbol table. If s not found then search in
-	// parent symbol table
-	// continue until symbol is found or there are no more parent tables.
+	/*Search through current symbol table. If s not found then search in
+	parent symbol table.
+	continue until symbol is found or there are no more parent tables.*/
 
 	SymbolTableEntry search = lookup_st(st, s);
 
@@ -264,10 +264,10 @@ void populate_symbol_tables(struct tree * n) {
 
 		case prodR_MethodDecl: {
 
-			if (lookup_st(current, n->kids[0]->kids[2]->kids[0]->leaf->text)) {
-				redeclaration_error(n->kids[0]->kids[2]->kids[0]->leaf);
+			if (lookup_st(current, n->kids[0]->kids[1]->kids[0]->leaf->text)) {
+				redeclaration_error(n->kids[0]->kids[1]->kids[0]->leaf);
 			}
-			enter_newscope(n->kids[0]->kids[2]->kids[0]->leaf->text, FUNC_TYPE);
+			enter_newscope(n->kids[0]->kids[1]->kids[0]->leaf->text, FUNC_TYPE);
 		 	break;
 		}
 
@@ -286,9 +286,6 @@ void populate_symbol_tables(struct tree * n) {
 			typeptr t = alctype(conv_to_type(n->kids[0]->leaf->text));
 			int insert_result = insert_symbol(current,
 				 n->kids[1]->kids[0]->leaf->text, t);
-
-			 SymbolTableEntry testing = malloc(sizeof(SymbolTableEntry));
-			 testing = lookup_st(current, n->kids[1]->kids[0]->leaf->text);
 
 			if (insert_result == 0) {
 				redeclaration_error(n->kids[1]->kids[0]->leaf);
@@ -320,16 +317,23 @@ void populate_symbol_tables(struct tree * n) {
 			SymbolTableEntry name_search =
 				check_if_undeclared(traversal, tree_copy->kids[0]->leaf->text);
 
+			printf("Searched for: %s\n",tree_copy->kids[0]->leaf->text);
+
+			if (name_search == NULL) {
+				undeclared_error(tree_copy->kids[0]->leaf);
+			}
+
+
 			int end = 0;
 			char* next_thing;
 
 			while(name_search != NULL) {
-				// printf("HERE: %s\n", name_search->s);
-				// printf("%s\n", typename(name_search->type));
+				printf("HERE: %s\n", name_search->s);
+				printf("%s\n", typename(name_search->type));
 
-				if(name_search->type == NULL){
+				if(name_search->type == NULL){ //Need to add types to builtins
 					// printf("Is not a class to dive into\n");
-					undeclared_error(tree_copy->leaf);
+					undeclared_error(tree_copy->kids[1]->leaf);
 				}
 
 				switch (name_search->type->basetype) {
@@ -369,6 +373,7 @@ void populate_symbol_tables(struct tree * n) {
 				//Break out of while loop if there are no more qualified names
 				if (end) {break;}
 			}
+
 			break;
 		}
 
@@ -439,8 +444,8 @@ void enter_newscope(char *s, int typ) {
 	/* insert s into current symbol table */
   	insert_symbol(current, s, t);
 
-	SymbolTableEntry testing = malloc(sizeof(SymbolTableEntry));
-	testing = lookup_st(current, s);
+	// SymbolTableEntry testing = malloc(sizeof(SymbolTableEntry));
+	// testing = lookup_st(current, s);
 
 	/* push new symbol on the stack, making it the current symbol table */
   	pushscope(new_st);

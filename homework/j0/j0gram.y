@@ -63,9 +63,9 @@
 %type <treeptr> MethodReturnVal
 %type <treeptr> MethodDecl
 %type <treeptr> MethodHeader
-%type <treeptr> HeaderPS
+/* %type <treeptr> HeaderPS
 %type <treeptr> HeaderOption
-%type <treeptr> HeaderOptions
+%type <treeptr> HeaderOptions */
 %type <treeptr> MethodDeclarator
 %type <treeptr> FormalParmListOpt
 %type <treeptr> FormalParmList
@@ -200,11 +200,11 @@ MethodDecl:
 		{$$ = create_branch(prodR_MethodDecl,"MethodDecl",2, $1,$2);}
 	;
 MethodHeader:
-	 HeaderPS MethodReturnVal MethodDeclarator
-		{$$ = create_branch(prodR_MethodHeader,"MethodHeader",3, $1,$2,$3);}
+	 PUBLIC STATIC MethodReturnVal MethodDeclarator
+		{$$ = create_branch(prodR_MethodHeader,"MethodHeader",2, $3,$4);}
 	;
 
-HeaderPS:
+/* HeaderPS:
 	HeaderOptions
 		{}
 	|
@@ -223,7 +223,7 @@ HeaderOption:
 		{}
 	| STATIC
 		{}
-	;
+	; */
 
 MethodDeclarator:
 	IDENTIFIER '(' FormalParmListOpt ')'

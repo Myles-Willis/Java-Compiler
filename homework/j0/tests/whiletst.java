@@ -1,11 +1,11 @@
 public class whiletst {
 // A test of while loop syntax
 int d20;
-int random() {
+public static int random() {
 	return d20 != 20;
 }
 
-int main() {
+public static int main() {
 	int test1;
 	int test2;
         // infinite loop
