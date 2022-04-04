@@ -18,8 +18,11 @@ lex.yy.c : j0lex.l
 lex.yy.o : lex.yy.c
 	$(CC) $(CFLAGS) -c lex.yy.c
 
-jmain.o : defs.h tree.h error.h symboltable.h jmain.c
+jmain.o : defs.h tree.h error.h symboltable.h jmain
 	$(CC) $(CFLAGS) -c jmain.c
+
+dot.o : dot.c dot.h
+	$(CC) $(CFLAGS) -c dot.c
 
 token.o : token.h token.c
 	$(CC) $(CFLAGS) -c token.c
@@ -37,10 +40,10 @@ type.o : type.h type.c
 	$(CC) $(CFLAGS) -c type.c
 
 j0 : j0gram.tab.o lex.yy.o jmain.o type.o lex.yy.o token.o tree.o error.o \
-j0gram.tab.o symboltable.o
+j0gram.tab.o symboltable.o dot.o
 
 	$(CC) $(CFLAGS) jmain.o lex.yy.o token.o tree.o error.o j0gram.tab.o \
-	symboltable.o type.o -o j0
+	symboltable.o type.o dot.o -o j0
 
 clean :
 	rm -f lex.yy.c

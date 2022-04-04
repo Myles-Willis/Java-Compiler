@@ -40,6 +40,7 @@
 %token <treeptr> INVALID_ESCAPE_IN_STRING REALLIT_RANGE_INVALID
 %token <treeptr> INVALID_CHARLIT_ESCAPE EMPTY_CHARLIT OPENENDED_CHARLIT
 %token <treeptr> '-' '+' '!' '='
+%token <treeptr> END_OF_FILE
 
 %left ELSE
 %left LOGICALOR
@@ -560,3 +561,9 @@ AssignOp:
 	| DECREMENT
 		{}
 	;
+
+%%
+
+const char *yyname(int sym) {
+	return yytname[sym-END_OF_FILE+3];
+}

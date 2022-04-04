@@ -1,0 +1,87 @@
+digraph {
+N61 [shape=box label="ClassDecl"];
+N61 -> N0;
+N0 [shape=box style=dotted label=<(null)<br/> text: public <br/> line: 1>]
+N61 -> N1;
+N1 [shape=box style=dotted label=<(null)<br/> text: class <br/> line: 1>]
+N61 -> N2;
+N2 [shape=box style=dotted label=<(null)<br/> text: foo <br/> line: 1>]
+N61 -> N59;
+N59 [shape=box label="ClassBodyDecls"];
+N59 -> N25;
+N25 [shape=box label="MethodDecl"];
+N25 -> N19;
+N19 [shape=box label="MethodHeader"];
+N19 -> N4;
+N4 [shape=box style=dotted label=<(null)<br/> text: public <br/> line: 2>]
+N19 -> N5;
+N5 [shape=box style=dotted label=<(null)<br/> text: static <br/> line: 2>]
+N19 -> N6;
+N6 [shape=box style=dotted label=<(null)<br/> text: int <br/> line: 2>]
+N19 -> N18;
+N18 [shape=box label="MethodDeclarator"];
+N18 -> N7;
+N7 [shape=box style=dotted label=<(null)<br/> text: foo <br/> line: 2>]
+N18 -> N17;
+N17 [shape=box label="FormalParmList"];
+N17 -> N12;
+N12 [shape=box label="FormalParm"];
+N12 -> N9;
+N9 [shape=box style=dotted label=<(null)<br/> text: int <br/> line: 2>]
+N12 -> N10;
+N10 [shape=box style=dotted label=<(null)<br/> text: x <br/> line: 2>]
+N17 -> N16;
+N16 [shape=box label="FormalParm"];
+N16 -> N13;
+N13 [shape=box style=dotted label=<(null)<br/> text: String <br/> line: 2>]
+N16 -> N14;
+N14 [shape=box style=dotted label=<(null)<br/> text: y <br/> line: 2>]
+N25 -> N22;
+N22 [shape=box style=dotted label=<(null)<br/> text: x <br/> line: 3>]
+N59 -> N58;
+N58 [shape=box label="MethodDecl"];
+N58 -> N33;
+N33 [shape=box label="MethodHeader"];
+N33 -> N26;
+N26 [shape=box style=dotted label=<(null)<br/> text: public <br/> line: 6>]
+N33 -> N27;
+N27 [shape=box style=dotted label=<(null)<br/> text: static <br/> line: 6>]
+N33 -> N28;
+N28 [shape=box style=dotted label=<(null)<br/> text: int <br/> line: 6>]
+N33 -> N32;
+N32 [shape=box label="MethodDeclarator"];
+N32 -> N29;
+N29 [shape=box style=dotted label=<(null)<br/> text: main <br/> line: 6>]
+N32 -> N0;
+N0 [label="Empty rule"];
+N58 -> N56;
+N56 [shape=box label="BlockStmts"];
+N56 -> N52;
+N52 [shape=box label="BlockStmts"];
+N52 -> N39;
+N39 [shape=box label="LocalVarDecl"];
+N39 -> N35;
+N35 [shape=box style=dotted label=<(null)<br/> text: int <br/> line: 8>]
+N39 -> N38;
+N38 [shape=box label="VarDecls"];
+N38 -> N36;
+N36 [shape=box style=dotted label=<(null)<br/> text: z <br/> line: 8>]
+N52 -> N51;
+N51 [shape=box label="Assignment"];
+N51 -> N40;
+N40 [shape=box style=dotted label=<(null)<br/> text: z <br/> line: 9>]
+N51 -> N41;
+N41 [shape=box style=dotted label=<(null)<br/> text: = <br/> line: 9>]
+N51 -> N49;
+N49 [shape=box label="MethodCall_parens"];
+N49 -> N42;
+N42 [shape=box style=dotted label=<(null)<br/> text: foo <br/> line: 9>]
+N49 -> N48;
+N48 [shape=box label="ArgList"];
+N48 -> N44;
+N44 [shape=box style=dotted label=<(null)<br/> text: 5 <br/> line: 9>]
+N48 -> N46;
+N46 [shape=box style=dotted label=<(null)<br/> text: "funf" <br/> line: 9>]
+N56 -> N54;
+N54 [shape=box style=dotted label=<(null)<br/> text: 0 <br/> line: 10>]
+}

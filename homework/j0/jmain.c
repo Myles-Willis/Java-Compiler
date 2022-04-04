@@ -2,6 +2,7 @@
 #include "tree.h"
 #include "error.h"
 #include "symboltable.h"
+#include "dot.h"
 
 extern int yydebug;
 char *filename;
@@ -67,6 +68,7 @@ int main(int argc, char *argv[]) {
 
 				globals = make_sym_table(20, "global");
 				current = globals;
+
 				load_builtins();
 				populate_symbol_tables(root);
 
@@ -76,6 +78,9 @@ int main(int argc, char *argv[]) {
 					printsymbols(globals, 1);
 				}
 				printf("\n");
+
+				print_graph(root);
+
 				//free_tree(root, 0);
 			}
 		}
