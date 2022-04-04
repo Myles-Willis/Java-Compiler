@@ -182,9 +182,9 @@ void printsymbols(SymbolTable st, int level) {
    	for (i=0;i<st->nBuckets;i++) {
       	for (ste = st->tbl[i]; ste; ste=ste->next) {
 
-			for (j=0; j < level; j++) printf("  ");
+			for (j=0; j < level; j++) printf("   ");
 			printf("%s %s\n", typename(ste->type),ste->s);
-			for (j=0; j < level; j++) printf("  ");
+			// for (j=0; j < level; j++) printf("  ");
 
 			/* if this symbol has a subscope,
 			 print it recursively, indented*/
@@ -193,13 +193,11 @@ void printsymbols(SymbolTable st, int level) {
 			switch (ste->type->basetype) {
 				case CLASS_TYPE:
 				case FUNC_TYPE:
-					for (j=0; j < level+1; j++) printf("  ");
-					printf("--- symbol table for: %s %s ---\n",
-					 typename(ste->type), ste->s);
-					for (j=0; j < level+1; j++) printf("  ");
+					for (j=0; j < level; j++) printf("   ");
+					printf("--- symbol table for: %s %s ---\n",typename(ste->type), ste->s);
 					printsymbols(ste->type->type_sym_table, level + 1);
-					for (j=0; j < level+1; j++) printf("  ");
-					printf("-----\n");
+					for (j=0; j < level; j++) printf("   ");
+					printf("---\n\n");
 					break;
 			}
       }
@@ -454,6 +452,7 @@ void enter_newscope(char *s, int typ) {
 
 void load_builtins() {
 
+
 	enter_newscope("String", CLASS_TYPE);
 	// typeptr t = alctype(BUILTIN_FUNCT);
 	insert_symbol(current, "charAt", NULL);
@@ -473,6 +472,7 @@ void load_builtins() {
 		enter_newscope("in", CLASS_TYPE);
 		insert_symbol(current, "read", NULL);
 		insert_symbol(current, "close", NULL);
+		popscope();
 		popscope();
 
 
