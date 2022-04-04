@@ -18,7 +18,7 @@ lex.yy.c : j0lex.l
 lex.yy.o : lex.yy.c
 	$(CC) $(CFLAGS) -c lex.yy.c
 
-jmain.o : defs.h tree.h error.h symboltable.h jmain
+jmain.o : defs.h tree.h error.h symboltable.h
 	$(CC) $(CFLAGS) -c jmain.c
 
 dot.o : dot.c dot.h
