@@ -194,7 +194,7 @@ void printsymbols(SymbolTable st, int level) {
 				case CLASS_TYPE:
 				case FUNC_TYPE:
 					for (j=0; j < level; j++) printf("   ");
-					printf("--- symbol table for: %s %s ---\n",typename(ste->type), ste->s);
+					printf("--- symbol table for %s: %s ---\n",typename(ste->type), ste->s);
 					printsymbols(ste->type->type_sym_table, level + 1);
 					for (j=0; j < level; j++) printf("   ");
 					printf("---\n\n");
@@ -295,15 +295,20 @@ void populate_symbol_tables(struct tree * n) {
 		case prodR_FormalParm: {
 
 			typeptr t = alctype(conv_to_type(n->kids[0]->leaf->text));
+			// printf("TYPE: %s\n", n->kids[0]->leaf->text);
 			int insert_result = insert_symbol(current,
 				 n->kids[1]->leaf->text, t);
-
+			// printf("****%s\n", n->kids[0]->leaf->text);
 			if (insert_result == 0) {
 				redeclaration_error(n->kids[1]->leaf);
 			}
 			break;
 		}
 
+		case prodR_FormalParmList:{
+			printf("Formal parm list found\n");
+			break;
+		}
 
 		case prodR_QualifiedName: {
 
@@ -387,6 +392,7 @@ void populate_symbol_tables(struct tree * n) {
 			}
 			break;
 		}
+
 	}
 
 	/* visit children */
@@ -454,24 +460,38 @@ void load_builtins() {
 
 
 	enter_newscope("String", CLASS_TYPE);
-	// typeptr t = alctype(BUILTIN_FUNCT);
-	insert_symbol(current, "charAt", NULL);
-	insert_symbol(current, "equals", NULL);
-	insert_symbol(current, "length", NULL);
-	insert_symbol(current, "substring", NULL);
-	insert_symbol(current, "valueOf", NULL);
+
+
+	struct typeinfo *a, *b, *c, *d, *e, *f, *g, *h, *i;
+
+	 a = alctype(FUNC_TYPE);
+	 b = alctype(FUNC_TYPE);
+	 c = alctype(FUNC_TYPE);
+	 d = alctype(FUNC_TYPE);
+	 e = alctype(FUNC_TYPE);
+	 f = alctype(FUNC_TYPE);
+	 g = alctype(FUNC_TYPE);
+	 h = alctype(FUNC_TYPE);
+	 i = alctype(FUNC_TYPE);
+
+
+	insert_symbol(current, "charAt", a);
+	insert_symbol(current, "equals", b);
+	insert_symbol(current, "length", c);
+	insert_symbol(current, "substring", d);
+	insert_symbol(current, "valueOf", e);
 	popscope();
 
 	enter_newscope("System", CLASS_TYPE);
 
 		enter_newscope("out", CLASS_TYPE);
-		insert_symbol(current, "print", NULL);
-		insert_symbol(current, "println", NULL);
+		insert_symbol(current, "print", f);
+		insert_symbol(current, "println", g);
 		popscope();
 
 		enter_newscope("in", CLASS_TYPE);
-		insert_symbol(current, "read", NULL);
-		insert_symbol(current, "close", NULL);
+		insert_symbol(current, "read", h);
+		insert_symbol(current, "close", i);
 		popscope();
 		popscope();
 

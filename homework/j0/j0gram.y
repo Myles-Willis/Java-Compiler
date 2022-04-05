@@ -187,6 +187,8 @@ VarDeclarator: //case?
 		{}
 	| VarDeclarator '[' ']'
 		{}
+	| '[' ']' VarDeclarator
+		{}
 	;
 
 MethodReturnVal:

@@ -27,7 +27,7 @@ struct field {			/* members (fields) of structs */
 #define BOOL_TYPE	 1000007
 #define STRING_TYPE  1000008
 #define NAME_TYPE    1000009
-#define BUILTIN_FUNCT 1000010
+#define FLOAT_TYPE 1000010
 
 #define LAST_TYPE    1000010
 
@@ -70,6 +70,7 @@ extern typeptr integer_typeptr;
 extern typeptr null_typeptr;
 extern typeptr string_typeptr;
 extern typeptr double_typeptr;
+extern typeptr float_typeptr;
 extern typeptr char_typeptr;
 // extern typeptr class_typeptr;
 // extern typeptr func_typeptr;

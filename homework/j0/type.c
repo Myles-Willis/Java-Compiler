@@ -4,27 +4,26 @@
 struct typeinfo integer_type = { INT_TYPE };
 struct typeinfo null_type = { NULL_TYPE };
 struct typeinfo double_type = { DOUBLE_TYPE };
+struct typeinfo float_type = { FLOAT_TYPE };
 struct typeinfo char_type = { CHAR_TYPE };
 struct typeinfo class_type = { CLASS_TYPE };
 struct typeinfo func_type = { FUNC_TYPE };
 struct typeinfo construct_type = { CONSTRUCT_TYPE };
-struct typeinfo builtin_funct_type = { BUILTIN_FUNCT };
 
 typeptr null_typeptr = &null_type;
 typeptr integer_typeptr = &integer_type;
 typeptr double_typeptr = &double_type;
+typeptr float_typeptr = &float_type;
 typeptr char_typeptr = &char_type;
 typeptr class_typeptr = &class_type;
 typeptr func_typeptr = &func_type;
 typeptr construct_typeptr = &construct_type;
-typeptr builtin_typeptr = &builtin_funct_type;
-
 
 char *typenam[] =
    {"null", "int", "double", "function", "class", "constructor", "char",
-    "boolean", "String", "name"};
+    "boolean", "String", "name", "float"};
 
-int typenamSize = 10;
+int typenamSize = 11;
 
 typeptr alctype(int base) {
 
@@ -32,8 +31,8 @@ typeptr alctype(int base) {
    if (base == NULL_TYPE) return null_typeptr;
    else if (base == INT_TYPE) return integer_typeptr;
    else if (base == DOUBLE_TYPE) return double_typeptr;
+   else if (base == FLOAT_TYPE) return float_typeptr;
    else if (base == CHAR_TYPE) return char_typeptr;
-   else if (base == BUILTIN_FUNCT) return builtin_typeptr;
    // else if (base == CLASS_TYPE) return class_typeptr;
    // else if (base == FUNC_TYPE) return func_typeptr;
 
@@ -78,10 +77,12 @@ char *typename(typeptr t) {
 }
 
 int conv_to_type(char* type_string) {
-
-	for (int i = 0; i < (typenamSize - 1); i++) {
+	// printf("conv_to_type: %s\n", type_string);
+	//typenamSize needs to be updated if new types added
+	for (int i = 0; i < (typenamSize); i++) {
+		// printf("typenam[%d] = %s, type_string = %s\n", i, typenam[i], type_string);
 		if (strcmp(typenam[i], type_string) == 0) {
-
+			// printf("i :%d\n", i);
 			switch (i) {
 				case 1:
 					return INT_TYPE;
@@ -100,6 +101,9 @@ int conv_to_type(char* type_string) {
 					break;
 				case 6:
 					return CHAR_TYPE;
+					break;
+				case 10:
+					return FLOAT_TYPE;
 					break;
 			}
 		}
