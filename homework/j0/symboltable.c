@@ -288,6 +288,10 @@ void populate_symbol_tables(struct tree * n) {
 			if (insert_result == 0) {
 				redeclaration_error(n->kids[1]->kids[0]->leaf);
 			}
+
+			n->stab = current;
+			n->kids[1]->kids[0]->leaf->type = t;
+
 			break;
 		}
 
@@ -302,6 +306,10 @@ void populate_symbol_tables(struct tree * n) {
 			if (insert_result == 0) {
 				redeclaration_error(n->kids[1]->leaf);
 			}
+
+			n->stab = current;
+			n->kids[1]->leaf->type = t;
+
 			break;
 		}
 
@@ -388,6 +396,8 @@ void populate_symbol_tables(struct tree * n) {
 				SymbolTableEntry check = check_if_undeclared(current, n->leaf->text);
 				if (check == NULL) {
 					undeclared_error(n->leaf);
+				} else {
+					n->stab = check->table;
 				}
 			}
 			break;

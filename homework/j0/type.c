@@ -197,10 +197,65 @@ void check_types(struct tree *t) {
 
 		case prodR_TypeAssignment: {
 
-			printf("Type assignment found\n");
-			typeptr typ = alctype(conv_to_type(t->kids[0]->leaf->text));
-			printf("***convd type to %s\n", t->kids[0]->leaf->text);
-			t->type = typ;
+			printf("prodR_TypeAssignment found\n");
+
+			int left;
+			int right;
+
+			left = t->kids[1]->leaf->type->basetype;
+			right = t->kids[3]->leaf->type->basetype;
+
+			// printf("L[%s] = R[%s]\n", left, right);
+
+			if (left != right) {
+				printf("INCOMPATIBLE Type Assignment!\n");
+			}
+
+			break;
+		}
+
+		case prodR_UnaryAssignment: {
+
+			printf("prodR_UnaryAssignment found\n");
+
+
+			SymbolTableEntry leftSide = lookup_st(t->kids[0]->stab, t->kids[0]->leaf->text);
+			int left;
+			left = leftSide->type->basetype;
+
+
+			// printf("L[%s] = R[%s]\n", left, right);
+			switch (left) {
+				case INT_TYPE:
+				case FLOAT_TYPE:
+				case DOUBLE_TYPE:
+					break;
+				default:
+					printf("INCOMPATIBLE Unary Assignment!\n");
+			}
+
+			break;
+		}
+
+		case prodR_Assignment: {
+
+			printf("prodR_Assignment found\n");
+
+			// look up in current table and save type;
+
+			SymbolTableEntry leftSide = lookup_st(t->kids[0]->stab, t->kids[0]->leaf->text);
+
+			int left;
+			int right;
+
+			left = leftSide->type->basetype;
+			right = t->kids[2]->leaf->type->basetype;
+
+			if (left != right) {
+				printf("INCOMPATIBLE Type Assignment!\n");
+			} else {
+				t->type = leftSide->type;
+			}
 
 			break;
 		}
@@ -210,28 +265,67 @@ void check_types(struct tree *t) {
 			break;
 		}
 
+		case prodR_MulExpr: {
+			printf("prodR_MulExpr found\n");
+
+			printf("L[%s] * R[]\n", t->kids[0]->kids[0]->kids[0]->leaf->text);
+
+			break;
+		}
+
 		case prodR_BlockStmts: {
-			printf("prodR_BlockStmts found\n");
+			// printf("prodR_BlockStmts found\n");
 			break;
 		}
 
 		case prodR_MethodCall: {
-			printf("prodR_MethodCall found\n");
+			// printf("prodR_MethodCall found\n");
 			break;
 		}
 
 		case prodR_QualifiedName: {
-			printf("prodR_QualifiedName found\n");
+			// printf("prodR_QualifiedName found\n");
 			break;
 		}
 
 		case TOKEN: {
 
-			printf("TOKEN: %s, %s\n", t->symbolname, t->leaf->text);
 
-			if (t->type) {
-				printf("Has Type\n");
+			// if (t->stab) {
+			// 	printf("Has table\n");
+			// }
+			//
+			// if (t->leaf->category == IDENTIFIER) {
+			// 	printf("IDENTIFIER TOKEN: %d, %s\n", t->leaf->category, t->leaf->text);
+			//
+			// 	if (t->leaf->type) {
+			// 		printf("*Has type*\n");
+			// 	}
+			//
+			//
+			// }
+			//
+
+			switch (t->leaf->category) {
+
+				//
+
+
+				case IDENTIFIER:
+				case INTLIT:
+				case STRINGLIT:
+				case REALLIT:
+				case BOOLLIT:
+				case CHARLIT: {
+					if (t->leaf->type) {
+						printf("* Token %s Has type: %s *\n", t->leaf->text ,typename(t->leaf->type));
+					} else {
+						// IDENTIFIER without type?
+					}
+				}
 			}
+
+
 			break;
 		}
 
@@ -242,6 +336,8 @@ void check_types(struct tree *t) {
 	}
 
 }
+
+
 
 // typeptr check_types (typeptr a, typeptr b) {
 //

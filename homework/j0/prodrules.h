@@ -41,6 +41,7 @@ typedef enum {
 	prodR_CondAndExpr,
 	prodR_CondOrExpr,
 	prodR_Assignment,
+	prodR_UnaryAssignment,
 	prodR_TypeAssignment,
 
 } prodrule;

@@ -1,5 +1,5 @@
 public class test2 { public static int f() {
-   float thread_local = 5;
+   float thread_local = 5.55;
    int a = 10;
    return thread_local;
 } }

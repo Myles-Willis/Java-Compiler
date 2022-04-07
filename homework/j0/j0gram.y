@@ -551,7 +551,7 @@ Assignment:
 	LeftHandSide AssignOp Expr
 		{$$ = create_branch(prodR_Assignment,"Assignment",3, $1,$2,$3);}
 	| LeftHandSide AssignOp
-		{$$ = create_branch(prodR_Assignment,"Assignment_Unary",2, $1,$2);}
+		{$$ = create_branch(prodR_UnaryAssignment,"Assignment_Unary",2, $1,$2);}
 	| Type VarDeclarator AssignOp Expr
 		{$$ = create_branch(prodR_TypeAssignment,"Assignment_Type",4, $1,$2,$3,$4);}
 	;
