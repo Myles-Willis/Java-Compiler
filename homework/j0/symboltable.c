@@ -256,7 +256,7 @@ void populate_symbol_tables(struct tree * n) {
 			if (lookup_st(current, n->kids[0]->kids[0]->leaf->text)) {
 				redeclaration_error(n->kids[0]->kids[0]->leaf);
 			}
-			enter_newscope(n->kids[0]->kids[0]->leaf->text, CONSTRUCT_TYPE);
+			enter_newscope(n->kids[0]->kids[0]->leaf->text, CONSTRUCT_TYPE, n);
 			break;
 		}
 
@@ -265,7 +265,7 @@ void populate_symbol_tables(struct tree * n) {
 			if (lookup_st(current, n->kids[0]->kids[1]->kids[0]->leaf->text)) {
 				redeclaration_error(n->kids[0]->kids[1]->kids[0]->leaf);
 			}
-			enter_newscope(n->kids[0]->kids[1]->kids[0]->leaf->text, FUNC_TYPE);
+			enter_newscope(n->kids[0]->kids[1]->kids[0]->leaf->text, FUNC_TYPE, n);
 		 	break;
 		}
 
@@ -274,7 +274,7 @@ void populate_symbol_tables(struct tree * n) {
 			if (lookup_st(current, n->kids[2]->leaf->text)) {
 				redeclaration_error(n->kids[2]->leaf);
 			}
-			enter_newscope(n->kids[2]->leaf->text, CLASS_TYPE);
+			enter_newscope(n->kids[2]->leaf->text, CLASS_TYPE, n);
 			break;
 		}
 
@@ -331,8 +331,8 @@ void populate_symbol_tables(struct tree * n) {
 			char* next_thing;
 
 			while(name_search != NULL) {
-				printf("HERE: %s\n", name_search->s);
-				printf("%s\n", typename(name_search->type));
+				// printf("HERE: %s\n", name_search->s);
+				// printf("%s\n", typename(name_search->type));
 
 				if(name_search->type == NULL){ //Need to add types to builtins
 					// printf("Is not a class to dive into\n");
@@ -430,7 +430,16 @@ char *checked_alloc(int size) {
 	return p;
 }
 
-void enter_newscope(char *s, int typ) {
+typeptr get_return_value(struct tree *n) {
+	if (n != NULL) {
+		/* code */
+		printf("get_return_value: %d\n", n->type->basetype);
+		typeptr typ;
+	}
+
+}
+
+void enter_newscope(char *s, int typ, struct tree * n) {
 
 	/* allocate a new symbol table */
   	SymbolTable new_st = make_sym_table(20, s);
@@ -440,6 +449,7 @@ void enter_newscope(char *s, int typ) {
 		t = alcclasstype(new_st);
 	} else {
 		t = alcfunctype(new_st);
+		// typeptr typ = get_return_value(n);
 	}
 
 	t->type_sym_table = new_st;
@@ -459,7 +469,7 @@ void enter_newscope(char *s, int typ) {
 void load_builtins() {
 
 
-	enter_newscope("String", CLASS_TYPE);
+	enter_newscope("String", CLASS_TYPE, NULL);
 
 
 	struct typeinfo *a, *b, *c, *d, *e, *f, *g, *h, *i;
@@ -482,14 +492,14 @@ void load_builtins() {
 	insert_symbol(current, "valueOf", e);
 	popscope();
 
-	enter_newscope("System", CLASS_TYPE);
+	enter_newscope("System", CLASS_TYPE, NULL);
 
-		enter_newscope("out", CLASS_TYPE);
+		enter_newscope("out", CLASS_TYPE, NULL);
 		insert_symbol(current, "print", f);
 		insert_symbol(current, "println", g);
 		popscope();
 
-		enter_newscope("in", CLASS_TYPE);
+		enter_newscope("in", CLASS_TYPE, NULL);
 		insert_symbol(current, "read", h);
 		insert_symbol(current, "close", i);
 		popscope();
