@@ -4,3 +4,10 @@ homework/j0_test_cases/errors/.DS_Store
 homework/.DS_Store
 homework/.DS_Store
 .DS_Store
+homework/j0/*.o
+homework/j0/j0gram.tab.c
+homework/j0/j0gram.tab.h
+homework/j0/j0gram.tab.o
+homework/j0/j0
+homework/j0/lex.yy.o
+homework/j0/lex.yy.c
