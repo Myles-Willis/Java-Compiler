@@ -5,7 +5,8 @@
 	extern int yyerror(const char *s);
 
 	#include <stdio.h>
-	#include "tree.h"
+	/* #include "tree.h" */
+	#include "type.h"
 	#include "symboltable.h"
 
 	struct tree *root;
@@ -145,9 +146,13 @@ ClassBodyDecl:
 	;
 FieldDecl:
 	Type VarDecls ';'
-		{$$ = create_branch(prodR_FieldDecl,"FieldDecl",2, $1,$2);}
-	/* | Type VarDeclarator '=' Literal ';'
-		{$$ = create_branch(prodR_FieldDeclAssign,"FieldDeclAssignment",3, $1,$2,$4);} */
+		{
+			$$ = create_branch(prodR_FieldDecl,"FieldDecl",2, $1,$2);
+			/* $$->type = determinetype($$);
+			printf("$$ type set to %d", $$->type->basetype); */
+		}
+	| PUBLIC STATIC Type VarDeclarator '=' Literal ';'
+		{$$ = create_branch(prodR_FieldDeclAssign,"FieldDeclAssignment",3, $3,$4,$6);}
 	;
 Type:
 	INT
@@ -199,7 +204,9 @@ MethodReturnVal:
 	;
 MethodDecl:
 	MethodHeader Block
-		{$$ = create_branch(prodR_MethodDecl,"MethodDecl",2, $1,$2);}
+		{
+			$$ = create_branch(prodR_MethodDecl,"MethodDecl",2, $1,$2);
+		}
 	;
 MethodHeader:
 	 PUBLIC STATIC MethodReturnVal MethodDeclarator

@@ -1,4 +1,5 @@
 #include "token.h"
+#include "type.h"
 
 struct token *allocate_token() {
 
@@ -73,6 +74,7 @@ int handle_token(int category_value) { //need to handle cases where tokens arent
 			}
 
 		  	yylval.treeptr->leaf->ival = number;
+			yylval.treeptr->leaf->type = alctype(INT_TYPE);
 
 			break; }
 
@@ -122,6 +124,7 @@ int handle_token(int category_value) { //need to handle cases where tokens arent
 
 			str_buffer[char_position - 1] = '\0';
 			yylval.treeptr->leaf->sval = strdup(str_buffer);
+			yylval.treeptr->leaf->type = alctype(STRING_TYPE);
 			free(str_buffer);
 
 			break; }
@@ -146,6 +149,7 @@ int handle_token(int category_value) { //need to handle cases where tokens arent
 
 				}
 			}
+			yylval.treeptr->leaf->type = alctype(CHAR_TYPE);
 			break; }
 
 	    case REALLIT: {
@@ -161,8 +165,19 @@ int handle_token(int category_value) { //need to handle cases where tokens arent
 	      }
 
 	      yylval.treeptr->leaf->dval = float_value;
+		  yylval.treeptr->leaf->type = alctype(FLOAT_TYPE);
 
 	      break; }
+
+		//   case '=':
+		//   case '+':
+		//   case '-':
+		//   case '*':
+		//   case '/':
+		//   case '%': {
+		// 	  printf("OPERATOR HIT\n");
+	  //
+		//   break;}
 	  }
 
 	  return yylval.treeptr->leaf->category;

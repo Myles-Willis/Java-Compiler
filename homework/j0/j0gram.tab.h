@@ -109,7 +109,11 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
+<<<<<<< Updated upstream
 #line 14 "j0gram.y"
+=======
+#line 15 "j0gram.y"
+>>>>>>> Stashed changes
 
    struct tree *treeptr;
 

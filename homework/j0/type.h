@@ -5,13 +5,13 @@
 
 typedef struct param {
 	char *name;
-	struct type *type;
+	struct typeinfo *type;
 	struct param *next;
 } *paramlist;
 
 struct field {			/* members (fields) of structs */
 	char *name;
-	struct type *elemtype;
+	struct typeinfo *elemtype;
 };
 
 /* base types. How many more base types do we need? */
@@ -38,7 +38,7 @@ typedef struct typeinfo {
 	union {
 		struct arrayinfo {
 			int size;
-			struct type *elemtype;
+			struct typeinfo *elemtype;
 		}a;
 		struct funcinfo {
 			char *name; /* ? */
@@ -51,6 +51,9 @@ typedef struct typeinfo {
 		struct classinfo {
 			char *name; /* ? */
 			struct sym_table *st;
+			// struct typeinfo *paramtype;
+			// struct param *methods;
+			// struct field *fields
 			//lists of zero or more fields, methods, and constructors
 		}c;
 
@@ -65,6 +68,9 @@ int conv_to_type(char* type_string);
 char *typename(typeptr t);
 typeptr alcclasstype(struct sym_table * st);
 typeptr alcfunctype(struct sym_table * st);
+typeptr determinetype(struct tree *t);
+void check_types(struct tree *t);
+void assigntype(typeptr t);
 
 extern typeptr integer_typeptr;
 extern typeptr null_typeptr;

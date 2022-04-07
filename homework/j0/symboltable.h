@@ -33,7 +33,7 @@ extern SymbolTable current;	       /* current */
 void printsymbols(SymbolTable st, int level);
 SymbolTableEntry lookup_st(SymbolTable st, char *s);
 
-void enter_newscope(char *s, int typ);
+void enter_newscope(char *s, int typ, struct tree * n);
 int insert_symbol(SymbolTable st, char *s, typeptr t);
 void load_builtins();
 

@@ -13,6 +13,7 @@ struct tree {
    struct token *leaf;   /* if nkids == 0; NULL for ε productions */
    int is_const;
    struct sym_table *stab;
+   struct typeinfo *type;
 };
 
 struct tree *allocate_tree();

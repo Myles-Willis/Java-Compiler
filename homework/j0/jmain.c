@@ -69,6 +69,7 @@ int main(int argc, char *argv[]) {
 				current = globals;
 				load_builtins();
 				populate_symbol_tables(root);
+				check_types(root);
 
 				if (symtab_print_flag) {
 					printf("\n\nprintsymbols() output:\n");

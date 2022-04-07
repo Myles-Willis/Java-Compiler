@@ -306,7 +306,7 @@ void populate_symbol_tables(struct tree * n) {
 		}
 
 		case prodR_FormalParmList:{
-			printf("Formal parm list found\n");
+			// printf("Formal parm list found\n");
 			break;
 		}
 

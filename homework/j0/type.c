@@ -110,3 +110,150 @@ int conv_to_type(char* type_string) {
 	}
 	return NULL_TYPE;
 }
+
+typeptr determinetype(struct tree *t) {
+	for (int i = 0; i < t->nkids; i++) {
+
+		determinetype(t->kids[i]);
+
+		 switch (t->prodrule) {
+
+		 	case prodR_FieldDecl: {
+				printf("determinetype FieldDecl\n");
+				typeptr typ = t->kids[0]->type;
+				// printf("setting %d type\n", t->type->basetype);
+				return typ;
+			}
+
+			case TOKEN: {
+
+				printf("determinetype Token\n");
+				struct token *tok = t->leaf;
+
+				switch (tok->category) {
+					case IDENTIFIER: {
+						typeptr typ = alctype(NULL_TYPE); //Need to mark as class type
+						return typ;
+						break;
+					}
+
+					case INTLIT: {
+						typeptr typ = alctype(conv_to_type(tok->text));
+						return typ;
+						break;
+					}
+
+					default: {
+						printf("Can't determine type of %s\n", tok->text);
+						exit(2);
+					}
+				}
+			}
+
+			default:
+				printf("Throw semantic error: can't determine type for: %s\n", t->symbolname);
+				exit(2);
+		 }
+	}
+	return NULL;
+}
+
+typeptr get_type(SymbolTable st, struct token *tok) {
+
+	SymbolTableEntry ste;
+
+	if (tok->type != NULL) {
+		return tok->type;
+	}
+
+	if (tok->category == IDENTIFIER) {
+		ste = lookup_st(st, tok->text);
+
+		if (ste != NULL) {
+			tok->type = ste->type;
+			return tok->type;
+		} else {
+			printf("Throw semantic error here: cant check type of %s\n", tok->text);
+			exit(3);
+		}
+	}
+
+	return NULL;
+}
+
+void check_types(struct tree *t) {
+
+	if (t == NULL) return;
+
+	int i;
+
+	for (i = 0; i < t->nkids; i++) {
+		check_types(t->kids[i]);
+	}
+
+
+	switch(t->prodrule) {
+
+
+		case prodR_TypeAssignment: {
+
+			printf("Type assignment found\n");
+			typeptr typ = alctype(conv_to_type(t->kids[0]->leaf->text));
+			printf("***convd type to %s\n", t->kids[0]->leaf->text);
+			t->type = typ;
+
+			break;
+		}
+
+		case prodR_AddExpr: {
+			printf("prodR_AddExpr found\n");
+			break;
+		}
+
+		case prodR_BlockStmts: {
+			printf("prodR_BlockStmts found\n");
+			break;
+		}
+
+		case prodR_MethodCall: {
+			printf("prodR_MethodCall found\n");
+			break;
+		}
+
+		case prodR_QualifiedName: {
+			printf("prodR_QualifiedName found\n");
+			break;
+		}
+
+		case TOKEN: {
+
+			printf("TOKEN: %s, %s\n", t->symbolname, t->leaf->text);
+
+			if (t->type) {
+				printf("Has Type\n");
+			}
+			break;
+		}
+
+		default: {
+
+		}
+
+	}
+
+}
+
+// typeptr check_types (typeptr a, typeptr b) {
+//
+// 	return NULL;
+// }
+
+// void assigntype(struct tree *t, typeinfo typ) {
+//
+// 	switch (t->prodrule) {
+//
+// 		case prodR_VarDecls: {
+//
+// 		}
+// 	}
+// }

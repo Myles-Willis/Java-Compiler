@@ -62,12 +62,21 @@
 	extern int yyerror(const char *s);
 
 	#include <stdio.h>
+<<<<<<< Updated upstream
 	#include "tree.h"
+=======
+	/* #include "tree.h" */
+	#include "type.h"
+>>>>>>> Stashed changes
 	#include "symboltable.h"
 
 	struct tree *root;
 
+<<<<<<< Updated upstream
 #line 71 "j0gram.tab.c"
+=======
+#line 72 "j0gram.tab.c"
+>>>>>>> Stashed changes
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -167,11 +176,19 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
+<<<<<<< Updated upstream
 #line 14 "j0gram.y"
 
    struct tree *treeptr;
 
 #line 175 "j0gram.tab.c"
+=======
+#line 15 "j0gram.y"
+
+   struct tree *treeptr;
+
+#line 176 "j0gram.tab.c"
+>>>>>>> Stashed changes
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -653,6 +670,7 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
+<<<<<<< Updated upstream
        0,   123,   123,   127,   129,   133,   135,   139,   141,   143,
      147,   153,   155,   157,   159,   161,   163,   165,   169,   171,
      175,   180,   186,   188,   190,   195,   197,   201,   205,   231,
@@ -667,6 +685,22 @@ static const yytype_int16 yyrline[] =
      488,   492,   494,   496,   500,   502,   504,   506,   510,   512,
      517,   519,   521,   525,   527,   531,   533,   538,   540,   544,
      546,   548,   552,   554,   558,   560,   562
+=======
+       0,   124,   124,   128,   130,   134,   136,   140,   142,   144,
+     148,   158,   160,   162,   164,   166,   168,   170,   174,   176,
+     180,   185,   191,   193,   195,   200,   202,   206,   212,   238,
+     242,   245,   248,   250,   254,   259,   263,   267,   270,   273,
+     277,   280,   283,   285,   289,   291,   296,   300,   305,   307,
+     309,   311,   313,   316,   318,   320,   323,   325,   330,   335,
+     337,   339,   344,   348,   352,   355,   360,   362,   366,   370,
+     375,   379,   381,   384,   387,   390,   393,   396,   400,   402,
+     407,   409,   413,   418,   420,   422,   424,   428,   430,   432,
+     434,   436,   438,   440,   445,   449,   451,   455,   460,   463,
+     466,   469,   474,   476,   480,   482,   484,   488,   490,   493,
+     495,   499,   501,   503,   507,   509,   511,   513,   517,   519,
+     524,   526,   528,   532,   534,   538,   540,   545,   547,   551,
+     553,   555,   559,   561,   565,   567,   569
+>>>>>>> Stashed changes
 };
 #endif
 
@@ -1458,6 +1492,7 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
   switch (yyrule)
     {
   case 2: /* ClassDecl: PUBLIC CLASS IDENTIFIER ClassBody  */
+<<<<<<< Updated upstream
 #line 124 "j0gram.y"
                 {root = create_branch(prodR_ClassDecl, "ClassDecl", 4, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
 #line 1464 "j0gram.tab.c"
@@ -2263,6 +2298,819 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
 
 
 #line 2266 "j0gram.tab.c"
+=======
+#line 125 "j0gram.y"
+                {root = create_branch(prodR_ClassDecl, "ClassDecl", 4, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
+#line 1465 "j0gram.tab.c"
+    break;
+
+  case 3: /* ClassBody: '{' ClassBodyDecls '}'  */
+#line 129 "j0gram.y"
+                {((*yyvalp).treeptr) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.treeptr);}
+#line 1471 "j0gram.tab.c"
+    break;
+
+  case 4: /* ClassBody: '{' '}'  */
+#line 131 "j0gram.y"
+                {}
+#line 1477 "j0gram.tab.c"
+    break;
+
+  case 5: /* ClassBodyDecls: ClassBodyDecl  */
+#line 135 "j0gram.y"
+                {}
+#line 1483 "j0gram.tab.c"
+    break;
+
+  case 6: /* ClassBodyDecls: ClassBodyDecls ClassBodyDecl  */
+#line 137 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_ClassBodyDecls,"ClassBodyDecls",2, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
+#line 1489 "j0gram.tab.c"
+    break;
+
+  case 7: /* ClassBodyDecl: FieldDecl  */
+#line 141 "j0gram.y"
+                {}
+#line 1495 "j0gram.tab.c"
+    break;
+
+  case 8: /* ClassBodyDecl: MethodDecl  */
+#line 143 "j0gram.y"
+                {}
+#line 1501 "j0gram.tab.c"
+    break;
+
+  case 9: /* ClassBodyDecl: ConstructorDecl  */
+#line 145 "j0gram.y"
+                {}
+#line 1507 "j0gram.tab.c"
+    break;
+
+  case 10: /* FieldDecl: Type VarDecls ';'  */
+#line 149 "j0gram.y"
+                {
+			((*yyvalp).treeptr) = create_branch(prodR_FieldDecl,"FieldDecl",2, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.treeptr));
+			/* $$->type = determinetype($$);
+			printf("$$ type set to %d", $$->type->basetype); */
+		}
+#line 1517 "j0gram.tab.c"
+    break;
+
+  case 11: /* Type: INT  */
+#line 159 "j0gram.y"
+                {}
+#line 1523 "j0gram.tab.c"
+    break;
+
+  case 12: /* Type: DOUBLE  */
+#line 161 "j0gram.y"
+                {}
+#line 1529 "j0gram.tab.c"
+    break;
+
+  case 13: /* Type: BOOL  */
+#line 163 "j0gram.y"
+                {}
+#line 1535 "j0gram.tab.c"
+    break;
+
+  case 14: /* Type: STRING  */
+#line 165 "j0gram.y"
+                {}
+#line 1541 "j0gram.tab.c"
+    break;
+
+  case 15: /* Type: Name  */
+#line 167 "j0gram.y"
+                {}
+#line 1547 "j0gram.tab.c"
+    break;
+
+  case 16: /* Type: CHAR  */
+#line 169 "j0gram.y"
+                {}
+#line 1553 "j0gram.tab.c"
+    break;
+
+  case 18: /* Name: IDENTIFIER  */
+#line 175 "j0gram.y"
+                {}
+#line 1559 "j0gram.tab.c"
+    break;
+
+  case 19: /* Name: QualifiedName  */
+#line 177 "j0gram.y"
+                {}
+#line 1565 "j0gram.tab.c"
+    break;
+
+  case 20: /* QualifiedName: IDENTIFIER '.' Name  */
+#line 181 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_QualifiedName,"QualifiedName",2, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
+#line 1571 "j0gram.tab.c"
+    break;
+
+  case 21: /* VarDecls: VarDeclarator  */
+#line 186 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_VarDecls,"VarDecls",1, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
+#line 1577 "j0gram.tab.c"
+    break;
+
+  case 22: /* VarDeclarator: IDENTIFIER  */
+#line 192 "j0gram.y"
+                {}
+#line 1583 "j0gram.tab.c"
+    break;
+
+  case 23: /* VarDeclarator: VarDeclarator '[' ']'  */
+#line 194 "j0gram.y"
+                {}
+#line 1589 "j0gram.tab.c"
+    break;
+
+  case 24: /* VarDeclarator: '[' ']' VarDeclarator  */
+#line 196 "j0gram.y"
+                {}
+#line 1595 "j0gram.tab.c"
+    break;
+
+  case 25: /* MethodReturnVal: Type  */
+#line 201 "j0gram.y"
+                {}
+#line 1601 "j0gram.tab.c"
+    break;
+
+  case 26: /* MethodReturnVal: VOID  */
+#line 203 "j0gram.y"
+                {}
+#line 1607 "j0gram.tab.c"
+    break;
+
+  case 27: /* MethodDecl: MethodHeader Block  */
+#line 207 "j0gram.y"
+                {
+			((*yyvalp).treeptr) = create_branch(prodR_MethodDecl,"MethodDecl",2, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));
+		}
+#line 1615 "j0gram.tab.c"
+    break;
+
+  case 28: /* MethodHeader: PUBLIC STATIC MethodReturnVal MethodDeclarator  */
+#line 213 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_MethodHeader,"MethodHeader",2, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
+#line 1621 "j0gram.tab.c"
+    break;
+
+  case 29: /* MethodDeclarator: IDENTIFIER '(' FormalParmListOpt ')'  */
+#line 239 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_MethodDeclarator, "MethodDeclarator", 2, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.treeptr), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.treeptr));}
+#line 1627 "j0gram.tab.c"
+    break;
+
+  case 30: /* FormalParmListOpt: FormalParmList  */
+#line 243 "j0gram.y"
+                {}
+#line 1633 "j0gram.tab.c"
+    break;
+
+  case 31: /* FormalParmListOpt: %empty  */
+#line 245 "j0gram.y"
+                {((*yyvalp).treeptr) = NULL;}
+#line 1639 "j0gram.tab.c"
+    break;
+
+  case 32: /* FormalParmList: FormalParm  */
+#line 249 "j0gram.y"
+                {}
+#line 1645 "j0gram.tab.c"
+    break;
+
+  case 33: /* FormalParmList: FormalParmList ',' FormalParm  */
+#line 251 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_FormalParmList,"FormalParmList",2, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
+#line 1651 "j0gram.tab.c"
+    break;
+
+  case 34: /* FormalParm: Type VarDeclarator  */
+#line 255 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_FormalParm,"FormalParm",2, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
+#line 1657 "j0gram.tab.c"
+    break;
+
+  case 35: /* ConstructorDecl: ConstructorDeclarator Block  */
+#line 260 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_ConstructorDecl,"ConstructorDecl",2, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
+#line 1663 "j0gram.tab.c"
+    break;
+
+  case 36: /* ConstructorDeclarator: IDENTIFIER '(' FormalParmListOpt ')'  */
+#line 264 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_ConstructorDeclarator,"ConstructorDeclarator",2, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.treeptr));}
+#line 1669 "j0gram.tab.c"
+    break;
+
+  case 37: /* ArgListOpt: ArgList  */
+#line 268 "j0gram.y"
+                {}
+#line 1675 "j0gram.tab.c"
+    break;
+
+  case 38: /* ArgListOpt: %empty  */
+#line 270 "j0gram.y"
+                {((*yyvalp).treeptr) = NULL;}
+#line 1681 "j0gram.tab.c"
+    break;
+
+  case 39: /* Block: '{' BlockStmtsOpt '}'  */
+#line 274 "j0gram.y"
+                {((*yyvalp).treeptr) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.treeptr);}
+#line 1687 "j0gram.tab.c"
+    break;
+
+  case 40: /* BlockStmtsOpt: BlockStmts  */
+#line 278 "j0gram.y"
+                {}
+#line 1693 "j0gram.tab.c"
+    break;
+
+  case 41: /* BlockStmtsOpt: %empty  */
+#line 280 "j0gram.y"
+                {((*yyvalp).treeptr) = NULL;}
+#line 1699 "j0gram.tab.c"
+    break;
+
+  case 42: /* BlockStmts: BlockStmt  */
+#line 284 "j0gram.y"
+                {}
+#line 1705 "j0gram.tab.c"
+    break;
+
+  case 43: /* BlockStmts: BlockStmts BlockStmt  */
+#line 286 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_BlockStmts,"BlockStmts",2, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
+#line 1711 "j0gram.tab.c"
+    break;
+
+  case 44: /* BlockStmt: LocalVarDeclStmt  */
+#line 290 "j0gram.y"
+                {}
+#line 1717 "j0gram.tab.c"
+    break;
+
+  case 45: /* BlockStmt: Stmt  */
+#line 292 "j0gram.y"
+                {}
+#line 1723 "j0gram.tab.c"
+    break;
+
+  case 46: /* LocalVarDeclStmt: LocalVarDecl ';'  */
+#line 297 "j0gram.y"
+                {}
+#line 1729 "j0gram.tab.c"
+    break;
+
+  case 47: /* LocalVarDecl: Type VarDecls  */
+#line 301 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_LocalVarDecl,"LocalVarDecl",2, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
+#line 1735 "j0gram.tab.c"
+    break;
+
+  case 48: /* Stmt: Block  */
+#line 306 "j0gram.y"
+                {}
+#line 1741 "j0gram.tab.c"
+    break;
+
+  case 49: /* Stmt: ';'  */
+#line 308 "j0gram.y"
+                {}
+#line 1747 "j0gram.tab.c"
+    break;
+
+  case 50: /* Stmt: ExprStmt  */
+#line 310 "j0gram.y"
+                {}
+#line 1753 "j0gram.tab.c"
+    break;
+
+  case 51: /* Stmt: BreakStmt  */
+#line 312 "j0gram.y"
+                {}
+#line 1759 "j0gram.tab.c"
+    break;
+
+  case 52: /* Stmt: ReturnStmt  */
+#line 314 "j0gram.y"
+                {}
+#line 1765 "j0gram.tab.c"
+    break;
+
+  case 53: /* Stmt: IfThenStmt  */
+#line 317 "j0gram.y"
+                {}
+#line 1771 "j0gram.tab.c"
+    break;
+
+  case 54: /* Stmt: IfThenElseStmt  */
+#line 319 "j0gram.y"
+                {}
+#line 1777 "j0gram.tab.c"
+    break;
+
+  case 55: /* Stmt: IfThenElseIfStmt  */
+#line 321 "j0gram.y"
+                {}
+#line 1783 "j0gram.tab.c"
+    break;
+
+  case 56: /* Stmt: WhileStmt  */
+#line 324 "j0gram.y"
+                {}
+#line 1789 "j0gram.tab.c"
+    break;
+
+  case 57: /* Stmt: ForStmt  */
+#line 326 "j0gram.y"
+                {}
+#line 1795 "j0gram.tab.c"
+    break;
+
+  case 58: /* ExprStmt: StmtExpr ';'  */
+#line 331 "j0gram.y"
+                {}
+#line 1801 "j0gram.tab.c"
+    break;
+
+  case 59: /* StmtExpr: Assignment  */
+#line 336 "j0gram.y"
+                {}
+#line 1807 "j0gram.tab.c"
+    break;
+
+  case 60: /* StmtExpr: MethodCall  */
+#line 338 "j0gram.y"
+                {}
+#line 1813 "j0gram.tab.c"
+    break;
+
+  case 61: /* StmtExpr: InstantiationExpr  */
+#line 340 "j0gram.y"
+                {}
+#line 1819 "j0gram.tab.c"
+    break;
+
+  case 62: /* IfThenStmt: IF '(' Expr ')' Block  */
+#line 345 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_IfThenStmt,"IfThenStmt",2, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
+#line 1825 "j0gram.tab.c"
+    break;
+
+  case 63: /* IfThenElseStmt: IF '(' Expr ')' Block ELSE Block  */
+#line 349 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_IfThenElseStmt, "IfThenElseStmt",3, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-4)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.treeptr), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
+#line 1831 "j0gram.tab.c"
+    break;
+
+  case 64: /* IfThenElseIfStmt: IF '(' Expr ')' Block ElseIfSequence  */
+#line 353 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_IfThenElseIfStmt,"IfThenElseIfStmt",3,(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
+#line 1837 "j0gram.tab.c"
+    break;
+
+  case 65: /* IfThenElseIfStmt: IF '(' Expr ')' Block ElseIfSequence ELSE Block  */
+#line 356 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_IfThenElseIfStmt,"IfThenElseIf_Else_Stmt",4, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-5)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
+#line 1843 "j0gram.tab.c"
+    break;
+
+  case 66: /* ElseIfSequence: ElseIfStmt  */
+#line 361 "j0gram.y"
+                {}
+#line 1849 "j0gram.tab.c"
+    break;
+
+  case 67: /* ElseIfSequence: ElseIfSequence ElseIfStmt  */
+#line 363 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_ElseIfSequence,"ElseIfSequence",2, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
+#line 1855 "j0gram.tab.c"
+    break;
+
+  case 68: /* ElseIfStmt: ELSE IfThenStmt  */
+#line 367 "j0gram.y"
+                {((*yyvalp).treeptr) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr);}
+#line 1861 "j0gram.tab.c"
+    break;
+
+  case 69: /* WhileStmt: WHILE '(' Expr ')' Stmt  */
+#line 371 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_WhileStmt,"WhileStmt",2, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
+#line 1867 "j0gram.tab.c"
+    break;
+
+  case 70: /* ForStmt: FOR '(' ForInit ';' ExprOpt ';' ForUpdate ')' Block  */
+#line 376 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_ForStmt,"ForStmt",4, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-6)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-4)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
+#line 1873 "j0gram.tab.c"
+    break;
+
+  case 71: /* ForInit: StmtExprList  */
+#line 380 "j0gram.y"
+                {}
+#line 1879 "j0gram.tab.c"
+    break;
+
+  case 72: /* ForInit: LocalVarDecl  */
+#line 382 "j0gram.y"
+                {}
+#line 1885 "j0gram.tab.c"
+    break;
+
+  case 73: /* ForInit: %empty  */
+#line 384 "j0gram.y"
+                {((*yyvalp).treeptr) = NULL;}
+#line 1891 "j0gram.tab.c"
+    break;
+
+  case 74: /* ExprOpt: Expr  */
+#line 388 "j0gram.y"
+                {}
+#line 1897 "j0gram.tab.c"
+    break;
+
+  case 75: /* ExprOpt: %empty  */
+#line 390 "j0gram.y"
+                {((*yyvalp).treeptr) = NULL;}
+#line 1903 "j0gram.tab.c"
+    break;
+
+  case 76: /* ForUpdate: StmtExprList  */
+#line 394 "j0gram.y"
+                {}
+#line 1909 "j0gram.tab.c"
+    break;
+
+  case 77: /* ForUpdate: %empty  */
+#line 396 "j0gram.y"
+                {((*yyvalp).treeptr) = NULL;}
+#line 1915 "j0gram.tab.c"
+    break;
+
+  case 78: /* StmtExprList: StmtExpr  */
+#line 401 "j0gram.y"
+                {}
+#line 1921 "j0gram.tab.c"
+    break;
+
+  case 79: /* StmtExprList: StmtExprList ',' StmtExpr  */
+#line 403 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_StmtExprList,"StmtExprList",2, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
+#line 1927 "j0gram.tab.c"
+    break;
+
+  case 80: /* BreakStmt: BREAK ';'  */
+#line 408 "j0gram.y"
+                {}
+#line 1933 "j0gram.tab.c"
+    break;
+
+  case 81: /* BreakStmt: BREAK IDENTIFIER ';'  */
+#line 410 "j0gram.y"
+                {((*yyvalp).treeptr) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.treeptr);}
+#line 1939 "j0gram.tab.c"
+    break;
+
+  case 82: /* ReturnStmt: RETURN ExprOpt ';'  */
+#line 414 "j0gram.y"
+                {((*yyvalp).treeptr) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.treeptr);}
+#line 1945 "j0gram.tab.c"
+    break;
+
+  case 83: /* Primary: Literal  */
+#line 419 "j0gram.y"
+                {}
+#line 1951 "j0gram.tab.c"
+    break;
+
+  case 84: /* Primary: '(' Expr ')'  */
+#line 421 "j0gram.y"
+                {((*yyvalp).treeptr) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.treeptr);}
+#line 1957 "j0gram.tab.c"
+    break;
+
+  case 85: /* Primary: FieldAccess  */
+#line 423 "j0gram.y"
+                {}
+#line 1963 "j0gram.tab.c"
+    break;
+
+  case 86: /* Primary: MethodCall  */
+#line 425 "j0gram.y"
+                {}
+#line 1969 "j0gram.tab.c"
+    break;
+
+  case 87: /* Literal: INTLIT  */
+#line 429 "j0gram.y"
+                {}
+#line 1975 "j0gram.tab.c"
+    break;
+
+  case 88: /* Literal: DOUBLELIT  */
+#line 431 "j0gram.y"
+                {}
+#line 1981 "j0gram.tab.c"
+    break;
+
+  case 89: /* Literal: REALLIT  */
+#line 433 "j0gram.y"
+                {}
+#line 1987 "j0gram.tab.c"
+    break;
+
+  case 90: /* Literal: BOOLLIT  */
+#line 435 "j0gram.y"
+                {}
+#line 1993 "j0gram.tab.c"
+    break;
+
+  case 91: /* Literal: CHARLIT  */
+#line 437 "j0gram.y"
+                {}
+#line 1999 "j0gram.tab.c"
+    break;
+
+  case 92: /* Literal: STRINGLIT  */
+#line 439 "j0gram.y"
+                {}
+#line 2005 "j0gram.tab.c"
+    break;
+
+  case 93: /* Literal: NULLVAL  */
+#line 441 "j0gram.y"
+                {}
+#line 2011 "j0gram.tab.c"
+    break;
+
+  case 94: /* InstantiationExpr: NEW Name '(' ArgListOpt ')'  */
+#line 446 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_InstantiationExpr,"InstantiationExpr",2, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.treeptr));}
+#line 2017 "j0gram.tab.c"
+    break;
+
+  case 95: /* ArgList: Expr  */
+#line 450 "j0gram.y"
+                {}
+#line 2023 "j0gram.tab.c"
+    break;
+
+  case 96: /* ArgList: ArgList ',' Expr  */
+#line 452 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_ArgList,"ArgList",2, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
+#line 2029 "j0gram.tab.c"
+    break;
+
+  case 97: /* FieldAccess: Primary '.' IDENTIFIER  */
+#line 456 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_FieldAccess,"FieldAccess",2, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
+#line 2035 "j0gram.tab.c"
+    break;
+
+  case 98: /* MethodCall: Name '(' ArgListOpt ')'  */
+#line 461 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_MethodCall,"MethodCall_parens",2, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.treeptr));}
+#line 2041 "j0gram.tab.c"
+    break;
+
+  case 99: /* MethodCall: Name '{' ArgListOpt '}'  */
+#line 464 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_MethodCall,"MethodCall_curly",2, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.treeptr));}
+#line 2047 "j0gram.tab.c"
+    break;
+
+  case 100: /* MethodCall: Primary '.' IDENTIFIER '(' ArgListOpt ')'  */
+#line 467 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_MethodCall,"MethodCall_primary_parens",3, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-5)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.treeptr));}
+#line 2053 "j0gram.tab.c"
+    break;
+
+  case 101: /* MethodCall: Primary '.' IDENTIFIER '{' ArgListOpt '}'  */
+#line 470 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_MethodCall,"MethodCall_primary_curly",3, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-5)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.treeptr));}
+#line 2059 "j0gram.tab.c"
+    break;
+
+  case 102: /* PostFixExpr: Primary  */
+#line 475 "j0gram.y"
+                {}
+#line 2065 "j0gram.tab.c"
+    break;
+
+  case 103: /* PostFixExpr: Name  */
+#line 477 "j0gram.y"
+                {}
+#line 2071 "j0gram.tab.c"
+    break;
+
+  case 104: /* UnaryExpr: '-' UnaryExpr  */
+#line 481 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_UnaryExpr, "UnaryExpr_Neg", 2, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.treeptr), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
+#line 2077 "j0gram.tab.c"
+    break;
+
+  case 105: /* UnaryExpr: '!' UnaryExpr  */
+#line 483 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_UnaryExpr, "UnaryExpr_Excl", 2, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.treeptr), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
+#line 2083 "j0gram.tab.c"
+    break;
+
+  case 106: /* UnaryExpr: PostFixExpr  */
+#line 485 "j0gram.y"
+                {}
+#line 2089 "j0gram.tab.c"
+    break;
+
+  case 107: /* MulExpr: UnaryExpr  */
+#line 489 "j0gram.y"
+                {}
+#line 2095 "j0gram.tab.c"
+    break;
+
+  case 108: /* MulExpr: MulExpr '*' UnaryExpr  */
+#line 491 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_MulExpr,"MulExpr_multiply",2, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
+#line 2101 "j0gram.tab.c"
+    break;
+
+  case 109: /* MulExpr: MulExpr '/' UnaryExpr  */
+#line 494 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_MulExpr,"MulExpr_divide",2, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
+#line 2107 "j0gram.tab.c"
+    break;
+
+  case 110: /* MulExpr: MulExpr '%' UnaryExpr  */
+#line 496 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_MulExpr,"MulExpr_modulus",2, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
+#line 2113 "j0gram.tab.c"
+    break;
+
+  case 111: /* AddExpr: MulExpr  */
+#line 500 "j0gram.y"
+                {}
+#line 2119 "j0gram.tab.c"
+    break;
+
+  case 112: /* AddExpr: AddExpr '+' MulExpr  */
+#line 502 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_AddExpr,"AddExpr_add",2, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
+#line 2125 "j0gram.tab.c"
+    break;
+
+  case 113: /* AddExpr: AddExpr '-' MulExpr  */
+#line 504 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_AddExpr,"AddExpr_subtract",2, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
+#line 2131 "j0gram.tab.c"
+    break;
+
+  case 114: /* RelOp: LESSTHANOREQUAL  */
+#line 508 "j0gram.y"
+                {}
+#line 2137 "j0gram.tab.c"
+    break;
+
+  case 115: /* RelOp: GREATERTHANOREQUAL  */
+#line 510 "j0gram.y"
+                {}
+#line 2143 "j0gram.tab.c"
+    break;
+
+  case 116: /* RelOp: '<'  */
+#line 512 "j0gram.y"
+                {}
+#line 2149 "j0gram.tab.c"
+    break;
+
+  case 117: /* RelOp: '>'  */
+#line 514 "j0gram.y"
+                {}
+#line 2155 "j0gram.tab.c"
+    break;
+
+  case 118: /* RelExpr: AddExpr  */
+#line 518 "j0gram.y"
+                {}
+#line 2161 "j0gram.tab.c"
+    break;
+
+  case 119: /* RelExpr: RelExpr RelOp AddExpr  */
+#line 520 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_RelExpr,"RelExpr",3, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
+#line 2167 "j0gram.tab.c"
+    break;
+
+  case 120: /* EqExpr: RelExpr  */
+#line 525 "j0gram.y"
+                {}
+#line 2173 "j0gram.tab.c"
+    break;
+
+  case 121: /* EqExpr: EqExpr ISEQUALTO RelExpr  */
+#line 527 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_EqExpr,"EqExpr_isequal",2, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
+#line 2179 "j0gram.tab.c"
+    break;
+
+  case 122: /* EqExpr: EqExpr NOTEQUALTO RelExpr  */
+#line 529 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_EqExpr,"EqExpr_notequal",2, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
+#line 2185 "j0gram.tab.c"
+    break;
+
+  case 123: /* CondAndExpr: EqExpr  */
+#line 533 "j0gram.y"
+                {}
+#line 2191 "j0gram.tab.c"
+    break;
+
+  case 124: /* CondAndExpr: CondAndExpr LOGICALAND EqExpr  */
+#line 535 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_CondAndExpr,"CondAndExpr",2, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
+#line 2197 "j0gram.tab.c"
+    break;
+
+  case 125: /* CondOrExpr: CondAndExpr  */
+#line 539 "j0gram.y"
+                {}
+#line 2203 "j0gram.tab.c"
+    break;
+
+  case 126: /* CondOrExpr: CondOrExpr LOGICALOR CondAndExpr  */
+#line 541 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_CondOrExpr,"CondOrExpr",2, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
+#line 2209 "j0gram.tab.c"
+    break;
+
+  case 127: /* Expr: CondOrExpr  */
+#line 546 "j0gram.y"
+                {}
+#line 2215 "j0gram.tab.c"
+    break;
+
+  case 128: /* Expr: Assignment  */
+#line 548 "j0gram.y"
+                {}
+#line 2221 "j0gram.tab.c"
+    break;
+
+  case 129: /* Assignment: LeftHandSide AssignOp Expr  */
+#line 552 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_Assignment,"Assignment",3, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
+#line 2227 "j0gram.tab.c"
+    break;
+
+  case 130: /* Assignment: LeftHandSide AssignOp  */
+#line 554 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_Assignment,"Assignment_Unary",2, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
+#line 2233 "j0gram.tab.c"
+    break;
+
+  case 131: /* Assignment: Type VarDeclarator AssignOp Expr  */
+#line 556 "j0gram.y"
+                {((*yyvalp).treeptr) = create_branch(prodR_TypeAssignment,"Assignment_Type",4, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.treeptr),(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.treeptr));}
+#line 2239 "j0gram.tab.c"
+    break;
+
+  case 132: /* LeftHandSide: Name  */
+#line 560 "j0gram.y"
+                {}
+#line 2245 "j0gram.tab.c"
+    break;
+
+  case 133: /* LeftHandSide: FieldAccess  */
+#line 562 "j0gram.y"
+                {}
+#line 2251 "j0gram.tab.c"
+    break;
+
+  case 134: /* AssignOp: '='  */
+#line 566 "j0gram.y"
+                {}
+#line 2257 "j0gram.tab.c"
+    break;
+
+  case 135: /* AssignOp: INCREMENT  */
+#line 568 "j0gram.y"
+                {}
+#line 2263 "j0gram.tab.c"
+    break;
+
+  case 136: /* AssignOp: DECREMENT  */
+#line 570 "j0gram.y"
+                {}
+#line 2269 "j0gram.tab.c"
+    break;
+
+
+#line 2273 "j0gram.tab.c"
+>>>>>>> Stashed changes
 
       default: break;
     }
