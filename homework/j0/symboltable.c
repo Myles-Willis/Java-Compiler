@@ -440,14 +440,14 @@ char *checked_alloc(int size) {
 	return p;
 }
 
-typeptr get_return_value(struct tree *n) {
-	if (n != NULL) {
-		/* code */
-		printf("get_return_value: %d\n", n->type->basetype);
-		typeptr typ;
-	}
-
-}
+// typeptr get_return_value(struct tree *n) {
+// 	if (n != NULL) {
+// 		/* code */
+// 		printf("get_return_value: %d\n", n->type->basetype);
+// 		typeptr typ;
+// 	}
+//
+// }
 
 void enter_newscope(char *s, int typ, struct tree * n) {
 

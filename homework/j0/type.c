@@ -198,7 +198,7 @@ typeptr get_type(struct tree *t) {
 			}
 		}
 	}
-
+	printf("### Could Not Get Type ###\n");
 	return NULL;
 }
 
@@ -233,15 +233,15 @@ void check_types(struct tree *t) {
 
 			printf("prodR_TypeAssignment found\n");
 
-			int left;
-			int right;
+			typeptr left;
+			typeptr right;
 
-			left = t->kids[1]->leaf->type->basetype;
-			right = t->kids[3]->leaf->type->basetype;
+			left = get_type(t->kids[1]);
+			right = get_type(t->kids[3]);
 
 			// printf("L[%s] = R[%s]\n", left, right);
 
-			if (left != right) {
+			if (left->basetype != right->basetype) {
 				printf("INCOMPATIBLE Type Assignment!\n");
 			}
 
@@ -252,20 +252,17 @@ void check_types(struct tree *t) {
 
 			printf("prodR_UnaryAssignment found\n");
 
-
-			SymbolTableEntry leftSide = lookup_st(t->kids[0]->stab, t->kids[0]->leaf->text);
-			int left;
-			left = leftSide->type->basetype;
-
+			typeptr left = get_type(t->kids[0]);
 
 			// printf("L[%s] = R[%s]\n", left, right);
-			switch (left) {
+			switch (left->basetype) {
 				case INT_TYPE:
 				case FLOAT_TYPE:
 				case DOUBLE_TYPE:
 					break;
 				default:
 					printf("INCOMPATIBLE Unary Assignment!\n");
+					exit(3);
 			}
 
 			break;
@@ -276,28 +273,25 @@ void check_types(struct tree *t) {
 			printf("prodR_Assignment found\n");
 
 			// look up in current table and save type;
+			typeptr left = get_type(t->kids[0]);
+			typeptr right = get_type(t->kids[2]);
 
-			SymbolTableEntry leftSide = lookup_st(t->kids[0]->stab, t->kids[0]->leaf->text);
-
-			int left;
-			int right;
-
-			left = leftSide->type->basetype;
-			right = t->kids[2]->leaf->type->basetype;
-
-			if (left != right) {
+			if (left->basetype != right->basetype) {
 				printf("INCOMPATIBLE Type Assignment!\n");
+				exit(3);
 			} else {
-				t->type = leftSide->type;
+				t->type = left;
 			}
 
 			break;
 		}
 
-		case prodR_AddExpr: {
-			printf("prodR_AddExpr found\n");
-			break;
-		}
+		// case prodR_AddExpr: {
+		// 	printf("prodR_AddExpr found\n");
+		//
+		//
+		// 	break;
+		// }
 
 		case prodR_UnaryExpr: {
 			printf("prodR_UnaryExpr found\n");
@@ -305,39 +299,36 @@ void check_types(struct tree *t) {
 
 			if (strcmp(t->symbolname, "UnaryExpr_Neg") == 0) {
 
-				SymbolTableEntry ste =
-				lookup_st(t->kids[1]->stab, t->kids[1]->leaf->text);
-				int ste_type;
+				// SymbolTableEntry ste =
+				// lookup_st(t->kids[1]->stab, t->kids[1]->leaf->text);
+				typeptr type = get_type(t->kids[1]);
 
-				ste_type = ste->type->basetype;
-
-				switch (ste_type) {
+				switch (type->basetype) {
 					case INT_TYPE:
 					case FLOAT_TYPE:
 					case DOUBLE_TYPE:
 						break;
 					default:
 						printf("INCOMPATIBLE Unary Expression NAN!\n");
+						exit(3);
 				}
 
-				t->type = ste->type;
+				t->type = type;
 
 			} else if (strcmp(t->symbolname, "UnaryExpr_Excl") == 0) {
 				printf("UnaryExpr_Excl found\n");
-				SymbolTableEntry ste =
-				lookup_st(t->kids[1]->stab, t->kids[1]->leaf->text);
-				int ste_type;
 
-				ste_type = ste->type->basetype;
+				typeptr type = get_type(t->kids[1]);
 
-				switch (ste_type) {
+				switch (type->basetype) {
 					case BOOL_TYPE:
 						break;
 					default:
 						printf("INCOMPATIBLE Unary Expression need BOOL_TYPE!\n");
+						exit(3);
 				}
 
-				t->type = ste->type;
+				t->type = type;
 
 
 			} else {
@@ -349,8 +340,98 @@ void check_types(struct tree *t) {
 			break;
 		}
 
-		case prodR_MulExpr: {
-			printf("prodR_MulExpr found\n");
+		case prodR_RelExpr: {
+			printf("prodR_RelExpr found\n");
+
+			typeptr left, right;
+
+			// printf("L[%s], R[%s]\n", t->kids[0]->leaf->text, t->kids[2]->leaf->text);
+
+			left = get_type(t->kids[0]);
+			right = get_type(t->kids[2]);
+
+			if ((left != NULL) && (right != NULL)) {
+
+				int left_correct = (is_number(left) || left->basetype == CHAR_TYPE);
+				int right_correct = (is_number(right) || right->basetype == CHAR_TYPE);
+
+				if (left_correct && right_correct) {
+					t->type = alctype(BOOL_TYPE);
+				} else {
+					printf("INCOMPATIBLE Rel Expression!\n");
+					exit(3);
+				}
+			}
+
+			break;
+		}
+
+		case prodR_EqExpr: {
+			printf("prodR_EqExpr found\n");
+
+			typeptr left, right;
+
+			// printf("L[%s], R[%s]\n", t->kids[0]->leaf->text, t->kids[2]->leaf->text);
+
+			left = get_type(t->kids[0]);
+			right = get_type(t->kids[1]);
+
+			if ((left != NULL) && (right != NULL)) {
+
+				int left_num = (is_number(left) || left->basetype == CHAR_TYPE);
+				int right_num = (is_number(right) || right->basetype == CHAR_TYPE);
+
+				if (left_num && right_num) {
+					// printf("BOTH NUMS\n");
+					t->type = alctype(BOOL_TYPE);
+				} else if(left->basetype == STRING_TYPE && right->basetype == STRING_TYPE) {
+					// printf("BOTH STRING\n");
+					t->type = alctype(BOOL_TYPE);
+				} else if(left->basetype == BOOL_TYPE && right->basetype == BOOL_TYPE) {
+					// printf("BOTH BOOLEAN\n");
+					t->type = alctype(BOOL_TYPE);
+				}else {
+					printf("INCOMPATIBLE Rel Expression!\n");
+					exit(3);
+				}
+			}
+			break;
+		}
+
+
+		case prodR_CondAndExpr:
+		case prodR_CondOrExpr: {
+			printf("prodR_Cond AND/OR Expr found\n");
+
+			typeptr left, right;
+
+			// printf("L[%s], R[%s]\n", t->kids[0]->leaf->text, t->kids[2]->leaf->text);
+
+			left = get_type(t->kids[0]);
+			right = get_type(t->kids[1]);
+
+			if ((left != NULL) && (right != NULL)) {
+
+				int left_correct = (left->basetype == BOOL_TYPE);
+				int right_correct = ( right->basetype == BOOL_TYPE);
+
+				if (left_correct && right_correct) {
+					// printf("BOTH NUMS\n");
+					t->type = alctype(BOOL_TYPE);
+				} else {
+					printf("INCOMPATIBLE Cond Expression!\n");
+					exit(3);
+				}
+			}
+			break;
+		}
+
+
+
+
+		case prodR_MulExpr:
+		case prodR_AddExpr: {
+			printf("prodR_MulExpr/prodR_AddExpr found\n");
 
 			typeptr left, right;
 
@@ -358,6 +439,7 @@ void check_types(struct tree *t) {
 			right = get_type(t->kids[1]);
 
 			if ((left != NULL) && (right != NULL)) {
+
 				//ensure they are numbers
 				if (is_number(left) && is_number(right)) {
 					//set node type according to promotion helper function?
@@ -391,10 +473,12 @@ void check_types(struct tree *t) {
 					}
 				} else {
 					printf("INCOMPATIBLE MUL Expression NAN!\n");
+					exit(3);
 				}
 			}
 			break;
 		}
+
 
 		case prodR_BlockStmts: {
 			// printf("prodR_BlockStmts found\n");

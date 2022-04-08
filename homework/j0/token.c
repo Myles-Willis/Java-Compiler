@@ -169,6 +169,12 @@ int handle_token(int category_value) { //need to handle cases where tokens arent
 
 	      break; }
 
+		  case BOOLLIT: {
+
+			yylval.treeptr->leaf->type = alctype(BOOL_TYPE);
+
+			break; }
+
 		//   case '=':
 		//   case '+':
 		//   case '-':

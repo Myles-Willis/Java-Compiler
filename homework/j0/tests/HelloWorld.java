@@ -3,19 +3,11 @@ public class hello {
    public static void main(String argv[]) {
 	   int x;
 	   x = 10;
-	   int y = 6;
-	   // int a;
-	   // a = 1 * 2;
-	   // a = 5 * 5;
-      // System.out.println("hello, jzero!");
-      int a;
-	  String b;
-	  float c;
-	  boolean d;
-	  char e;
-	  x = 'c' * x;
 
-
-
+	   int a = 18;
+	   boolean b = ("hello" == "goodbye");
+	   boolean c = (123 != 456);
+	   boolean d = (b && c);
+	   boolean e = ( (b && c) || c);
    }
 }
