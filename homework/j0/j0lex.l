@@ -61,7 +61,7 @@ int rows = 0, words = 0, chars = 0;
 "<="                  { return handle_token(LESSTHANOREQUAL); }
 "&&"                  { return handle_token(LOGICALAND); }
 "||"                  { return handle_token(LOGICALOR); }
-"!"                   { return handle_token(LOGICALNOT); }
+"!"                   { return handle_token('!'); }
 "["                   { return handle_token('['); }
 "]"                   { return handle_token(']'); }
 "."                   { return handle_token('.'); }

@@ -13,5 +13,9 @@ public class hello {
 	  float c;
 	  boolean d;
 	  char e;
+	  x = 'c' * x;
+
+
+
    }
 }

@@ -158,27 +158,61 @@ typeptr determinetype(struct tree *t) {
 	return NULL;
 }
 
-typeptr get_type(SymbolTable st, struct token *tok) {
+
+// if (t->kids[0]->symbolname) {
+// 	printf("reduced rule\n");
+// } else if (t->kids[0]->leaf->category == IDENTIFIER) {
+// 	printf("need to look up left side\n");
+// } else {
+// 	printf("access left as literal\n");
+// }
+
+
+typeptr get_type(struct tree *t) {
 
 	SymbolTableEntry ste;
 
-	if (tok->type != NULL) {
-		return tok->type;
+	if (t->type != NULL) {
+		return t->type;
 	}
 
-	if (tok->category == IDENTIFIER) {
-		ste = lookup_st(st, tok->text);
+	switch (t->leaf->category) {
+		case INTLIT:
+		case REALLIT:
+		case STRINGLIT:
+		case BOOLLIT:
+		case CHARLIT: {
+			return t->leaf->type;
+			break;
+		}
 
-		if (ste != NULL) {
-			tok->type = ste->type;
-			return tok->type;
-		} else {
-			printf("Throw semantic error here: cant check type of %s\n", tok->text);
-			exit(3);
+		case IDENTIFIER: {
+
+			ste = lookup_st(t->stab, t->leaf->text);
+
+			if (ste != NULL) {
+				return ste->type;
+			} else {
+				printf("Throw semantic error here: cant check type of %s\n", t->leaf->text);
+				exit(3);
+			}
 		}
 	}
 
 	return NULL;
+}
+
+
+int is_number(typeptr t) {
+	switch(t->basetype) {
+		case INT_TYPE:
+		case FLOAT_TYPE:
+		case DOUBLE_TYPE:
+			return 1;
+			break;
+	}
+
+	return 0;
 }
 
 void check_types(struct tree *t) {
@@ -265,11 +299,100 @@ void check_types(struct tree *t) {
 			break;
 		}
 
+		case prodR_UnaryExpr: {
+			printf("prodR_UnaryExpr found\n");
+			// printf("*** %s\n", t->symbolname);
+
+			if (strcmp(t->symbolname, "UnaryExpr_Neg") == 0) {
+
+				SymbolTableEntry ste =
+				lookup_st(t->kids[1]->stab, t->kids[1]->leaf->text);
+				int ste_type;
+
+				ste_type = ste->type->basetype;
+
+				switch (ste_type) {
+					case INT_TYPE:
+					case FLOAT_TYPE:
+					case DOUBLE_TYPE:
+						break;
+					default:
+						printf("INCOMPATIBLE Unary Expression NAN!\n");
+				}
+
+				t->type = ste->type;
+
+			} else if (strcmp(t->symbolname, "UnaryExpr_Excl") == 0) {
+				printf("UnaryExpr_Excl found\n");
+				SymbolTableEntry ste =
+				lookup_st(t->kids[1]->stab, t->kids[1]->leaf->text);
+				int ste_type;
+
+				ste_type = ste->type->basetype;
+
+				switch (ste_type) {
+					case BOOL_TYPE:
+						break;
+					default:
+						printf("INCOMPATIBLE Unary Expression need BOOL_TYPE!\n");
+				}
+
+				t->type = ste->type;
+
+
+			} else {
+				//PostFixExpr
+				printf("PostFixExpr type: %s\n", typename(t->type));
+
+			}
+
+			break;
+		}
+
 		case prodR_MulExpr: {
 			printf("prodR_MulExpr found\n");
 
-			printf("L[%s] * R[]\n", t->kids[0]->kids[0]->kids[0]->leaf->text);
+			typeptr left, right;
 
+			left = get_type(t->kids[0]);
+			right = get_type(t->kids[1]);
+
+			if ((left != NULL) && (right != NULL)) {
+				//ensure they are numbers
+				if (is_number(left) && is_number(right)) {
+					//set node type according to promotion helper function?
+					switch (left->basetype) {
+
+						case INT_TYPE: {
+							if (right->basetype != left->basetype) {
+								printf("result type should be %s\n", typename(right));
+								t->type = right;
+							} else {
+								printf("**Matching ints on L and R ");
+								printf("result type should be %s\n", typename(left));
+								t->type = left;
+							}
+							break;
+						}
+
+						case DOUBLE_TYPE: {
+							if (right->basetype == FLOAT_TYPE) {
+								printf("result type should be %s\n", typename(right));
+								t->type = right;
+							}
+							break;
+						}
+
+						case FLOAT_TYPE: {
+							printf("result type should be %s\n", typename(left));
+							t->type = left;
+							break;
+						}
+					}
+				} else {
+					printf("INCOMPATIBLE MUL Expression NAN!\n");
+				}
+			}
 			break;
 		}
 
@@ -318,7 +441,7 @@ void check_types(struct tree *t) {
 				case BOOLLIT:
 				case CHARLIT: {
 					if (t->leaf->type) {
-						printf("* Token %s Has type: %s *\n", t->leaf->text ,typename(t->leaf->type));
+						// printf("* Token %s Has type: %s *\n", t->leaf->text ,typename(t->leaf->type));
 					} else {
 						// IDENTIFIER without type?
 					}

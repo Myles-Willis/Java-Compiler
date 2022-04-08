@@ -69,13 +69,13 @@ int main(int argc, char *argv[]) {
 				current = globals;
 				load_builtins();
 				populate_symbol_tables(root);
-				check_types(root);
 
 				if (symtab_print_flag) {
 					printf("\n\nprintsymbols() output:\n");
 					printf("---------------------------------------\n\n");
 					printsymbols(globals, 1);
 				}
+				check_types(root);
 				printf("\n");
 				//free_tree(root, 0);
 			}

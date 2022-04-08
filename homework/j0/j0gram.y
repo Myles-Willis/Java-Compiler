@@ -30,7 +30,7 @@
 
 // j0 Comparison/Operators
 %token <treeptr> INCREMENT DECREMENT ISEQUALTO NOTEQUALTO GREATERTHANOREQUAL
-%token <treeptr> LESSTHANOREQUAL LOGICALAND LOGICALOR LOGICALNOT TYPE
+%token <treeptr> LESSTHANOREQUAL LOGICALAND LOGICALOR TYPE
 
 //Indentifier
 %token <treeptr> IDENTIFIER
@@ -49,7 +49,6 @@
 %left '<' GREATERTHANOREQUAL '>' LESSTHANOREQUAL
 %left '+' '-'
 %left '*' '/' '%'
-%left LOGICALNOT
 
 %type <treeptr> ClassDecl
 %type <treeptr> ClassBody
