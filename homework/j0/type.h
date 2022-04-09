@@ -28,8 +28,9 @@ struct field {			/* members (fields) of structs */
 #define STRING_TYPE  1000008
 #define NAME_TYPE    1000009
 #define FLOAT_TYPE 1000010
+#define VOID_TYPE 1000011
 
-#define LAST_TYPE    1000010
+#define LAST_TYPE    1000011
 
 typedef struct typeinfo {
 	int basetype;
@@ -44,7 +45,7 @@ typedef struct typeinfo {
 			char *name; /* ? */
 			int defined; /* 0 == prototype, 1 == not prototype */
 			struct sym_table *st;
-			struct type *returntype;
+			struct typeinfo *returntype;
 			int nparams;
 			struct param *parameters;
 		}f;
@@ -77,6 +78,7 @@ extern typeptr null_typeptr;
 extern typeptr string_typeptr;
 extern typeptr double_typeptr;
 extern typeptr float_typeptr;
+extern typeptr void_typeptr;
 extern typeptr char_typeptr;
 // extern typeptr class_typeptr;
 // extern typeptr func_typeptr;

@@ -5,6 +5,7 @@ struct typeinfo integer_type = { INT_TYPE };
 struct typeinfo null_type = { NULL_TYPE };
 struct typeinfo double_type = { DOUBLE_TYPE };
 struct typeinfo float_type = { FLOAT_TYPE };
+struct typeinfo void_type = { VOID_TYPE };
 struct typeinfo char_type = { CHAR_TYPE };
 struct typeinfo class_type = { CLASS_TYPE };
 struct typeinfo func_type = { FUNC_TYPE };
@@ -18,12 +19,13 @@ typeptr char_typeptr = &char_type;
 typeptr class_typeptr = &class_type;
 typeptr func_typeptr = &func_type;
 typeptr construct_typeptr = &construct_type;
+typeptr void_typeptr = &void_type;
 
 char *typenam[] =
    {"null", "int", "double", "function", "class", "constructor", "char",
-    "boolean", "String", "name", "float"};
+    "boolean", "String", "name", "float", "void"};
 
-int typenamSize = 11;
+int typenamSize = 12;
 
 typeptr alctype(int base) {
 
@@ -33,6 +35,7 @@ typeptr alctype(int base) {
    else if (base == DOUBLE_TYPE) return double_typeptr;
    else if (base == FLOAT_TYPE) return float_typeptr;
    else if (base == CHAR_TYPE) return char_typeptr;
+   else if (base == VOID_TYPE) return void_typeptr;
    // else if (base == CLASS_TYPE) return class_typeptr;
    // else if (base == FUNC_TYPE) return func_typeptr;
 
@@ -105,9 +108,13 @@ int conv_to_type(char* type_string) {
 				case 10:
 					return FLOAT_TYPE;
 					break;
+				case 11:
+					return VOID_TYPE;
+					break;
 			}
 		}
 	}
+	printf("couldn't convert %s to a type\n", type_string);
 	return NULL_TYPE;
 }
 

@@ -448,6 +448,40 @@ char *checked_alloc(int size) {
 // 	}
 //
 // }
+//
+int count_params(struct tree *parm_list) {
+
+	int param_count = 0;
+
+	if (strcmp(parm_list->kids[0]->symbolname, "FormalParmList") == 0) {
+		int inner_count = count_params(parm_list->kids[0]);
+		param_count = param_count + inner_count;
+	} else if (strcmp(parm_list->kids[0]->symbolname, "FormalParm") == 0) {
+		param_count++;
+	}
+
+	param_count++;
+
+	return param_count;
+}
+
+int get_param_count(struct tree *formal_parm_listOpt) {
+
+	int param_count;
+
+	if (formal_parm_listOpt) {
+		//Check if FormalParm or FormalParmList
+		if (strcmp(formal_parm_listOpt->symbolname, "FormalParm") == 0) {
+			param_count = 1;
+		} else {
+			param_count = count_params(formal_parm_listOpt);
+		}
+	} else {
+		param_count = 0;
+	}
+
+	return param_count;
+}
 
 void enter_newscope(char *s, int typ, struct tree * n) {
 
@@ -458,8 +492,19 @@ void enter_newscope(char *s, int typ, struct tree * n) {
 	if (typ == CLASS_TYPE) {
 		t = alcclasstype(new_st);
 	} else {
+
 		t = alcfunctype(new_st);
-		// typeptr typ = get_return_value(n);
+
+		struct tree *formal_parm_listOpt = n->kids[0]->kids[1]->kids[1];
+		typeptr return_type = alctype(conv_to_type(n->kids[0]->kids[0]
+			->leaf->text));
+
+		t->u.f.returntype = return_type;
+		t->u.f.name = s;
+		t->u.f.nparams = get_param_count(formal_parm_listOpt);
+
+		printf("** Method [%s] has [%d] parameters\n", s, t->u.f.nparams);
+		printf("** Return type determined as: %s\n", typename(return_type));
 	}
 
 	t->type_sym_table = new_st;
