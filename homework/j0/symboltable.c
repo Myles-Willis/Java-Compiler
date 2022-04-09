@@ -295,7 +295,23 @@ void populate_symbol_tables(struct tree * n) {
 			break;
 		}
 
-		case prodR_TypeAssignment:
+		case prodR_TypeAssignment: {
+
+			typeptr t = alctype(conv_to_type(n->kids[0]->leaf->text));
+			// printf("TYPE: %s\n", n->kids[0]->leaf->text);
+			int insert_result = insert_symbol(current,
+				 n->kids[1]->leaf->text, t);
+			// printf("****%s\n", n->kids[0]->leaf->text);
+			if (insert_result == 0) {
+				redeclaration_error(n->kids[1]->leaf);
+			}
+
+			n->stab = current;
+			n->kids[1]->leaf->type = t;
+
+			break;
+		}
+
 		case prodR_FormalParm: {
 
 			typeptr t = alctype(conv_to_type(n->kids[0]->leaf->text));
@@ -309,6 +325,28 @@ void populate_symbol_tables(struct tree * n) {
 
 			n->stab = current;
 			n->kids[1]->leaf->type = t;
+
+			//Add formal parameter to its method's parameter linked list
+			paramlist param = malloc(sizeof(struct param));
+
+			param->name = n->kids[1]->leaf->text;
+			param->type = t;
+
+			if (current->scope->u.f.has_param) {
+
+				paramlist last_ptr = current->scope->u.f.parameters;
+
+				while (last_ptr->next != NULL) {
+					last_ptr = last_ptr->next;
+				}
+				printf("** previous param [%s] adding [%s %s] to next\n", last_ptr->name, typename(t), param->name);
+				last_ptr->next = param;
+			} else {
+				printf("** No initial param, setting initial to [%s %s]\n", typename(t), param->name);
+				current->scope->u.f.parameters = param;
+				param->next = NULL;
+				current->scope->u.f.has_param = 1;
+			}
 
 			break;
 		}
@@ -440,15 +478,18 @@ char *checked_alloc(int size) {
 	return p;
 }
 
-// typeptr get_return_value(struct tree *n) {
-// 	if (n != NULL) {
-// 		/* code */
-// 		printf("get_return_value: %d\n", n->type->basetype);
-// 		typeptr typ;
-// 	}
-//
-// }
-//
+typeptr get_method_return_type(struct tree *n) {
+
+	if (n != NULL) {
+		typeptr return_type = alctype(conv_to_type(n->kids[0]->kids[0]
+			->leaf->text));
+		return return_type;
+	}
+
+	printf("Error: Can not determine return type of method\n");
+	exit(3);
+}
+
 int count_params(struct tree *parm_list) {
 
 	int param_count = 0;
@@ -491,20 +532,18 @@ void enter_newscope(char *s, int typ, struct tree * n) {
 
 	if (typ == CLASS_TYPE) {
 		t = alcclasstype(new_st);
+		t->u.c.name = s;
 	} else {
 
 		t = alcfunctype(new_st);
-
 		struct tree *formal_parm_listOpt = n->kids[0]->kids[1]->kids[1];
-		typeptr return_type = alctype(conv_to_type(n->kids[0]->kids[0]
-			->leaf->text));
 
-		t->u.f.returntype = return_type;
+		t->u.f.returntype = get_method_return_type(n);
 		t->u.f.name = s;
 		t->u.f.nparams = get_param_count(formal_parm_listOpt);
 
 		printf("** Method [%s] has [%d] parameters\n", s, t->u.f.nparams);
-		printf("** Return type determined as: %s\n", typename(return_type));
+		printf("** Return type determined as: %s\n", typename(t->u.f.returntype));
 	}
 
 	t->type_sym_table = new_st;

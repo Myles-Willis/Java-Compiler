@@ -47,6 +47,7 @@ typedef struct typeinfo {
 			struct sym_table *st;
 			struct typeinfo *returntype;
 			int nparams;
+			int has_param;
 			struct param *parameters;
 		}f;
 		struct classinfo {
