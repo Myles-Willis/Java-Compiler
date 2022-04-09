@@ -339,10 +339,12 @@ void populate_symbol_tables(struct tree * n) {
 				while (last_ptr->next != NULL) {
 					last_ptr = last_ptr->next;
 				}
-				printf("** previous param [%s] adding [%s %s] to next\n", last_ptr->name, typename(t), param->name);
+				// printf("** previous param [%s] adding [%s %s] to next\n", last_ptr->name, typename(t), param->name);
+				param->position = last_ptr->position + 1;
 				last_ptr->next = param;
 			} else {
-				printf("** No initial param, setting initial to [%s %s]\n", typename(t), param->name);
+				// printf("** No initial param, setting initial to [%s %s]\n", typename(t), param->name);
+				param->position = 0;
 				current->scope->u.f.parameters = param;
 				param->next = NULL;
 				current->scope->u.f.has_param = 1;
@@ -542,12 +544,13 @@ void enter_newscope(char *s, int typ, struct tree * n) {
 		t->u.f.name = s;
 		t->u.f.nparams = get_param_count(formal_parm_listOpt);
 
-		printf("** Method [%s] has [%d] parameters\n", s, t->u.f.nparams);
-		printf("** Return type determined as: %s\n", typename(t->u.f.returntype));
+		// printf("** Method [%s] has [%d] parameters\n", s, t->u.f.nparams);
+		// printf("** Return type determined as: %s\n", typename(t->u.f.returntype));
 	}
 
 	t->type_sym_table = new_st;
 	new_st->scope = t;
+	// n->type = t;
 
 	/* insert s into current symbol table */
   	insert_symbol(current, s, t);

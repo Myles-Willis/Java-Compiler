@@ -5,6 +5,7 @@
 
 typedef struct param {
 	char *name;
+	int position;
 	struct typeinfo *type;
 	struct param *next;
 } *paramlist;

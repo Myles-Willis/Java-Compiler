@@ -4,7 +4,7 @@ public class pet {
    int hunger;
    int happy;
 
-public void play() {
+public static void play() {
    int choice;
    System.out.println("What should we play?\n");
    System.out.println( "Fetch (1) \n Roll over (2)\n" );

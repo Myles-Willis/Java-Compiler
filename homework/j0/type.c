@@ -118,62 +118,25 @@ int conv_to_type(char* type_string) {
 	return NULL_TYPE;
 }
 
-typeptr determinetype(struct tree *t) {
-	for (int i = 0; i < t->nkids; i++) {
+int get_arg_count(struct tree *args) {
 
-		determinetype(t->kids[i]);
+	int argument_count = 0;
 
-		 switch (t->prodrule) {
+	if (args->symbolname) {
 
-		 	case prodR_FieldDecl: {
-				printf("determinetype FieldDecl\n");
-				typeptr typ = t->kids[0]->type;
-				// printf("setting %d type\n", t->type->basetype);
-				return typ;
-			}
-
-			case TOKEN: {
-
-				printf("determinetype Token\n");
-				struct token *tok = t->leaf;
-
-				switch (tok->category) {
-					case IDENTIFIER: {
-						typeptr typ = alctype(NULL_TYPE); //Need to mark as class type
-						return typ;
-						break;
-					}
-
-					case INTLIT: {
-						typeptr typ = alctype(conv_to_type(tok->text));
-						return typ;
-						break;
-					}
-
-					default: {
-						printf("Can't determine type of %s\n", tok->text);
-						exit(2);
-					}
-				}
-			}
-
-			default:
-				printf("Throw semantic error: can't determine type for: %s\n", t->symbolname);
-				exit(2);
-		 }
+		if (args->kids[0]->nkids == 0) {
+			argument_count = argument_count + 2;
+		} else {
+			argument_count++;
+			argument_count = argument_count +
+				get_arg_count(args->kids[0]);
+		}
+	} else {
+		argument_count++;
 	}
-	return NULL;
+
+	return argument_count;
 }
-
-
-// if (t->kids[0]->symbolname) {
-// 	printf("reduced rule\n");
-// } else if (t->kids[0]->leaf->category == IDENTIFIER) {
-// 	printf("need to look up left side\n");
-// } else {
-// 	printf("access left as literal\n");
-// }
-
 
 typeptr get_type(struct tree *t) {
 
@@ -208,6 +171,78 @@ typeptr get_type(struct tree *t) {
 	printf("### Could Not Get Type ###\n");
 	return NULL;
 }
+
+int match_param(typeptr method_info, struct tree *arg, int arg_index) {
+
+	paramlist ptr = method_info->u.f.parameters;
+	typeptr arg_type = get_type(arg);
+
+	// printf("Matching against %d declared parameters\n", method_info->u.f.nparams);
+
+	while (ptr->next != NULL) {
+
+		typeptr ptr_type = ptr->type;
+		// printf("declared[%d] vs submitted[%d]\n", ptr->position, arg_index);
+		if (ptr->position == arg_index) {
+			// printf("index match found\n");
+
+			if (ptr_type->basetype != arg_type->basetype) {
+				printf("INCOMPATIBLE parameter used in call\n");
+				exit(3);
+			}
+
+			printf("*** Types match at corresponding index ***\n");
+			return 1;
+		}
+
+		ptr = ptr->next;
+	}
+
+	if (ptr->position == arg_index) {
+		// printf("index match found\n");
+		typeptr ptr_type = ptr->type;
+		if (ptr_type->basetype != arg_type->basetype) {
+			printf("INCOMPATIBLE parameter used in call\n");
+			exit(3);
+		}
+
+		printf("*** Types match at corresponding index ***\n");
+		return 1;
+
+	}
+
+	return 0;
+
+}
+
+void validate_params(struct tree *args, typeptr method_info, int start_index) {
+
+	// printf("\n\n** validate_params **\n\n");
+	// printf("Starting index [%d]\n", start_index);
+	// int argument_count = get_arg_count(args);
+	// printf("Method called with %d parameters\n", argument_count);
+
+	if (args->symbolname) {
+
+		if (args->kids[0]->nkids == 0) {
+			// printf("%s %s\n", typename(get_type(args->kids[1])) ,args->kids[1]->leaf->text);
+			match_param(method_info, args->kids[1], 1);
+			// printf("%s %s\n", typename(get_type(args->kids[0])) ,args->kids[0]->leaf->text);
+			match_param(method_info, args->kids[0], 0);
+		} else {
+			// printf("%s %s\n", typename(get_type(args->kids[1])) ,args->kids[1]->leaf->text);
+			match_param(method_info, args->kids[1], start_index);
+			start_index = start_index - 1;
+			validate_params(args->kids[0], method_info, start_index--);
+		}
+
+	} else {
+		// printf("Expr (single)\n");
+		// printf("%s\n", args->leaf->text);
+		match_param(method_info, args, start_index);
+	}
+}
+
 
 
 int is_number(typeptr t) {
@@ -301,6 +336,7 @@ void check_types(struct tree *t) {
 		// }
 
 		case prodR_UnaryExpr: {
+
 			printf("prodR_UnaryExpr found\n");
 			// printf("*** %s\n", t->symbolname);
 
@@ -348,6 +384,7 @@ void check_types(struct tree *t) {
 		}
 
 		case prodR_RelExpr: {
+
 			printf("prodR_RelExpr found\n");
 
 			typeptr left, right;
@@ -374,6 +411,7 @@ void check_types(struct tree *t) {
 		}
 
 		case prodR_EqExpr: {
+
 			printf("prodR_EqExpr found\n");
 
 			typeptr left, right;
@@ -408,6 +446,7 @@ void check_types(struct tree *t) {
 
 		case prodR_CondAndExpr:
 		case prodR_CondOrExpr: {
+
 			printf("prodR_Cond AND/OR Expr found\n");
 
 			typeptr left, right;
@@ -433,11 +472,9 @@ void check_types(struct tree *t) {
 			break;
 		}
 
-
-
-
 		case prodR_MulExpr:
 		case prodR_AddExpr: {
+
 			printf("prodR_MulExpr/prodR_AddExpr found\n");
 
 			typeptr left, right;
@@ -486,14 +523,49 @@ void check_types(struct tree *t) {
 			break;
 		}
 
+		case prodR_ArgList: {
+			printf("prodR_ArgList found\n");
+			break;
+		}
+
 
 		case prodR_BlockStmts: {
 			// printf("prodR_BlockStmts found\n");
 			break;
 		}
 
-		case prodR_MethodCall: {
-			// printf("prodR_MethodCall found\n");
+		case prodR_MethodCall: { // parens/curly
+			printf("prodR_MethodCall found\n");
+			typeptr typ = get_type(t->kids[0]);
+			int defined_num_args = typ->u.f.nparams;
+
+			if (t->kids[1]) {
+
+				// printf("Method with a arglist\n");
+				//need to ensure argument list is proper
+				//send arglist to validate_params()
+
+				int num_args = get_arg_count(t->kids[1]);
+
+				if (num_args == defined_num_args) {
+					validate_params(t->kids[1], typ, num_args - 1);
+				} else {
+					printf("INCOMPATIBLE number of arguments in Method call\n");
+					exit(3);
+				}
+
+				t->type = typ->u.f.returntype;
+
+			} else {
+				// printf("method call with no arguments\n");
+				if (defined_num_args != 0) {
+					printf("INCOMPATIBLE number of arguments in Method call\n");
+					exit(3);
+				}
+			}
+
+			// printf("Method return type is %s\n", typename(typ->u.f.returntype));
+			t->type = typ->u.f.returntype;
 			break;
 		}
 
