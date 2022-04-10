@@ -114,7 +114,7 @@ int conv_to_type(char* type_string) {
 			}
 		}
 	}
-	printf("couldn't convert %s to a type\n", type_string);
+	// printf("couldn't convert %s to a type\n", type_string);
 	return NULL_TYPE;
 }
 
@@ -146,29 +146,37 @@ typeptr get_type(struct tree *t) {
 		return t->type;
 	}
 
-	switch (t->leaf->category) {
-		case INTLIT:
-		case REALLIT:
-		case STRINGLIT:
-		case BOOLLIT:
-		case CHARLIT: {
-			return t->leaf->type;
-			break;
-		}
+	// if (t->nkids > 0) {
+	// 	if (strcmp(t->symbolname, "MethodCall_parens") == 0) {
+	// 		printf("LETD GOOO\n");
+	// 		ste = lookup_st(t->kids[0]->stab ,t->kids[0]->leaf->text);
+	// 	}
+	// } else {
+		switch (t->leaf->category) {
+			case INTLIT:
+			case REALLIT:
+			case STRINGLIT:
+			case BOOLLIT:
+			case CHARLIT: {
+				return t->leaf->type;
+				break;
+			}
 
-		case IDENTIFIER: {
+			case IDENTIFIER: {
 
-			ste = lookup_st(t->stab, t->leaf->text);
+				ste = lookup_st(t->stab, t->leaf->text);
 
-			if (ste != NULL) {
-				return ste->type;
-			} else {
-				printf("Throw semantic error here: cant check type of %s\n", t->leaf->text);
-				exit(3);
+				if (ste != NULL) {
+					return ste->type;
+				} else {
+					int line_number = t->leaf->lineno;
+					char* msg = "unable to determine typel\n";
+					throw_semantic_error(msg, line_number);
+				}
 			}
 		}
-	}
-	printf("### Could Not Get Type ###\n");
+
+	// printf("### Could Not Get Type ###\n");
 	return NULL;
 }
 
@@ -187,11 +195,13 @@ int match_param(typeptr method_info, struct tree *arg, int arg_index) {
 			// printf("index match found\n");
 
 			if (ptr_type->basetype != arg_type->basetype) {
-				printf("INCOMPATIBLE parameter used in call\n");
-				exit(3);
+
+				int line_number = arg->leaf->lineno;
+				char* msg = "incompatible parameter in call\n";
+				throw_semantic_error(msg, line_number);
 			}
 
-			printf("*** Types match at corresponding index ***\n");
+			// printf("*** Types match at corresponding index ***\n");
 			return 1;
 		}
 
@@ -202,11 +212,13 @@ int match_param(typeptr method_info, struct tree *arg, int arg_index) {
 		// printf("index match found\n");
 		typeptr ptr_type = ptr->type;
 		if (ptr_type->basetype != arg_type->basetype) {
-			printf("INCOMPATIBLE parameter used in call\n");
-			exit(3);
+
+			int line_number = arg->leaf->lineno;
+			char* msg = "incompatible parameter in call\n";
+			throw_semantic_error(msg, line_number);
 		}
 
-		printf("*** Types match at corresponding index ***\n");
+		// printf("*** Types match at corresponding index ***\n");
 		return 1;
 
 	}
@@ -216,11 +228,6 @@ int match_param(typeptr method_info, struct tree *arg, int arg_index) {
 }
 
 void validate_params(struct tree *args, typeptr method_info, int start_index) {
-
-	// printf("\n\n** validate_params **\n\n");
-	// printf("Starting index [%d]\n", start_index);
-	// int argument_count = get_arg_count(args);
-	// printf("Method called with %d parameters\n", argument_count);
 
 	if (args->symbolname) {
 
@@ -259,21 +266,40 @@ int is_number(typeptr t) {
 
 void check_types(struct tree *t) {
 
-	if (t == NULL) return;
-
 	int i;
 
-	for (i = 0; i < t->nkids; i++) {
-		check_types(t->kids[i]);
-	}
-
+	if (t == NULL) return;
+	for (i = 0; i < t->nkids; i++) { check_types(t->kids[i]); }
 
 	switch(t->prodrule) {
 
+		// case prodR_QualifiedName: {
+		// 	break;
+		// }
 
-		case prodR_TypeAssignment: {
+		case prodR_TypeAssignment:
+		case prodR_FieldDeclAssign: {
 
-			printf("prodR_TypeAssignment found\n");
+			// printf("prodR_TypeAssignment found\n");
+
+			if (strcmp(t->symbolname, "FieldDeclAssignment") == 0) {
+				// printf("Right side must be literal\n");
+
+				switch (t->kids[3]->leaf->category) {
+					case INTLIT:
+					case REALLIT:
+					case STRINGLIT:
+					case BOOLLIT:
+					case CHARLIT: {
+						break;
+					}
+					default: {
+						int line_number = t->kids[3]->leaf->lineno;
+						char* msg = "static field declaration must be assigned a literal\n";
+						throw_semantic_error(msg, line_number);
+					}
+				}
+			}
 
 			typeptr left;
 			typeptr right;
@@ -284,7 +310,9 @@ void check_types(struct tree *t) {
 			// printf("L[%s] = R[%s]\n", left, right);
 
 			if (left->basetype != right->basetype) {
-				printf("INCOMPATIBLE Type Assignment!\n");
+				int line_number = t->kids[1]->leaf->lineno;
+				char* msg = "incompatible types in assignment\n";
+				throw_semantic_error(msg, line_number);
 			}
 
 			break;
@@ -292,7 +320,7 @@ void check_types(struct tree *t) {
 
 		case prodR_UnaryAssignment: {
 
-			printf("prodR_UnaryAssignment found\n");
+			// printf("prodR_UnaryAssignment found\n");
 
 			typeptr left = get_type(t->kids[0]);
 
@@ -302,9 +330,11 @@ void check_types(struct tree *t) {
 				case FLOAT_TYPE:
 				case DOUBLE_TYPE:
 					break;
-				default:
-					printf("INCOMPATIBLE Unary Assignment!\n");
-					exit(3);
+				default: {
+					int line_number = t->kids[0]->leaf->lineno;
+					char* msg = "incompatible type for unary assignment\n";
+					throw_semantic_error(msg, line_number);
+				}
 			}
 
 			break;
@@ -312,15 +342,20 @@ void check_types(struct tree *t) {
 
 		case prodR_Assignment: {
 
-			printf("prodR_Assignment found\n");
+			// printf("prodR_Assignment found\n");
 
 			// look up in current table and save type;
 			typeptr left = get_type(t->kids[0]);
 			typeptr right = get_type(t->kids[2]);
 
+
+
 			if (left->basetype != right->basetype) {
-				printf("INCOMPATIBLE Type Assignment!\n");
-				exit(3);
+
+				int line_number = t->kids[0]->leaf->lineno;
+				char* msg = "incompatible types in assignment\n";
+				throw_semantic_error(msg, line_number);
+
 			} else {
 				t->type = left;
 			}
@@ -328,16 +363,9 @@ void check_types(struct tree *t) {
 			break;
 		}
 
-		// case prodR_AddExpr: {
-		// 	printf("prodR_AddExpr found\n");
-		//
-		//
-		// 	break;
-		// }
-
 		case prodR_UnaryExpr: {
 
-			printf("prodR_UnaryExpr found\n");
+			// printf("prodR_UnaryExpr found\n");
 			// printf("*** %s\n", t->symbolname);
 
 			if (strcmp(t->symbolname, "UnaryExpr_Neg") == 0) {
@@ -350,25 +378,30 @@ void check_types(struct tree *t) {
 					case INT_TYPE:
 					case FLOAT_TYPE:
 					case DOUBLE_TYPE:
+					case CHAR_TYPE:
 						break;
-					default:
-						printf("INCOMPATIBLE Unary Expression NAN!\n");
-						exit(3);
+					default: {
+						int line_number = t->kids[1]->leaf->lineno;
+						char* msg = "incompatible type in expression (not a number)\n";
+						throw_semantic_error(msg, line_number);
+					}
 				}
 
 				t->type = type;
 
 			} else if (strcmp(t->symbolname, "UnaryExpr_Excl") == 0) {
-				printf("UnaryExpr_Excl found\n");
+				// printf("UnaryExpr_Excl found\n");
 
 				typeptr type = get_type(t->kids[1]);
 
 				switch (type->basetype) {
 					case BOOL_TYPE:
 						break;
-					default:
-						printf("INCOMPATIBLE Unary Expression need BOOL_TYPE!\n");
-						exit(3);
+					default: {
+						int line_number = t->kids[1]->leaf->lineno;
+						char* msg = "incompatible type in expression (not a boolean)\n";
+						throw_semantic_error(msg, line_number);
+					}
 				}
 
 				t->type = type;
@@ -376,7 +409,7 @@ void check_types(struct tree *t) {
 
 			} else {
 				//PostFixExpr
-				printf("PostFixExpr type: %s\n", typename(t->type));
+				printf("\t\tPostFixExpr type: %s\n", typename(t->type));
 
 			}
 
@@ -385,7 +418,7 @@ void check_types(struct tree *t) {
 
 		case prodR_RelExpr: {
 
-			printf("prodR_RelExpr found\n");
+			// printf("prodR_RelExpr found\n");
 
 			typeptr left, right;
 
@@ -402,8 +435,9 @@ void check_types(struct tree *t) {
 				if (left_correct && right_correct) {
 					t->type = alctype(BOOL_TYPE);
 				} else {
-					printf("INCOMPATIBLE Rel Expression!\n");
-					exit(3);
+					int line_number = t->kids[0]->leaf->lineno;
+					char* msg = "incompatible type in expression (not a number)\n";
+					throw_semantic_error(msg, line_number);
 				}
 			}
 
@@ -412,7 +446,7 @@ void check_types(struct tree *t) {
 
 		case prodR_EqExpr: {
 
-			printf("prodR_EqExpr found\n");
+			// printf("prodR_EqExpr found\n");
 
 			typeptr left, right;
 
@@ -436,8 +470,9 @@ void check_types(struct tree *t) {
 					// printf("BOTH BOOLEAN\n");
 					t->type = alctype(BOOL_TYPE);
 				}else {
-					printf("INCOMPATIBLE Rel Expression!\n");
-					exit(3);
+					int line_number = t->kids[0]->leaf->lineno;
+					char* msg = "incompatible types in expression\n";
+					throw_semantic_error(msg, line_number);
 				}
 			}
 			break;
@@ -447,7 +482,7 @@ void check_types(struct tree *t) {
 		case prodR_CondAndExpr:
 		case prodR_CondOrExpr: {
 
-			printf("prodR_Cond AND/OR Expr found\n");
+			// printf("prodR_Cond AND/OR Expr found\n");
 
 			typeptr left, right;
 
@@ -462,11 +497,11 @@ void check_types(struct tree *t) {
 				int right_correct = ( right->basetype == BOOL_TYPE);
 
 				if (left_correct && right_correct) {
-					// printf("BOTH NUMS\n");
 					t->type = alctype(BOOL_TYPE);
 				} else {
-					printf("INCOMPATIBLE Cond Expression!\n");
-					exit(3);
+					int line_number = t->kids[0]->leaf->lineno;
+					char* msg = "incompatible types in expression (not a boolean)\n";
+					throw_semantic_error(msg, line_number);
 				}
 			}
 			break;
@@ -485,87 +520,90 @@ void check_types(struct tree *t) {
 			if ((left != NULL) && (right != NULL)) {
 
 				//ensure they are numbers
-				if (is_number(left) && is_number(right)) {
+				int left_correct = ((is_number(left)) || (left->basetype == CHAR_TYPE));
+				int right_correct = ((is_number(right)) || (right->basetype == CHAR_TYPE));
+
+				if (left_correct && right_correct) {
 					//set node type according to promotion helper function?
 					switch (left->basetype) {
 
-						case INT_TYPE: {
-							if (right->basetype != left->basetype) {
-								printf("result type should be %s\n", typename(right));
+						case INT_TYPE:
+						case CHAR_TYPE: {
+
+							if ((right->basetype != left->basetype) &&
+								(right->basetype != CHAR_TYPE)) {
+
+								// printf("result type should be %s\n", typename(right));
 								t->type = right;
 							} else {
-								printf("**Matching ints on L and R ");
-								printf("result type should be %s\n", typename(left));
-								t->type = left;
+								// printf("**Matching ints on L and R ");
+								// printf("result type should be INT\n");
+								t->type = alctype(INT_TYPE);
 							}
 							break;
 						}
 
 						case DOUBLE_TYPE: {
 							if (right->basetype == FLOAT_TYPE) {
-								printf("result type should be %s\n", typename(right));
+								// printf("result type should be %s\n", typename(right));
 								t->type = right;
 							}
 							break;
 						}
 
 						case FLOAT_TYPE: {
-							printf("result type should be %s\n", typename(left));
+							// printf("result type should be %s\n", typename(left));
 							t->type = left;
 							break;
 						}
 					}
 				} else {
-					printf("INCOMPATIBLE MUL Expression NAN!\n");
-					exit(3);
+					int line_number = t->kids[0]->leaf->lineno;
+					char* msg = "expression requires numerical values\n";
+					throw_semantic_error(msg, line_number);
 				}
 			}
-			break;
-		}
-
-		case prodR_ArgList: {
-			printf("prodR_ArgList found\n");
-			break;
-		}
-
-
-		case prodR_BlockStmts: {
-			// printf("prodR_BlockStmts found\n");
 			break;
 		}
 
 		case prodR_MethodCall: { // parens/curly
-			printf("prodR_MethodCall found\n");
-			typeptr typ = get_type(t->kids[0]);
-			int defined_num_args = typ->u.f.nparams;
+			// printf("prodR_MethodCall found\n");
+			//
+			// printf("**** %s\n", t->leaf->text);
 
-			if (t->kids[1]) {
+			// *** WEIRD behavior when surrounding in if condition ****
 
-				// printf("Method with a arglist\n");
-				//need to ensure argument list is proper
-				//send arglist to validate_params()
+				printf("Here %s\n", t->symbolname);
 
-				int num_args = get_arg_count(t->kids[1]);
+				typeptr typ = get_type(t->kids[0]);
+				int defined_num_args = typ->u.f.nparams;
 
-				if (num_args == defined_num_args) {
-					validate_params(t->kids[1], typ, num_args - 1);
+				if (t->kids[1]) {
+
+					int num_args = get_arg_count(t->kids[1]);
+
+					if (num_args == defined_num_args) {
+						validate_params(t->kids[1], typ, num_args - 1);
+					} else {
+						int line_number = t->kids[0]->leaf->lineno;
+						char* msg = "invalid number of arguments to method call\n";
+						throw_semantic_error(msg, line_number);
+					}
+
+					t->type = typ->u.f.returntype;
+
 				} else {
-					printf("INCOMPATIBLE number of arguments in Method call\n");
-					exit(3);
+					// printf("method call with no arguments\n");
+					if (defined_num_args != 0) {
+						int line_number = t->kids[0]->leaf->lineno;
+						char* msg = "invalid number of arguments to method call\n\n";
+						throw_semantic_error(msg, line_number);
+					}
 				}
 
+				printf("Method return type is %s\n", typename(typ->u.f.returntype));
 				t->type = typ->u.f.returntype;
 
-			} else {
-				// printf("method call with no arguments\n");
-				if (defined_num_args != 0) {
-					printf("INCOMPATIBLE number of arguments in Method call\n");
-					exit(3);
-				}
-			}
-
-			// printf("Method return type is %s\n", typename(typ->u.f.returntype));
-			t->type = typ->u.f.returntype;
 			break;
 		}
 
@@ -576,26 +614,7 @@ void check_types(struct tree *t) {
 
 		case TOKEN: {
 
-
-			// if (t->stab) {
-			// 	printf("Has table\n");
-			// }
-			//
-			// if (t->leaf->category == IDENTIFIER) {
-			// 	printf("IDENTIFIER TOKEN: %d, %s\n", t->leaf->category, t->leaf->text);
-			//
-			// 	if (t->leaf->type) {
-			// 		printf("*Has type*\n");
-			// 	}
-			//
-			//
-			// }
-			//
-
 			switch (t->leaf->category) {
-
-				//
-
 
 				case IDENTIFIER:
 				case INTLIT:

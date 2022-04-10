@@ -28,9 +28,8 @@ int main(int argc, char *argv[]) {
 		for (int i = 1; i < argc; i++) {
 
 			if (nonflag && (argv[i][0] == '-')) {
-				printf("\nError: Flags not placed before input files\n");
-				printf("Usage: ./j0 [flags] [input files]\n\n");
-				exit(-1);
+				printf("\nusage: ./j0 [flags] [input files]\n");
+				throw_error("flags not placed before input files");
 			}
 
 			if (argv[i][0] == '-') {
@@ -77,6 +76,7 @@ int main(int argc, char *argv[]) {
 				}
 				check_types(root);
 				printf("\n");
+				exit(0);
 				//free_tree(root, 0);
 			}
 		}
@@ -104,9 +104,8 @@ void set_flag (char* flag) {
 	} else if(strcmp(flag, "-tree") == 0) {
 		tree_print_flag = 1;
 	} else {
-		printf("\nError: Unknown Flag %s\n", flag);
-		printf("Available flags include: -symtab\n\n");
-		exit(-1);
+		printf("\nAvailable flags include: -symtab, -tree\n");
+		throw_error("unknown flag");
 	}
 
 }

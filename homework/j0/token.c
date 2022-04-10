@@ -16,44 +16,38 @@ int handle_token(int category_value) { //need to handle cases where tokens arent
 
 		case NOT_IN_JZERO_RESERVED:
 
-			print_error("not supported in jzero");
-			exit(1);
+			throw_lexical_error("not supported in jzero");
 			break;
 
 		case INVALID_PUNCTUATION:
 
- 			print_error("is invalid jzero punctuation");
-	  		exit(1);
+ 			throw_lexical_error("is invalid jzero punctuation");
+
 	  		break;
 
 		case INVALID_CHARLIT_ESCAPE:
 
- 			print_error("has invalid char literal escape");
-			exit(1);
+ 			throw_lexical_error("has invalid char literal escape");
 			break;
 
 	    case INVALIDCHARLIT:
 
- 			print_error("is invalid char literal");
-			exit(1);
+ 			throw_lexical_error("is invalid char literal");
 			break;
 
 		case EMPTY_CHARLIT:
 
- 			print_error("is empty char literal");
-			exit(1);
+ 			throw_lexical_error("is empty char literal");
 			break;
 
 		case OPENENDED_CHARLIT:
 
- 			print_error("is open-ended char literal");
-			exit(1);
+ 			throw_lexical_error("is open-ended char literal");
 			break;
 
 		case UNRECOGNIZED_CHARACTER:
 
-			print_error("is unrecognized character");
-			exit(1);
+			throw_lexical_error("is unrecognized character");
 			break;
 
 	}
@@ -69,7 +63,7 @@ int handle_token(int category_value) { //need to handle cases where tokens arent
 
 	      	//Validate number with min and max allowed INT in Java
 			if (number > 2147483647 || number < -2147483648) {
-				print_error("has invalid int literal range");
+				throw_semantic_error("has invalid int literal range", yylineno);
 				exit(1);
 			}
 
@@ -100,9 +94,8 @@ int handle_token(int category_value) { //need to handle cases where tokens arent
 					    case '\\': str_buffer[char_position] = '\\'; break;
 
 					    default:
-						  print_error("has invalid escape in String");
-					      free(str_buffer);
-						  exit(1);
+						  free(str_buffer);
+						  throw_lexical_error("has invalid escape in String");
 				 	}
 
 				  	//Reset has_escape and advance character location

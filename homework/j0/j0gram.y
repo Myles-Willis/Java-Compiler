@@ -114,6 +114,9 @@
 %type <treeptr> Assignment
 %type <treeptr> LeftHandSide
 %type <treeptr> AssignOp
+/* %type <treeptr> Array */
+/* %type <treeptr> Index */
+/* %type <treeptr> OptArray */
 
 %start ClassDecl
 %%
@@ -145,13 +148,11 @@ ClassBodyDecl:
 	;
 FieldDecl:
 	Type VarDecls ';'
-		{
-			$$ = create_branch(prodR_FieldDecl,"FieldDecl",2, $1,$2);
-			/* $$->type = determinetype($$);
-			printf("$$ type set to %d", $$->type->basetype); */
-		}
+		{$$ = create_branch(prodR_FieldDecl,"FieldDecl",2, $1,$2);}
+	| PUBLIC STATIC Type VarDecls ';'
+		{$$ = create_branch(prodR_StaticFieldDecl,"StaticFieldDecl",2, $3,$4);}
 	| PUBLIC STATIC Type VarDeclarator '=' Literal ';'
-		{$$ = create_branch(prodR_FieldDeclAssign,"FieldDeclAssignment",3, $3,$4,$6);}
+		{$$ = create_branch(prodR_FieldDeclAssign,"FieldDeclAssignment",4, $3,$4,$5,$6);}
 	;
 Type:
 	INT
@@ -167,6 +168,7 @@ Type:
 	| CHAR
 		{}
 	| FLOAT
+		{}
 	;
 
 Name:
@@ -183,10 +185,11 @@ QualifiedName:
 VarDecls:
 	VarDeclarator
 		{$$ = create_branch(prodR_VarDecls,"VarDecls",1, $1);}
-	/* | VarDecls ',' VarDeclarator
-		{$$ = create_branch(prodR_MultiVarDecls,"VarDecls_multi",2, $1,$3);} */
+	| VarDecls ',' VarDeclarator
+		{throw_syntax_error("inline declarations not supported in j0.1");}
 	;
-VarDeclarator: //case?
+
+VarDeclarator:
 	IDENTIFIER
 		{}
 	| VarDeclarator '[' ']'
@@ -196,11 +199,19 @@ VarDeclarator: //case?
 	;
 
 MethodReturnVal:
-	Type
+	Type //change to OptArray
 		{}
 	| VOID
 		{}
 	;
+
+/* OptArray:
+	Type
+		{}
+	| Array
+		{}
+	; */
+
 MethodDecl:
 	MethodHeader Block
 		{
@@ -211,27 +222,6 @@ MethodHeader:
 	 PUBLIC STATIC MethodReturnVal MethodDeclarator
 		{$$ = create_branch(prodR_MethodHeader,"MethodHeader",2, $3,$4);}
 	;
-
-/* HeaderPS:
-	HeaderOptions
-		{}
-	|
-		{$$ = NULL;}
-	;
-
-HeaderOptions:
-	HeaderOption
-		{}
-	| HeaderOptions HeaderOption
-		{$$ = create_branch(prodR_HeaderOptions, "HeaderOptions", 2, $1,$2);}
-	;
-
-HeaderOption:
-	PUBLIC
-		{}
-	| STATIC
-		{}
-	; */
 
 MethodDeclarator:
 	IDENTIFIER '(' FormalParmListOpt ')'
@@ -423,6 +413,14 @@ Primary:
 	| MethodCall
 		{}
 	;
+
+/* Index:
+	INTLIT
+		{}
+	|
+		{$$ = NULL;}
+	; */
+
 Literal:
 	INTLIT
 		{}
@@ -441,9 +439,20 @@ Literal:
 	;
 
 InstantiationExpr:
-	NEW Name '(' ArgListOpt ')'
-		{$$ = create_branch(prodR_InstantiationExpr,"InstantiationExpr",2, $2,$4);}
+	NEW Type '(' ArgListOpt ')'
+		{throw_syntax_error("class instantiation not supported in j0.1");}
+	/* | NEW Array
+		{$$ = create_branch(prodR_ArrayInstantiation, "ArrayInstantiation",1, $2);} */
 	;
+
+/* Array:
+	Type '[' Index ']'
+		{$$ = create_branch(prodR_PostBracketArray, "PostBracketArray", 2, $1, $3);}
+	| '[' ']' TYPE
+		{$$ = $3;}
+	; */
+
+
 ArgList:
 	Expr
 		{}
@@ -545,6 +554,8 @@ Expr:
 		{}
 	| Assignment
 		{}
+	| InstantiationExpr
+		{}
 	;
 Assignment:
 	LeftHandSide AssignOp Expr
@@ -557,6 +568,8 @@ Assignment:
 LeftHandSide:
 	Name
 		{}
+	/* | Array
+		{} */
 	| FieldAccess
 		{}
 	;

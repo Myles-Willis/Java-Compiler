@@ -279,7 +279,15 @@ void populate_symbol_tables(struct tree * n) {
 		}
 
 		case prodR_FieldDecl:
-		case prodR_LocalVarDecl: {
+		case prodR_LocalVarDecl:
+		case prodR_StaticFieldDecl: {
+			// printf("%d\n", n->kids[0]->nkids);
+
+
+			// if (strcmp(n->symbolname, "FieldDecl") == 0) {
+			// 	printf("HERE\n");
+			// 	printf("%s\n", n->kids[0]->symbolname);
+			// }
 
 			typeptr t = alctype(conv_to_type(n->kids[0]->leaf->text));
 			int insert_result = insert_symbol(current,
@@ -295,7 +303,26 @@ void populate_symbol_tables(struct tree * n) {
 			break;
 		}
 
-		case prodR_TypeAssignment: {
+		// case prodR_FieldDeclAssign: {
+		//
+		// 	printf("Static Field Decl Found in Populate\n");
+		//
+		// 	typeptr t = alctype(conv_to_type(n->kids[0]->leaf->text));
+		// 	int insert_result = insert_symbol(current,
+		// 		 n->kids[1]->kids[0]->leaf->text, t);
+		//
+		// 	if (insert_result == 0) {
+		// 		redeclaration_error(n->kids[1]->kids[0]->leaf);
+		// 	}
+		//
+		// 	n->stab = current;
+		// 	n->kids[1]->kids[0]->leaf->type = t;
+		//
+		// 	break;
+		// }
+
+		case prodR_TypeAssignment:
+		case prodR_FieldDeclAssign: {
 
 			typeptr t = alctype(conv_to_type(n->kids[0]->leaf->text));
 			// printf("TYPE: %s\n", n->kids[0]->leaf->text);
@@ -368,7 +395,7 @@ void populate_symbol_tables(struct tree * n) {
 			SymbolTableEntry name_search =
 				check_if_undeclared(traversal, tree_copy->kids[0]->leaf->text);
 
-			printf("Searched for: %s\n",tree_copy->kids[0]->leaf->text);
+			// printf("Searched for: %s\n",tree_copy->kids[0]->leaf->text);
 
 			if (name_search == NULL) {
 				undeclared_error(tree_copy->kids[0]->leaf);
@@ -424,7 +451,7 @@ void populate_symbol_tables(struct tree * n) {
 				//Break out of while loop if there are no more qualified names
 				if (end) {break;}
 			}
-
+			// n->stab = current;
 			break;
 		}
 
@@ -432,9 +459,12 @@ void populate_symbol_tables(struct tree * n) {
 
 			int category = n->leaf->category;
 
+			// printf("%s\n", n->symbolname);
+
 			if (category == IDENTIFIER) {
 				SymbolTableEntry check = check_if_undeclared(current, n->leaf->text);
 				if (check == NULL) {
+					// printf("%s\n", n->leaf->text);
 					undeclared_error(n->leaf);
 				} else {
 					n->stab = check->table;
@@ -483,13 +513,19 @@ char *checked_alloc(int size) {
 typeptr get_method_return_type(struct tree *n) {
 
 	if (n != NULL) {
-		typeptr return_type = alctype(conv_to_type(n->kids[0]->kids[0]
-			->leaf->text));
-		return return_type;
+		// if (n->kids[0]->kids[0]->prodrule == prodR_PostBracketArray) {
+		// 	typeptr return_type = alctype(conv_to_type(n->kids[0]->kids[0]->
+		// 		kids[0]->leaf->text));
+		// 	return return_type;
+		// } else {
+			typeptr return_type = alctype(conv_to_type(n->kids[0]->kids[0]
+				->leaf->text));
+				return return_type;
+		// }
 	}
 
-	printf("Error: Can not determine return type of method\n");
-	exit(3);
+	throw_semantic_error("can not determine return type of method\n", n->leaf->lineno);
+	return NULL;
 }
 
 int count_params(struct tree *parm_list) {
@@ -544,8 +580,8 @@ void enter_newscope(char *s, int typ, struct tree * n) {
 		t->u.f.name = s;
 		t->u.f.nparams = get_param_count(formal_parm_listOpt);
 
-		// printf("** Method [%s] has [%d] parameters\n", s, t->u.f.nparams);
-		// printf("** Return type determined as: %s\n", typename(t->u.f.returntype));
+		printf("** Method [%s] has [%d] parameters\n", s, t->u.f.nparams);
+		printf("** Return type determined as: %s\n", typename(t->u.f.returntype));
 	}
 
 	t->type_sym_table = new_st;
