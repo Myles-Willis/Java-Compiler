@@ -514,7 +514,7 @@ typeptr get_method_return_type(struct tree *n) {
 
 	if (n != NULL) {
 		if (n->kids[0]->kids[0]->prodrule == prodR_PostBracketArray) {
-			printf("Found PostBracketArray\n");
+			// printf("Found PostBracketArray\n");
 			typeptr array_type = alctype(conv_to_type(n->kids[0]->kids[0]->
 				kids[0]->leaf->text));
 			typeptr return_type = alcarraytype(array_type, 0);
@@ -582,8 +582,8 @@ void enter_newscope(char *s, int typ, struct tree * n) {
 		t->u.f.name = s;
 		t->u.f.nparams = get_param_count(formal_parm_listOpt);
 
-		printf("** Method [%s] has [%d] parameters\n", s, t->u.f.nparams);
-		printf("** Return type determined as: %s\n", typename(t->u.f.returntype));
+		// printf("** Method [%s] has [%d] parameters\n", s, t->u.f.nparams);
+		// printf("** Return type determined as: %s\n", typename(t->u.f.returntype));
 	}
 
 	t->type_sym_table = new_st;

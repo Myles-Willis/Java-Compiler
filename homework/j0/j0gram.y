@@ -195,7 +195,7 @@ VarDeclarator:
 	| VarDeclarator '[' ']'
 		{}
 	| '[' ']' VarDeclarator
-		{}
+		{} //Setting $$ = $3; causes a segfault in methodcall type case
 	;
 
 MethodReturnVal:
@@ -206,9 +206,9 @@ MethodReturnVal:
 	;
 
 OptArray:
-	Type
+	Array
 		{}
-	| Array
+	| Type
 		{}
 	;
 
@@ -448,8 +448,8 @@ InstantiationExpr:
 Array:
 	Type '[' Index ']'
 		{$$ = create_branch(prodR_PostBracketArray, "PostBracketArray", 2, $1, $3);}
-	| '[' ']' TYPE
-		{$$ = $3;}
+	| '[' ']' Type
+		{$$ = $3;} //$$ = $3;
 	;
 
 
@@ -568,9 +568,9 @@ Assignment:
 LeftHandSide:
 	Name
 		{}
-	| Array
-		{}
 	| FieldAccess
+		{}
+	| Array
 		{}
 	;
 AssignOp:

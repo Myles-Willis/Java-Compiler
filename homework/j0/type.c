@@ -583,7 +583,9 @@ void check_types(struct tree *t) {
 
 			// *** WEIRD behavior when surrounding in if condition ****
 
-				printf("Here %s\n", t->symbolname);
+				// if (strcmp(t->kids[0]->symbolname, "QualifiedName") == 0) {
+				// 	printf("Case with a QualifiedName\n");
+				// }
 
 				typeptr typ = get_type(t->kids[0]);
 				int defined_num_args = typ->u.f.nparams;
@@ -611,7 +613,7 @@ void check_types(struct tree *t) {
 					}
 				}
 
-				printf("Method return type is %s\n", typename(typ->u.f.returntype));
+				// printf("Method return type is %s\n", typename(typ->u.f.returntype));
 				t->type = typ->u.f.returntype;
 
 			break;
@@ -649,22 +651,4 @@ void check_types(struct tree *t) {
 		}
 
 	}
-
 }
-
-
-
-// typeptr check_types (typeptr a, typeptr b) {
-//
-// 	return NULL;
-// }
-
-// void assigntype(struct tree *t, typeinfo typ) {
-//
-// 	switch (t->prodrule) {
-//
-// 		case prodR_VarDecls: {
-//
-// 		}
-// 	}
-// }
