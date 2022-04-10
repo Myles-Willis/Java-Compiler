@@ -8,6 +8,7 @@ struct typeinfo float_type = { FLOAT_TYPE };
 struct typeinfo void_type = { VOID_TYPE };
 struct typeinfo char_type = { CHAR_TYPE };
 struct typeinfo class_type = { CLASS_TYPE };
+struct typeinfo array_type = { ARRAY_TYPE };
 struct typeinfo func_type = { FUNC_TYPE };
 struct typeinfo construct_type = { CONSTRUCT_TYPE };
 
@@ -18,14 +19,15 @@ typeptr float_typeptr = &float_type;
 typeptr char_typeptr = &char_type;
 typeptr class_typeptr = &class_type;
 typeptr func_typeptr = &func_type;
+typeptr array_typeptr = &array_type;
 typeptr construct_typeptr = &construct_type;
 typeptr void_typeptr = &void_type;
 
 char *typenam[] =
    {"null", "int", "double", "function", "class", "constructor", "char",
-    "boolean", "String", "name", "float", "void"};
+    "boolean", "String", "name", "float", "void", "array"};
 
-int typenamSize = 12;
+int typenamSize = 13;
 
 typeptr alctype(int base) {
 
@@ -55,8 +57,7 @@ typeptr alcfunctype(SymbolTable st) {
    typeptr rv = alctype(FUNC_TYPE);
    if (rv == NULL) return NULL;
    rv->u.f.st = st;
-   /* fill in return type and paramlist by traversing subtrees */
-   /* rf->u.f.returntype = ... */
+
    return rv;
 }
 
@@ -65,8 +66,17 @@ typeptr alcclasstype(SymbolTable st) {
    typeptr rv = alctype(CLASS_TYPE);
    if (rv == NULL) return NULL;
    rv->u.c.st = st;
-   /* fill in return type and paramlist by traversing subtrees */
-   /* rf->u.f.returntype = ... */
+
+   return rv;
+}
+
+typeptr alcarraytype(typeptr elemtype, int size) {
+
+   typeptr rv = alctype(ARRAY_TYPE);
+   if (rv == NULL) return NULL;
+   rv->u.a.elemtype = elemtype;
+   rv->u.a.size = size;
+
    return rv;
 }
 

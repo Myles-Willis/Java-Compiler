@@ -513,15 +513,17 @@ char *checked_alloc(int size) {
 typeptr get_method_return_type(struct tree *n) {
 
 	if (n != NULL) {
-		// if (n->kids[0]->kids[0]->prodrule == prodR_PostBracketArray) {
-		// 	typeptr return_type = alctype(conv_to_type(n->kids[0]->kids[0]->
-		// 		kids[0]->leaf->text));
-		// 	return return_type;
-		// } else {
+		if (n->kids[0]->kids[0]->prodrule == prodR_PostBracketArray) {
+			printf("Found PostBracketArray\n");
+			typeptr array_type = alctype(conv_to_type(n->kids[0]->kids[0]->
+				kids[0]->leaf->text));
+			typeptr return_type = alcarraytype(array_type, 0);
+			return return_type;
+		} else {
 			typeptr return_type = alctype(conv_to_type(n->kids[0]->kids[0]
 				->leaf->text));
 				return return_type;
-		// }
+		}
 	}
 
 	throw_semantic_error("can not determine return type of method\n", n->leaf->lineno);

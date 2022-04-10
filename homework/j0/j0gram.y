@@ -114,9 +114,9 @@
 %type <treeptr> Assignment
 %type <treeptr> LeftHandSide
 %type <treeptr> AssignOp
-/* %type <treeptr> Array */
-/* %type <treeptr> Index */
-/* %type <treeptr> OptArray */
+%type <treeptr> Array
+%type <treeptr> Index
+%type <treeptr> OptArray
 
 %start ClassDecl
 %%
@@ -199,18 +199,18 @@ VarDeclarator:
 	;
 
 MethodReturnVal:
-	Type //change to OptArray
+	OptArray //was Type
 		{}
 	| VOID
 		{}
 	;
 
-/* OptArray:
+OptArray:
 	Type
 		{}
 	| Array
 		{}
-	; */
+	;
 
 MethodDecl:
 	MethodHeader Block
@@ -414,12 +414,12 @@ Primary:
 		{}
 	;
 
-/* Index:
+Index:
 	INTLIT
 		{}
 	|
 		{$$ = NULL;}
-	; */
+	;
 
 Literal:
 	INTLIT
@@ -441,16 +441,16 @@ Literal:
 InstantiationExpr:
 	NEW Type '(' ArgListOpt ')'
 		{throw_syntax_error("class instantiation not supported in j0.1");}
-	/* | NEW Array
-		{$$ = create_branch(prodR_ArrayInstantiation, "ArrayInstantiation",1, $2);} */
+	| NEW Array
+		{$$ = create_branch(prodR_ArrayInstantiation, "ArrayInstantiation",1, $2);}
 	;
 
-/* Array:
+Array:
 	Type '[' Index ']'
 		{$$ = create_branch(prodR_PostBracketArray, "PostBracketArray", 2, $1, $3);}
 	| '[' ']' TYPE
 		{$$ = $3;}
-	; */
+	;
 
 
 ArgList:
@@ -568,8 +568,8 @@ Assignment:
 LeftHandSide:
 	Name
 		{}
-	/* | Array
-		{} */
+	| Array
+		{}
 	| FieldAccess
 		{}
 	;

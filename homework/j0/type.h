@@ -30,8 +30,9 @@ struct field {			/* members (fields) of structs */
 #define NAME_TYPE    1000009
 #define FLOAT_TYPE 1000010
 #define VOID_TYPE 1000011
+#define ARRAY_TYPE 1000012
 
-#define LAST_TYPE    1000011
+#define LAST_TYPE    1000012
 
 typedef struct typeinfo {
 	int basetype;
@@ -71,6 +72,7 @@ int conv_to_type(char* type_string);
 char *typename(typeptr t);
 typeptr alcclasstype(struct sym_table * st);
 typeptr alcfunctype(struct sym_table * st);
+typeptr alcarraytype(typeptr elemtype, int size);
 typeptr determinetype(struct tree *t);
 void check_types(struct tree *t);
 void assigntype(typeptr t);
