@@ -419,7 +419,7 @@ void check_types(struct tree *t) {
 
 			} else {
 				//PostFixExpr
-				printf("\t\tPostFixExpr type: %s\n", typename(t->type));
+				// printf("\t\tPostFixExpr type: %s\n", typename(t->type));
 
 			}
 
@@ -520,7 +520,7 @@ void check_types(struct tree *t) {
 		case prodR_MulExpr:
 		case prodR_AddExpr: {
 
-			printf("prodR_MulExpr/prodR_AddExpr found\n");
+			// printf("prodR_MulExpr/prodR_AddExpr found\n");
 
 			typeptr left, right;
 
