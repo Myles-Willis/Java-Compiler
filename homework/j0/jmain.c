@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
 					printf("---------------------------------------\n\n");
 					printsymbols(globals, 1);
 				}
-				check_types(root);
+				// check_types(root);
 				printf("\n");
 				exit(0);
 				//free_tree(root, 0);

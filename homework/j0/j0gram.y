@@ -190,12 +190,13 @@ VarDecls:
 	;
 
 VarDeclarator:
-	IDENTIFIER
-		{}
-	| VarDeclarator '[' ']'
-		{}
+	VarDeclarator '[' ']'
+		{$$ = create_branch(prodR_PostBracketArrayDeclarator,"PostBracketArrayDeclarator",1, $1);}
 	| '[' ']' VarDeclarator
-		{} //Setting $$ = $3; causes a segfault in methodcall type case
+		{$$ = create_branch(prodR_PreBracketArrayDeclarator,"PreBracketArrayDeclarator",1, $3);} //Setting $$ = $3; causes a segfault in methodcall type case
+			/* $$ = create_branch(prodR_PreBracketArrayDeclarator,"PreBracketArrayDeclarator",1, $3); */
+	| IDENTIFIER
+			{}
 	;
 
 MethodReturnVal:

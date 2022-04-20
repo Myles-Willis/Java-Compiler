@@ -278,27 +278,61 @@ void populate_symbol_tables(struct tree * n) {
 			break;
 		}
 
+
+		// case prodR_PostBracketArrayDeclarator:
+		// case prodR_PreBracketArrayDeclarator: {
+		// 	printf("Post/PreBracketArray Declarator\n");
+		// }
+		//
+		// case prodR_PostBracketArray: {
+		// 	printf("PostBracketArray\n");
+		// }
+
+
 		case prodR_FieldDecl:
 		case prodR_LocalVarDecl:
 		case prodR_StaticFieldDecl: {
-			// printf("%d\n", n->kids[0]->nkids);
+
+			printf("KIDS: %d\n", n->nkids);
+			typeptr t = NULL;
+			int insert_result = 0;
+
+			if (n->nkids == 2) {
+				printf("HEREEE\n");
 
 
-			// if (strcmp(n->symbolname, "FieldDecl") == 0) {
-			// 	printf("HERE\n");
-			// 	printf("%s\n", n->kids[0]->symbolname);
-			// }
+				if (strcmp(n->kids[1]->kids[0]->symbolname, "PostBracketArrayDeclarator") == 0) {
 
-			typeptr t = alctype(conv_to_type(n->kids[0]->leaf->text));
-			int insert_result = insert_symbol(current,
-				 n->kids[1]->kids[0]->leaf->text, t);
+					printf("Post/PreBracketArray Declarator\n\n");
+					t = alctype(conv_to_type(n->kids[0]->leaf->text));
+					insert_result = insert_symbol(current,
+						 n->kids[1]->kids[0]->kids[0]->leaf->text, t);
 
-			if (insert_result == 0) {
-				redeclaration_error(n->kids[1]->kids[0]->leaf);
+				    if (insert_result == 0) {
+						printf("Redeclaration Here***\n");
+						redeclaration_error(n->kids[1]->kids[0]->leaf);
+					}
+
+					n->stab = current;
+			 		n->kids[1]->kids[0]->kids[0]->leaf->type = t;
+				}
+			} else {
+				printf("Other cases***\n");
+				t = alctype(conv_to_type(n->kids[0]->leaf->text));
+				insert_result = insert_symbol(current,
+					n->kids[1]->kids[0]->leaf->text, t);
+
+				if (insert_result == 0) {
+					printf("Redeclaration Here***\n");
+					redeclaration_error(n->kids[1]->kids[0]->leaf);
+				}
+
+				n->stab = current;
+				n->kids[1]->kids[0]->leaf->type = t;
 			}
 
-			n->stab = current;
-			n->kids[1]->kids[0]->leaf->type = t;
+
+
 
 			break;
 		}
@@ -341,40 +375,83 @@ void populate_symbol_tables(struct tree * n) {
 
 		case prodR_FormalParm: {
 
-			typeptr t = alctype(conv_to_type(n->kids[0]->leaf->text));
+			typeptr t = NULL;
+			int insert_result = 0;
 			// printf("TYPE: %s\n", n->kids[0]->leaf->text);
-			int insert_result = insert_symbol(current,
-				 n->kids[1]->leaf->text, t);
-			// printf("****%s\n", n->kids[0]->leaf->text);
-			if (insert_result == 0) {
-				redeclaration_error(n->kids[1]->leaf);
-			}
 
-			n->stab = current;
-			n->kids[1]->leaf->type = t;
+			if (n->nkids == 2) {
+				if (strcmp(n->kids[1]->symbolname, "PostBracketArrayDeclarator")) {
+					t = alctype(conv_to_type(n->kids[0]->leaf->text));
 
-			//Add formal parameter to its method's parameter linked list
-			paramlist param = malloc(sizeof(struct param));
+					insert_result = insert_symbol(current,
+						n->kids[1]->kids[0]->leaf->text, t);
+					// printf("****%s\n", n->kids[0]->leaf->text);
+					if (insert_result == 0) {
+						redeclaration_error(n->kids[1]->kids[0]->leaf);
+					}
 
-			param->name = n->kids[1]->leaf->text;
-			param->type = t;
+					n->stab = current;
+					n->kids[1]->kids[0]->leaf->type = t;
 
-			if (current->scope->u.f.has_param) {
+					//Add formal parameter to its method's parameter linked list
+					paramlist param = malloc(sizeof(struct param));
 
-				paramlist last_ptr = current->scope->u.f.parameters;
+					param->name = n->kids[1]->kids[0]->leaf->text;
+					param->type = t;
 
-				while (last_ptr->next != NULL) {
-					last_ptr = last_ptr->next;
+					if (current->scope->u.f.has_param) {
+
+						paramlist last_ptr = current->scope->u.f.parameters;
+
+						while (last_ptr->next != NULL) {
+							last_ptr = last_ptr->next;
+						}
+						// printf("** previous param [%s] adding [%s %s] to next\n", last_ptr->name, typename(t), param->name);
+						param->position = last_ptr->position + 1;
+						last_ptr->next = param;
+					} else {
+						// printf("** No initial param, setting initial to [%s %s]\n", typename(t), param->name);
+						param->position = 0;
+						current->scope->u.f.parameters = param;
+						param->next = NULL;
+						current->scope->u.f.has_param = 1;
+					}
 				}
-				// printf("** previous param [%s] adding [%s %s] to next\n", last_ptr->name, typename(t), param->name);
-				param->position = last_ptr->position + 1;
-				last_ptr->next = param;
 			} else {
-				// printf("** No initial param, setting initial to [%s %s]\n", typename(t), param->name);
-				param->position = 0;
-				current->scope->u.f.parameters = param;
-				param->next = NULL;
-				current->scope->u.f.has_param = 1;
+
+				insert_result = insert_symbol(current,
+					n->kids[1]->leaf->text, t);
+					// printf("****%s\n", n->kids[0]->leaf->text);
+					if (insert_result == 0) {
+						redeclaration_error(n->kids[1]->leaf);
+					}
+
+					n->stab = current;
+					n->kids[1]->leaf->type = t;
+
+					//Add formal parameter to its method's parameter linked list
+					paramlist param = malloc(sizeof(struct param));
+
+					param->name = n->kids[1]->leaf->text;
+					param->type = t;
+
+					if (current->scope->u.f.has_param) {
+
+						paramlist last_ptr = current->scope->u.f.parameters;
+
+						while (last_ptr->next != NULL) {
+							last_ptr = last_ptr->next;
+						}
+						// printf("** previous param [%s] adding [%s %s] to next\n", last_ptr->name, typename(t), param->name);
+						param->position = last_ptr->position + 1;
+						last_ptr->next = param;
+					} else {
+						// printf("** No initial param, setting initial to [%s %s]\n", typename(t), param->name);
+						param->position = 0;
+						current->scope->u.f.parameters = param;
+						param->next = NULL;
+						current->scope->u.f.has_param = 1;
+					}
 			}
 
 			break;

@@ -8,6 +8,8 @@ typedef enum {
 	prodR_ClassDecl,
 	prodR_ArrayInstantiation,
 	prodR_PostBracketArray,
+	prodR_PostBracketArrayDeclarator,
+	prodR_PreBracketArrayDeclarator,
 	prodR_ClassBodyDecls,
 	prodR_FieldDecl,
 	prodR_StaticFieldDecl,
