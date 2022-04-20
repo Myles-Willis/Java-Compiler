@@ -94,6 +94,11 @@ char* humanreadable(prodrule rule) {
 		case prodR_CondAndExpr : return "CondAndExpr";
 		case prodR_CondOrExpr : return "CondOrExpr";
 		case prodR_Assignment : return "Assignment";
+		case prodR_ArrayInstantiation: return "ArrayInstantiation";
+		case prodR_PostBracketArray: return "PostBracketArray";
+		case prodR_PostBracketArrayDeclarator: return "PostBracketArrayDeclarator";
+		case prodR_PreBracketArrayDeclarator: return "PreBracketArrayDeclarator";
+		case prodR_ArrayAccess: return "ArrayAccess";
 		default: return "";
 
 	}

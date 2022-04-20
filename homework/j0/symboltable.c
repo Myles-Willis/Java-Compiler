@@ -261,7 +261,7 @@ void populate_symbol_tables(struct tree * n) {
 		}
 
 		case prodR_MethodDecl: {
-
+			// printf("MethodDecl Here\n");
 			if (lookup_st(current, n->kids[0]->kids[1]->kids[0]->leaf->text)) {
 				redeclaration_error(n->kids[0]->kids[1]->kids[0]->leaf);
 			}
@@ -278,38 +278,29 @@ void populate_symbol_tables(struct tree * n) {
 			break;
 		}
 
-
-		// case prodR_PostBracketArrayDeclarator:
-		// case prodR_PreBracketArrayDeclarator: {
-		// 	printf("Post/PreBracketArray Declarator\n");
-		// }
-		//
-		// case prodR_PostBracketArray: {
-		// 	printf("PostBracketArray\n");
-		// }
-
-
 		case prodR_FieldDecl:
 		case prodR_LocalVarDecl:
 		case prodR_StaticFieldDecl: {
 
-			printf("KIDS: %d\n", n->nkids);
 			typeptr t = NULL;
 			int insert_result = 0;
 
 			if (n->nkids == 2) {
-				printf("HEREEE\n");
 
+				int postBracket = strcmp(n->kids[1]->kids[0]->symbolname,
+					 "PostBracketArrayDeclarator");
+				int preBracket = strcmp(n->kids[1]->kids[0]->symbolname,
+					 "PreBracketArrayDeclarator");
 
-				if (strcmp(n->kids[1]->kids[0]->symbolname, "PostBracketArrayDeclarator") == 0) {
+				if ((postBracket == 0) || (preBracket == 0)) {
 
-					printf("Post/PreBracketArray Declarator\n\n");
+					// printf("Post/PreBracketArray Declarator\n\n");
 					t = alctype(conv_to_type(n->kids[0]->leaf->text));
 					insert_result = insert_symbol(current,
 						 n->kids[1]->kids[0]->kids[0]->leaf->text, t);
 
 				    if (insert_result == 0) {
-						printf("Redeclaration Here***\n");
+						// printf("Redeclaration Here***\n");
 						redeclaration_error(n->kids[1]->kids[0]->leaf);
 					}
 
@@ -317,13 +308,13 @@ void populate_symbol_tables(struct tree * n) {
 			 		n->kids[1]->kids[0]->kids[0]->leaf->type = t;
 				}
 			} else {
-				printf("Other cases***\n");
+				// printf("Other cases***\n");
 				t = alctype(conv_to_type(n->kids[0]->leaf->text));
 				insert_result = insert_symbol(current,
 					n->kids[1]->kids[0]->leaf->text, t);
 
 				if (insert_result == 0) {
-					printf("Redeclaration Here***\n");
+					// printf("Redeclaration Here***\n");
 					redeclaration_error(n->kids[1]->kids[0]->leaf);
 				}
 
@@ -331,29 +322,8 @@ void populate_symbol_tables(struct tree * n) {
 				n->kids[1]->kids[0]->leaf->type = t;
 			}
 
-
-
-
 			break;
 		}
-
-		// case prodR_FieldDeclAssign: {
-		//
-		// 	printf("Static Field Decl Found in Populate\n");
-		//
-		// 	typeptr t = alctype(conv_to_type(n->kids[0]->leaf->text));
-		// 	int insert_result = insert_symbol(current,
-		// 		 n->kids[1]->kids[0]->leaf->text, t);
-		//
-		// 	if (insert_result == 0) {
-		// 		redeclaration_error(n->kids[1]->kids[0]->leaf);
-		// 	}
-		//
-		// 	n->stab = current;
-		// 	n->kids[1]->kids[0]->leaf->type = t;
-		//
-		// 	break;
-		// }
 
 		case prodR_TypeAssignment:
 		case prodR_FieldDeclAssign: {
@@ -380,7 +350,12 @@ void populate_symbol_tables(struct tree * n) {
 			// printf("TYPE: %s\n", n->kids[0]->leaf->text);
 
 			if (n->nkids == 2) {
-				if (strcmp(n->kids[1]->symbolname, "PostBracketArrayDeclarator")) {
+
+				int postBracket = strcmp(n->kids[1]->symbolname, "PostBracketArrayDeclarator");
+				int preBracket = strcmp(n->kids[1]->symbolname, "PreBracketArrayDeclarator");
+
+				if ((postBracket == 0) || (preBracket == 0)) {
+					// printf("BRACK in FORMAL\n");
 					t = alctype(conv_to_type(n->kids[0]->leaf->text));
 
 					insert_result = insert_symbol(current,

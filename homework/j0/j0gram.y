@@ -115,6 +115,7 @@
 %type <treeptr> LeftHandSide
 %type <treeptr> AssignOp
 %type <treeptr> Array
+%type <treeptr> ArrayAccess
 %type <treeptr> Index
 %type <treeptr> OptArray
 
@@ -413,6 +414,8 @@ Primary:
 		{}
 	| MethodCall
 		{}
+	| ArrayAccess
+		{}
 	;
 
 Index:
@@ -451,6 +454,11 @@ Array:
 		{$$ = create_branch(prodR_PostBracketArray, "PostBracketArray", 2, $1, $3);}
 	| '[' ']' Type
 		{$$ = $3;} //$$ = $3;
+	;
+
+ArrayAccess:
+	IDENTIFIER '[' Expr ']'
+		{$$ = create_branch(prodR_ArrayAccess, "ArrayAccess", 2, $1, $3);}
 	;
 
 

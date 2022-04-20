@@ -10,6 +10,7 @@ typedef enum {
 	prodR_PostBracketArray,
 	prodR_PostBracketArrayDeclarator,
 	prodR_PreBracketArrayDeclarator,
+	prodR_ArrayAccess,
 	prodR_ClassBodyDecls,
 	prodR_FieldDecl,
 	prodR_StaticFieldDecl,
