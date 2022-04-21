@@ -1,14 +1,7 @@
-public class redeclared {
-
-public static int n1 ;
-public static int n2 ;
-
-public static void f(double n1) {
-   double n2;
-   int y;
-
-   double n1;
-   System.out.println(""+ n1);
-   return;
+public class basic {
+public static int x ;
+public static void main(String []argv) {
+   x = 5;
+   x = x * x;
 }
 }
