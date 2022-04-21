@@ -183,7 +183,7 @@ void printsymbols(SymbolTable st, int level) {
       	for (ste = st->tbl[i]; ste; ste=ste->next) {
 
 			for (j=0; j < level; j++) printf("   ");
-			printf("%s %s\n", typename(ste->type),ste->s);
+			printf("%s [%s]\n", typename(ste->type),ste->s);
 			// for (j=0; j < level; j++) printf("  ");
 
 			/* if this symbol has a subscope,
@@ -281,11 +281,11 @@ void populate_symbol_tables(struct tree * n) {
 		case prodR_FieldDecl:
 		case prodR_LocalVarDecl:
 		case prodR_StaticFieldDecl: {
-
+			// printf("ProdRule: %s\n", n->symbolname);
 			typeptr t = NULL;
 			int insert_result = 0;
 
-			if (n->nkids == 2) {
+			if (n->nkids == 2 && (n->kids[1]->nkids > 0 && n->kids[1]->kids[0]->prodrule != TOKEN)) {
 
 				int postBracket = strcmp(n->kids[1]->kids[0]->symbolname,
 					 "PostBracketArrayDeclarator");
@@ -349,7 +349,7 @@ void populate_symbol_tables(struct tree * n) {
 			int insert_result = 0;
 			// printf("TYPE: %s\n", n->kids[0]->leaf->text);
 
-			if (n->nkids == 2) {
+			if (n->nkids == 2 && n->kids[1]->nkids > 0) {
 
 				int postBracket = strcmp(n->kids[1]->symbolname, "PostBracketArrayDeclarator");
 				int preBracket = strcmp(n->kids[1]->symbolname, "PreBracketArrayDeclarator");
@@ -393,6 +393,8 @@ void populate_symbol_tables(struct tree * n) {
 					}
 				}
 			} else {
+
+				t = alctype(conv_to_type(n->kids[0]->leaf->text));
 
 				insert_result = insert_symbol(current,
 					n->kids[1]->leaf->text, t);
