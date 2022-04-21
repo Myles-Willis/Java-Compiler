@@ -49,6 +49,7 @@ typedef enum {
 	prodR_Assignment,
 	prodR_UnaryAssignment,
 	prodR_TypeAssignment,
+	prodR_MethodCallPrimary,
 
 } prodrule;
 

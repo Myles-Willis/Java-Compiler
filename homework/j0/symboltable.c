@@ -439,6 +439,11 @@ void populate_symbol_tables(struct tree * n) {
 			break;
 		}
 
+		// case prodR_ArrayInstantiation:{
+		// 	printf("ArrayInstantiation\n");
+		// 	break;
+		// }
+
 		case prodR_QualifiedName: {
 
 			//Copy current symbol table and tree (n) to traverse
@@ -505,7 +510,7 @@ void populate_symbol_tables(struct tree * n) {
 				//Break out of while loop if there are no more qualified names
 				if (end) {break;}
 			}
-			// n->stab = current;
+			n->stab = current;
 			break;
 		}
 
@@ -661,36 +666,70 @@ void load_builtins() {
 	enter_newscope("String", CLASS_TYPE, NULL);
 
 
-	struct typeinfo *a, *b, *c, *d, *e, *f, *g, *h, *i;
+	struct typeinfo *charAt, *equals, *length, *substring, *valueOf, *print, *println, *read, *close;
 
-	 a = alctype(FUNC_TYPE);
-	 b = alctype(FUNC_TYPE);
-	 c = alctype(FUNC_TYPE);
-	 d = alctype(FUNC_TYPE);
-	 e = alctype(FUNC_TYPE);
-	 f = alctype(FUNC_TYPE);
-	 g = alctype(FUNC_TYPE);
-	 h = alctype(FUNC_TYPE);
-	 i = alctype(FUNC_TYPE);
+	 charAt = alctype(FUNC_TYPE);
+		 charAt->u.f.returntype = alctype(CHAR_TYPE);
+		 charAt->u.f.name = "charAt";
+		 charAt->u.f.nparams = 1;
 
+	 equals = alctype(FUNC_TYPE);
+		 equals->u.f.returntype = alctype(BOOL_TYPE);
+		 equals->u.f.name = "equals";
+		 equals->u.f.nparams = 2;
 
-	insert_symbol(current, "charAt", a);
-	insert_symbol(current, "equals", b);
-	insert_symbol(current, "length", c);
-	insert_symbol(current, "substring", d);
-	insert_symbol(current, "valueOf", e);
+	 length = alctype(FUNC_TYPE);
+		 length->u.f.returntype = alctype(INT_TYPE);
+		 length->u.f.name = "length";
+		 length->u.f.nparams = 0;
+
+	 substring = alctype(FUNC_TYPE);
+		 substring->u.f.returntype = alctype(STRING_TYPE);
+		 substring->u.f.name = "substring";
+		 substring->u.f.nparams = 2;
+
+	 valueOf = alctype(FUNC_TYPE);
+		 valueOf->u.f.returntype = alctype(INT_TYPE);
+		 valueOf->u.f.name = "valueOf";
+		 valueOf->u.f.nparams = 1;
+
+	 print = alctype(FUNC_TYPE);
+		 print->u.f.returntype = alctype(STRING_TYPE);
+		 print->u.f.name = "print";
+		 print->u.f.nparams = 1;
+
+	 println = alctype(FUNC_TYPE);
+		 println->u.f.returntype = alctype(STRING_TYPE);
+		 println->u.f.name = "println";
+		 println->u.f.nparams = 1;
+
+	 read = alctype(FUNC_TYPE);
+		 read->u.f.returntype = alctype(INT_TYPE);
+		 read->u.f.name = "read";
+		 read->u.f.nparams = 0;
+
+	 close = alctype(FUNC_TYPE);
+		 close->u.f.returntype = NULL;
+		 close->u.f.name = "close";
+		 close->u.f.nparams = 0;
+
+	insert_symbol(current, "charAt", charAt);
+	insert_symbol(current, "equals", equals);
+	insert_symbol(current, "length", length);
+	insert_symbol(current, "substring", substring);
+	insert_symbol(current, "valueOf", valueOf);
 	popscope();
 
 	enter_newscope("System", CLASS_TYPE, NULL);
 
 		enter_newscope("out", CLASS_TYPE, NULL);
-		insert_symbol(current, "print", f);
-		insert_symbol(current, "println", g);
+		insert_symbol(current, "print", print);
+		insert_symbol(current, "println", println);
 		popscope();
 
 		enter_newscope("in", CLASS_TYPE, NULL);
-		insert_symbol(current, "read", h);
-		insert_symbol(current, "close", i);
+		insert_symbol(current, "read", read);
+		insert_symbol(current, "close", close);
 		popscope();
 		popscope();
 

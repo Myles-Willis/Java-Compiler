@@ -481,10 +481,10 @@ MethodCall:
 		{$$ = create_branch(prodR_MethodCall,"MethodCall_curly",2, $1,$3);}
 
 	| Primary '.' IDENTIFIER '(' ArgListOpt ')'
-		{$$ = create_branch(prodR_MethodCall,"MethodCall_primary_parens",3, $1,$3,$5);}
+		{$$ = create_branch(prodR_MethodCallPrimary,"MethodCall_primary_parens",3, $1,$3,$5);}
 
 	| Primary '.' IDENTIFIER '{' ArgListOpt '}'
-		{$$ = create_branch(prodR_MethodCall,"MethodCall_primary_curly",3, $1,$3,$5);}
+		{$$ = create_branch(prodR_MethodCallPrimary,"MethodCall_primary_curly",3, $1,$3,$5);}
 	;
 
 PostFixExpr:

@@ -274,6 +274,24 @@ int is_number(typeptr t) {
 	return 0;
 }
 
+struct tree *get_last_name(struct tree *name_head) {
+
+	struct tree *current = name_head;
+
+	if (name_head->nkids == 0) {
+		return name_head;
+	}
+
+	while (current->kids[1]->nkids != 0) {
+		current = current->kids[1];
+	}
+
+	current = current->kids[1];
+
+	printf("Returning %s\n", current->leaf->text);
+	return current;
+}
+
 void check_types(struct tree *t) {
 
 	int i;
@@ -353,16 +371,44 @@ void check_types(struct tree *t) {
 		case prodR_Assignment: {
 
 			// printf("prodR_Assignment found\n");
+			// printf("[0]: %s, [1]: %s\n",t->kids[0]->leaf->text, t->kids[2]->leaf->text);
+			typeptr left = NULL;
+			typeptr right = NULL;
+			int line_number = 0;
 
-			// look up in current table and save type;
-			typeptr left = get_type(t->kids[0]);
-			typeptr right = get_type(t->kids[2]);
+			if (t->kids[2]->prodrule == prodR_ArrayInstantiation) {
+				// printf("prodR_ArrayInstantiation found\n");
+				// left = get_type(t->kids[0]);
 
+				if(t->kids[2]->kids[0]->nkids == 2) {
+					char* type_str = t->kids[2]->kids[0]->kids[0]->leaf->text;
+					right = alctype(conv_to_type(type_str));
+				} else {
+					char* type_str = t->kids[2]->kids[0]->leaf->text;
+					right = alctype(conv_to_type(type_str));
+				}
+			} else if (t->kids[2]->prodrule == prodR_PostBracketArray) {
 
+				// left = get_type(t->kids[0]);
+				char* type_str = t->kids[2]->kids[0]->leaf->text;
+				right = alctype(conv_to_type(type_str));
+
+			} else {
+				// look up in current table and save type;
+				// left = get_type(t->kids[0]);
+				right = get_type(t->kids[2]);
+			}
+
+			if (t->kids[0]->prodrule == prodR_PostBracketArray) {
+				left = get_type(t->kids[0]->kids[0]);
+				line_number = t->kids[0]->kids[0]->leaf->lineno;
+			} else {
+				left = get_type(t->kids[0]);
+				line_number = t->kids[0]->leaf->lineno;
+			}
 
 			if (left->basetype != right->basetype) {
 
-				int line_number = t->kids[0]->leaf->lineno;
 				char* msg = "incompatible types in assignment\n";
 				throw_semantic_error(msg, line_number);
 
@@ -578,15 +624,61 @@ void check_types(struct tree *t) {
 
 		case prodR_MethodCall: { // parens/curly
 			// printf("prodR_MethodCall found\n");
-			//
-			// printf("**** %s\n", t->leaf->text);
 
 			// *** WEIRD behavior when surrounding in if condition ****
+				typeptr typ = NULL;
 
-				// if (strcmp(t->kids[0]->symbolname, "QualifiedName") == 0) {
-				// 	printf("Case with a QualifiedName\n");
-				// }
+				if (t->kids[0]->symbolname) {
+					break;
 
+					// printf("Found: %s\n", t->kids[0]->symbolname);
+					//
+					// struct tree *last_name = get_last_name(t->kids[0]->kids[1]);
+					// // typ = get_type(last_name);
+					// printf("FUNCT %s\n", last_name->leaf->text);
+					// SymbolTableEntry st = check_if_undeclared(t->kids[0]->stab, last_name->leaf->text);
+					// printf("%s\n", st->s);
+					// printf("TYPE %s\n", typename(get_type(last_name)));
+					// printf("PARAM %s\n", typename(t->kids[1]->leaf->type));
+
+
+				}
+				typ = get_type(t->kids[0]);
+				int defined_num_args = typ->u.f.nparams;
+
+				if (t->kids[1]) {
+
+					int num_args = get_arg_count(t->kids[1]);
+
+					if (num_args == defined_num_args) {
+						validate_params(t->kids[1], typ, num_args - 1);
+					} else {
+						int line_number = t->kids[0]->leaf->lineno;
+						char* msg = "invalid number of arguments to method call\n";
+						throw_semantic_error(msg, line_number);
+					}
+
+					t->type = typ->u.f.returntype;
+
+				} else {
+					// printf("method call with no arguments\n");
+					if (defined_num_args != 0) {
+						int line_number = t->kids[0]->leaf->lineno;
+						char* msg = "invalid number of arguments to method call\n\n";
+						throw_semantic_error(msg, line_number);
+					}
+				}
+
+				// printf("Method return type is %s\n", typename(typ->u.f.returntype));
+				t->type = typ->u.f.returntype;
+
+			break;
+		}
+
+		case prodR_MethodCallPrimary: {
+			printf("prodR_MethodCallPrimary found\n");
+
+				//get last of the qualified name sequence
 				typeptr typ = get_type(t->kids[0]);
 				int defined_num_args = typ->u.f.nparams;
 

@@ -71,7 +71,7 @@ public static String stringOps() {
     String S1;
     String S2;
     S1 = "One";
-    //S2 = S1 + "Two"; // uh oh
+    // S2 = S1 + "Two"; // uh oh
     return S2;
 }
 
