@@ -156,12 +156,6 @@ typeptr get_type(struct tree *t) {
 		return t->type;
 	}
 
-	// if (t->nkids > 0) {
-	// 	if (strcmp(t->symbolname, "MethodCall_parens") == 0) {
-	// 		printf("LETD GOOO\n");
-	// 		ste = lookup_st(t->kids[0]->stab ,t->kids[0]->leaf->text);
-	// 	}
-	// } else {
 		switch (t->leaf->category) {
 			case INTLIT:
 			case REALLIT:
@@ -292,6 +286,56 @@ struct tree *get_last_name(struct tree *name_head) {
 	return current;
 }
 
+typeptr type_promotion (typeptr left, typeptr right) {
+
+	if ((left != NULL) && (right != NULL)) {
+
+		//ensure they are numbers
+		int left_correct = ((is_number(left)) || (left->basetype == CHAR_TYPE));
+		int right_correct = ((is_number(right)) || (right->basetype == CHAR_TYPE));
+
+		if (left_correct && right_correct) {
+
+			switch (left->basetype) {
+
+				case INT_TYPE:
+				case CHAR_TYPE: {
+
+					if ((right->basetype != left->basetype) &&
+						(right->basetype != CHAR_TYPE)) {
+
+						// printf("result type should be %s\n", typename(right));
+						return right;
+					} else {
+						// printf("**Matching ints on L and R ");
+						// printf("result type should be INT\n");
+						return alctype(INT_TYPE);
+					}
+					break;
+				}
+
+				case DOUBLE_TYPE: {
+					if (right->basetype == FLOAT_TYPE) {
+						// printf("result type should be %s\n", typename(right));
+						return right;
+					}
+					break;
+				}
+
+				case FLOAT_TYPE: {
+					// printf("result type should be %s\n", typename(left));
+					return left;
+					break;
+				}
+			}
+		}
+		//If type is not a number, return the left type since it must match
+		return left;
+	}
+	printf("Promotion could not be checked!\n");
+	return NULL;
+}
+
 void check_types(struct tree *t) {
 
 	int i;
@@ -395,8 +439,11 @@ void check_types(struct tree *t) {
 
 			} else {
 				// look up in current table and save type;
-				// left = get_type(t->kids[0]);
-				right = get_type(t->kids[2]);
+				if (t->kids[2]->nkids == 2 && t->kids[2]->kids[0]->prodrule == prodR_MulExpr) {
+					right = get_type(t->kids[2]->kids[0]->kids[0]);
+				} else {
+					right = get_type(t->kids[2]);
+				}
 			}
 
 			if (t->kids[0]->prodrule == prodR_PostBracketArray) {
@@ -407,13 +454,19 @@ void check_types(struct tree *t) {
 				line_number = t->kids[0]->leaf->lineno;
 			}
 
-			if (left->basetype != right->basetype) {
 
-				char* msg = "incompatible types in assignment\n";
-				throw_semantic_error(msg, line_number);
+			if ((left != NULL) && (right != NULL)) {
+				typeptr promo = type_promotion(left, right);
+				// printf("Promo1 returned %s\n", typename(promo));
 
-			} else {
-				t->type = left;
+				if (is_number(promo)) {
+					t->type = promo;
+				} else if (left->basetype == right->basetype) {
+					t->type = promo;
+				} else {
+					char* msg = "incompatible types in assignment\n";
+					throw_semantic_error(msg, line_number);
+				}
 			}
 
 			break;
@@ -426,8 +479,6 @@ void check_types(struct tree *t) {
 
 			if (strcmp(t->symbolname, "UnaryExpr_Neg") == 0) {
 
-				// SymbolTableEntry ste =
-				// lookup_st(t->kids[1]->stab, t->kids[1]->leaf->text);
 				typeptr type = get_type(t->kids[1]);
 
 				switch (type->basetype) {
@@ -569,50 +620,30 @@ void check_types(struct tree *t) {
 			// printf("prodR_MulExpr/prodR_AddExpr found\n");
 
 			typeptr left, right;
+			int line_number;
 
-			left = get_type(t->kids[0]);
+			if (t->kids[0]->nkids == 2) { //prodrule == prodR_MulExpr
+				left = get_type(t->kids[0]->kids[0]);
+				line_number = t->kids[0]->kids[0]->leaf->lineno;
+			} else {
+				left = get_type(t->kids[0]);
+				line_number = t->kids[0]->leaf->lineno;
+			}
+
 			right = get_type(t->kids[1]);
 
 			if ((left != NULL) && (right != NULL)) {
 
-				//ensure they are numbers
-				int left_correct = ((is_number(left)) || (left->basetype == CHAR_TYPE));
-				int right_correct = ((is_number(right)) || (right->basetype == CHAR_TYPE));
+				if (!(is_number(left) && is_number(right))) {
+					char* msg = "expression requires numerical values\n";
+					throw_semantic_error(msg, line_number);
+				}
 
-				if (left_correct && right_correct) {
-					//set node type according to promotion helper function?
-					switch (left->basetype) {
+				typeptr promo = type_promotion(left, right);
+				// printf("Promo2 returned %s\n", typename(promo));
 
-						case INT_TYPE:
-						case CHAR_TYPE: {
-
-							if ((right->basetype != left->basetype) &&
-								(right->basetype != CHAR_TYPE)) {
-
-								// printf("result type should be %s\n", typename(right));
-								t->type = right;
-							} else {
-								// printf("**Matching ints on L and R ");
-								// printf("result type should be INT\n");
-								t->type = alctype(INT_TYPE);
-							}
-							break;
-						}
-
-						case DOUBLE_TYPE: {
-							if (right->basetype == FLOAT_TYPE) {
-								// printf("result type should be %s\n", typename(right));
-								t->type = right;
-							}
-							break;
-						}
-
-						case FLOAT_TYPE: {
-							// printf("result type should be %s\n", typename(left));
-							t->type = left;
-							break;
-						}
-					}
+				if(is_number(promo)) {
+					t->type = type_promotion(left, right);
 				} else {
 					int line_number = t->kids[0]->leaf->lineno;
 					char* msg = "expression requires numerical values\n";

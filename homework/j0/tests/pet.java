@@ -18,9 +18,12 @@ public class pet {
         }
     }
 
-    public static void main(String[] argv) {
+    public static void main(String []argv) {
+
+		int x;
+		x = 2;
         // pet myDog = new pet();
-        pet myDog = new pet();
+        // pet myDog = new pet();
         // int x = new pet();
         // myDog.play();
 
