@@ -2,6 +2,7 @@
 #include "tree.h"
 #include "error.h"
 #include "symboltable.h"
+#include "intermediate.h"
 
 extern int yydebug;
 char *filename;
@@ -75,6 +76,10 @@ int main(int argc, char *argv[]) {
 					printsymbols(globals, 1);
 				}
 				check_types(root);
+
+				// print_intermediate_tree(root, 0);
+
+				gen_intermediate_code(root);
 				printf("\n");
 				exit(0);
 				//free_tree(root, 0);

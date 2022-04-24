@@ -100,6 +100,7 @@ SymbolTable make_sym_table(int size, char* table_name) {
 		checked_alloc((unsigned int) (size * sizeof(struct sym_entry *))); //* or **?
 	table->nBuckets = size;
 	table->nEntries = 0;
+	table->byte_words = 0;
 	table->table_name = table_name;
 
 	return table;
@@ -122,8 +123,6 @@ int hash(SymbolTable st, char *s) {
 }
 
 int insert_symbol(SymbolTable st, char *s, typeptr t) {
-
-	// printf("inserting for %s inside %s\n", s, st->table_name);
 
    	int h;
    	struct sym_entry *se;
@@ -150,7 +149,15 @@ int insert_symbol(SymbolTable st, char *s, typeptr t) {
    	if (st ==stringpool) se->s = insert_sbuf(&buf, s);
    	else se->s = s;
 	se->type = t;
+
+	struct addr *temp = malloc(sizeof(struct addr));
+	memset(temp, 0, sizeof(struct addr));
+	se->address = temp;
+	se->address->region = R_LOCAL;
+	se->address->u.offset = (8 * st->byte_words);
+
    	st->nEntries++;
+	st->byte_words++;
 
    	return 1;
 }
@@ -183,7 +190,9 @@ void printsymbols(SymbolTable st, int level) {
       	for (ste = st->tbl[i]; ste; ste=ste->next) {
 
 			for (j=0; j < level; j++) printf("   ");
-			printf("%s [%s]\n", typename(ste->type),ste->s);
+			printf("%s [%s] ", typename(ste->type),ste->s);
+			print_addr(*ste->address);
+			printf("\n");
 			// for (j=0; j < level; j++) printf("  ");
 
 			/* if this symbol has a subscope,
@@ -194,7 +203,7 @@ void printsymbols(SymbolTable st, int level) {
 				case CLASS_TYPE:
 				case FUNC_TYPE:
 					for (j=0; j < level; j++) printf("   ");
-					printf("--- symbol table for %s: %s ---\n",typename(ste->type), ste->s);
+					printf("--- symbol table for %s: %s [%d words] ---\n",typename(ste->type), ste->s, ste->table->byte_words);
 					printsymbols(ste->type->type_sym_table, level + 1);
 					for (j=0; j < level; j++) printf("   ");
 					printf("---\n\n");

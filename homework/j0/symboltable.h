@@ -7,6 +7,7 @@ typedef struct sym_table {
 	char* table_name;
   	int nBuckets;			/* # of buckets */
   	int nEntries;			/* # of symbols in the table */
+	int byte_words;
 	struct sym_table *parent;		/* enclosing scope, superclass etc. */
 	struct typeinfo *scope;			/* what type do we belong to? class/method? */
   	struct sym_entry **tbl;
@@ -16,8 +17,8 @@ typedef struct sym_table {
 typedef struct sym_entry {
    SymbolTable table;	//what symbol table do we belong to
    char *s;				/* string */
-   // more symbol attributes go here for code generation
    struct typeinfo *type;
+   struct addr *address;
    struct sym_entry *next;
    } *SymbolTableEntry;
 
@@ -34,7 +35,7 @@ void printsymbols(SymbolTable st, int level);
 SymbolTableEntry lookup_st(SymbolTable st, char *s);
 
 void enter_newscope(char *s, int typ, struct tree * n);
-int insert_symbol(SymbolTable st, char *s, typeptr t);
+int insert_symbol(SymbolTable st, char *s, typeptr t); //, int address_region
 void load_builtins();
 SymbolTableEntry check_if_undeclared(SymbolTable st, char* s);
 

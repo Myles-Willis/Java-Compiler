@@ -25,12 +25,6 @@ struct tree *create_leaf(int category_value, char* yytext, int lineno, char* fil
 	leaf_token->dval = 0;
 	leaf_token->sval = NULL;
 
-	// if(trees->tree_node == NULL) {
-	// 	trees->tree_node = tree;
-	// } else {
-	// 	trees->next
-	// }
-
 	return tree;
 
 }
@@ -138,6 +132,30 @@ int print_tree(struct tree* tree, int depth) {
 	return 0;
 
 }
+
+// void genfirst(struct tree *t) {
+//
+// 	if (t->kids != NULL) {
+// 		for (int i = 0; i < t->nkids; i++) {
+// 			genfirst(t->kids[i]);
+// 		}
+//
+// 		switch (t->prodrule) {
+//
+// 			case prodR_AddExpr:
+// 			case prodR_MulExpr: {
+//
+// 				if (t->kids[0]->first != NULL) {
+// 					t->first = t-
+// 				}
+// 			}
+// 		}
+//
+//
+//
+// 	}
+//
+// }
 
 // int free_tree(struct tree* tree, int depth) {
 //
