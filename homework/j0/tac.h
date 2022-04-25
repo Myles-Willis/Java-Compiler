@@ -2,6 +2,7 @@
 #define TAC_H
 
 enum ADDR_UNION {OFFSET, DVAL, NAME};
+enum  CODE_TYPE {OPCODE, DECLARATION};
 
 struct addr {
 
@@ -29,10 +30,13 @@ struct addr {
 
 struct instr {
    int opcode;
+   enum CODE_TYPE code_type;
    struct addr dest, src1, src2;
    struct instr *next;
-   int nparams;
    char *name;
+
+   int nparams;
+   int block_bytes;
 
 };
 /* Opcodes, per lecture notes */
@@ -68,7 +72,7 @@ struct instr {
 #define D_PROT  3056 /* prototype "declaration" */
 
 struct instr *gen(int, struct addr, struct addr, struct addr);
-struct instr *gen_method(char* method_name, int nparams, struct addr a);
+struct instr *gen_method(char* method_name, int nparams, struct addr a, int code);
 struct instr *concat(struct instr *, struct instr *);
 struct instr *append(struct instr *l1, struct instr *l2);
 char *regionname(int i);
@@ -76,6 +80,7 @@ char *opcodename(int i);
 char *pseudoname(int i);
 struct addr *genlabel();
 void print_instr(struct instr *rv);
+void print_proc(struct instr *rv);
 void tacprint(struct instr *head);
 char print_addr(struct addr a);
 

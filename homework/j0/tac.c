@@ -47,7 +47,7 @@ struct instr *gen(int op, struct addr a1, struct addr a2, struct addr a3) {
 	return rv;
 }
 
-struct instr *gen_method(char* method_name, int nparams, struct addr a) {
+struct instr *gen_method(char* method_name, int nparams, struct addr a, int code) {
 
 	struct instr *rv = malloc(sizeof (struct instr));
 
@@ -57,7 +57,7 @@ struct instr *gen_method(char* method_name, int nparams, struct addr a) {
 	 }
 
 	struct addr empty_address = {R_NONE, OFFSET, {0}};
-	rv->opcode = O_CALL;
+	rv->opcode = code;
 	rv->dest = a;
 	rv->src1 = empty_address;
 	rv->src2 = empty_address;
@@ -94,22 +94,40 @@ struct instr *concat(struct instr *l1, struct instr *l2) {
 	return append(copylist(l1), l2);
 }
 
+void print_proc(struct instr *rv) {
+	printf("%s, %d, %d ", rv->name, (rv->nparams*8), rv->block_bytes);
+}
+
 void print_instr(struct instr *rv) {
 
-	char *opcode_name = opcodenames[rv->opcode - 3001];
-	printf("%s\t", opcode_name);
+	char *opcode_name;
 
+	switch (rv->code_type) {
+
+		case DECLARATION:
+			opcode_name = pseudoname(rv->opcode);
+			printf("%s\t", opcode_name);
+			break;
+
+		default:
+			opcode_name = opcodename(rv->opcode);
+			printf("\t%s\t", opcode_name);
+			break;
+	}
 
 	if (rv->opcode == O_CALL) {
-		 printf("%s, %d, ", rv->name, rv->nparams);
+		 printf("%s,%d,", rv->name, rv->nparams);
 		 print_addr(rv->dest);
 
+	} else if (rv->opcode == D_PROC) {
+		print_proc(rv);
 	} else {
+
 		print_addr(rv->dest);
-		if (rv->src1.region != R_NONE) {printf(", ");}
+		if (rv->src1.region != R_NONE) {printf(",");}
 		print_addr(rv->src1);
 
-		if (rv->src2.region != R_NONE) {printf(", ");}
+		if (rv->src2.region != R_NONE) {printf(",");}
 		print_addr(rv->src2);
 	}
 
@@ -133,23 +151,20 @@ void tacprint(struct instr *head) {
 
 char print_addr(struct addr a) {
 
-	// printf("Region: %d\n", a.region);
-	char *r = regionnames[a.region - 2001];
+	if (a.region == R_NONE) { return 0; }
 
-	if (a.region == R_NONE) {
-		return 0 ;
-	}
+	char *r = regionname(a.region);
 
 	switch (a.tag) {
 
 		case NAME:
-			printf("%s:%s ", r, a.u.name);
+			printf("%s:%s", r, a.u.name);
 			break;
 		case DVAL:
-			printf("%s:%f ", r, a.u.dval);
+			printf("%s:%f", r, a.u.dval);
 			break;
 		case OFFSET:
-			printf("%s:%d ", r, a.u.offset);
+			printf("%s:%d", r, a.u.offset);
 			break;
 	}
 

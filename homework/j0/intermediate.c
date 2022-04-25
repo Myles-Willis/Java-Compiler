@@ -44,7 +44,7 @@ void gen_intermediate_code(struct tree *n) {
 
 	if (n->symbolname) {
 		/* code */
-		printf("\n********** current node is %s\n", n->symbolname);
+		// printf("\n********** current node is %s\n", n->symbolname);
 	}
 
 	switch (n->prodrule) {
@@ -149,6 +149,39 @@ void gen_intermediate_code(struct tree *n) {
 			break;
 		}
 
+		case prodR_MethodDecl: {
+			// printf("%s\n", n->symbolname);
+			break;
+		}
+
+		case prodR_MethodDeclarator: {
+			// printf("%s\n", n->kids[0]->leaf->text);
+
+			n->address = newtemp(1);
+			n->address->region = R_PROCNAME;
+			// gen_method(n->kids[0]->leaf->text, int nparams, struct addr a, int code)
+			// n->icode = gen_method(n->kids[0]->leaf->text, );
+			//
+
+
+			SymbolTableEntry method = check_if_undeclared(n->stab, n->kids[0]->leaf->text);
+
+			if (method != NULL) {
+				char* method_name = method->type->u.f.name;
+				int params = method->type->u.f.nparams;
+				n->icode = gen_method(method_name, params, *method->address, D_PROC);
+				n->icode->code_type = DECLARATION;
+				n->icode->block_bytes = method->table->byte_words * 8;
+				tacprint(n->icode);
+
+			} else {
+				printf("Method not found in symtab!\n");
+			}
+
+
+			break;
+		}
+
 		case prodR_AddExpr: {
 
 			int add = strcmp(n->symbolname, "AddExpr_add");
@@ -230,7 +263,7 @@ void gen_intermediate_code(struct tree *n) {
 					case REALLIT:
 					case BOOLLIT:
 					case CHARLIT:
-						printf("Handle literals here\n");
+						// printf("Handle literals here\n");
 						gentoken(n->kids[1]);
 						method_params = gen(O_PARM, *n->kids[1]->address, empty_address, empty_address);
 
@@ -246,7 +279,7 @@ void gen_intermediate_code(struct tree *n) {
 			if (method != NULL) {
 				char* method_name = method->type->u.f.name;
 				int params = method->type->u.f.nparams;
-				method_call = gen_method(method_name, params, *method->address);
+				method_call = gen_method(method_name, params, *method->address, O_CALL);
 
 				n->icode = append(method_params, method_call);
 				tacprint(n->icode);
@@ -259,6 +292,12 @@ void gen_intermediate_code(struct tree *n) {
 		}
 
 		case prodR_MethodCallPrimary: {
+			// printf("METHODCALLPRIMARY*****\n");
+			break;
+		}
+
+		case prodR_QualifiedName: {
+			// printf("$$$$$$$$$$$ QualifiedName HERE ******\n");
 			break;
 		}
 
@@ -316,7 +355,7 @@ void genfirst(struct tree *t) {
 
 int set_identifier_addr(struct tree *n) {
 
-	SymbolTableEntry search = lookup_st(n->stab ,n->leaf->text);
+	SymbolTableEntry search = check_if_undeclared(n->stab ,n->leaf->text);
 
 	if (search) {
 		n->address = search->address;
@@ -334,19 +373,8 @@ void gentoken(struct tree *n) {
 	switch (n->leaf->category) {
 
 		case IDENTIFIER: {
-			// printf("Indentifier address %s\n", n->leaf->text);
+			// printf("Indentifier %s\n", n->leaf->text);
 			set_identifier_addr(n);
-
-			// SymbolTableEntry search = lookup_st(n->stab ,n->leaf->text);
-			//
-			// if (search) {
-			// 	// printf("\tfound in SymbolTable\n");
-			// 	n->address = search->address;
-			// 	//print_addr(*n->address);
-			// } else {
-			// 	printf("Could not find address for %s from Symboltable\n", n->leaf->text);
-			// 	printf("table name: %s\n", n->stab->table_name);
-			// }
 			break;
 		}
 		case INTLIT: {
