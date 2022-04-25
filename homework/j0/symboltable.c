@@ -443,16 +443,6 @@ void populate_symbol_tables(struct tree * n) {
 			break;
 		}
 
-		case prodR_FormalParmList:{
-			// printf("Formal parm list found\n");
-			break;
-		}
-
-		// case prodR_ArrayInstantiation:{
-		// 	printf("ArrayInstantiation\n");
-		// 	break;
-		// }
-
 		case prodR_QualifiedName: {
 
 			//Copy current symbol table and tree (n) to traverse
@@ -540,8 +530,10 @@ void populate_symbol_tables(struct tree * n) {
 			}
 			break;
 		}
-
 	}
+
+	if (n->stab == NULL) { n->stab = current; }
+
 
 	/* visit children */
 	switch (n->prodrule) {

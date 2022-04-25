@@ -51,7 +51,7 @@ void gen_intermediate_code(struct tree *n) {
 
 		case prodR_TypeAssignment:
 		case prodR_FieldDeclAssign: {
-			// printf("TypeAssignment/FieldDeclAssign Found\n");
+
 			n->address = newtemp(1);
 
 			int field_assn = strcmp(n->symbolname, "FieldDeclAssignment");
@@ -70,10 +70,7 @@ void gen_intermediate_code(struct tree *n) {
 			}
 
 			n->icode = append(other_instr, current_instr);
-			// tacprint(n->icode);
-			// print_addr(*n->address);
 			tacprint(n->icode);
-			// printf("\n");
 
 			break;
 		}
@@ -86,6 +83,8 @@ void gen_intermediate_code(struct tree *n) {
 
 			n->address = n->kids[0]->address;
 			n->address->region = R_LOCAL;
+			n->address->u.offset = n->stab->byte_words *  8;
+			n->stab->byte_words++;
 
 			struct instr *current_instr;
 			struct instr *other_instr;
@@ -94,8 +93,6 @@ void gen_intermediate_code(struct tree *n) {
 			other_instr = n->kids[2]->icode;
 
 			n->icode = append(other_instr, current_instr);
-			// tacprint(n->icode);
-			//print_addr(*n->address);
 			tacprint(n->icode);
 
 			break;
@@ -106,6 +103,8 @@ void gen_intermediate_code(struct tree *n) {
 			int neg = strcmp(n->symbolname, "UnaryExpr_Neg");
 			n->address = newtemp(1);
 			n->address->region = R_LOCAL;
+			n->address->u.offset = n->stab->byte_words *  8;
+			n->stab->byte_words++;
 
 			struct instr *current_instr;
 			struct instr *other_instr;
@@ -127,6 +126,17 @@ void gen_intermediate_code(struct tree *n) {
 		}
 
 		case prodR_RelExpr: {
+			printf("The symbol is: %d\n", n->kids[1]->leaf->category);
+			switch (n->kids[1]->leaf->category) {
+				case 60:
+					break;
+				case 62:
+					break;
+				case 293:
+					break;
+				case 294:
+					break;
+			}
 			break;
 		}
 
@@ -144,8 +154,8 @@ void gen_intermediate_code(struct tree *n) {
 			int add = strcmp(n->symbolname, "AddExpr_add");
 			n->address = newtemp(1);
 			n->address->region = R_LOCAL;
-			n->address->u.offset = n->kids[0]->kids[0]->stab->byte_words *  8;
-			n->kids[0]->kids[0]->stab++;
+			n->address->u.offset = n->stab->byte_words *  8;
+			n->stab->byte_words++;
 
 			struct instr *current_instr;
 			struct instr *other_instr;
@@ -171,12 +181,10 @@ void gen_intermediate_code(struct tree *n) {
 			int multiply = strcmp(n->symbolname, "MulExpr_multiply");
 			int divide = strcmp(n->symbolname, "MulExpr_divide");
 
-			// int offset_bytes = n->stab->byte_words *  8;
-
 			n->address = newtemp(1);
 			n->address->region = R_LOCAL;
-			n->address->u.offset = n->kids[0]->stab->byte_words *  8;
-			n->kids[0]->stab->byte_words++;
+			n->address->u.offset = n->stab->byte_words *  8;
+			n->stab->byte_words++;
 
 			struct instr *current_instr;
 			struct instr *other_instr;
@@ -199,6 +207,54 @@ void gen_intermediate_code(struct tree *n) {
 		}
 
 		case prodR_MethodCall: {
+
+			struct instr *method_params;
+			struct instr *method_call;
+
+			if (n->kids[1]->nkids == 0) {
+				//Expr
+				switch (n->kids[1]->leaf->category) {
+					case IDENTIFIER: {
+
+						int set = set_identifier_addr(n->kids[1]);
+
+						if (set == 1) {
+							method_params = gen(O_PARM, *n->kids[1]->address, empty_address, empty_address);
+							// tacprint(method_params);
+						}
+						break;
+					}
+
+					case INTLIT:
+					case STRINGLIT:
+					case REALLIT:
+					case BOOLLIT:
+					case CHARLIT:
+						printf("Handle literals here\n");
+						gentoken(n->kids[1]);
+						method_params = gen(O_PARM, *n->kids[1]->address, empty_address, empty_address);
+
+						break;
+				}
+			} else {
+				// Arglist in kids[1]
+				method_params = gen_arglist(n->kids[1]);
+			}
+
+			SymbolTableEntry method = check_if_undeclared(n->stab, n->kids[0]->leaf->text);
+
+			if (method != NULL) {
+				char* method_name = method->type->u.f.name;
+				int params = method->type->u.f.nparams;
+				method_call = gen_method(method_name, params, *method->address);
+
+				n->icode = append(method_params, method_call);
+				tacprint(n->icode);
+
+			} else {
+				printf("Method not found in symtab!\n");
+			}
+
 			break;
 		}
 
@@ -215,60 +271,7 @@ void gen_intermediate_code(struct tree *n) {
 
 		case TOKEN: {
 			// printf("intermediate token %s\n", n->leaf->text);
-			//gentoken();
-			n->icode = NULL;
-			switch (n->leaf->category) {
-
-				case IDENTIFIER: {
-					// printf("Indentifier address %s\n", n->leaf->text);
-
-					SymbolTableEntry search = lookup_st(n->stab ,n->leaf->text);
-
-					if (search) {
-						// printf("\tfound in SymbolTable\n");
-						n->address = search->address;
-						//print_addr(*n->address);
-					} else {
-						printf("Could not find address for %s from Symboltable\n", n->leaf->text);
-					}
-					break;
-				}
-				case INTLIT: {
-
-					n->address = newtemp(1);
-					n->address->region = R_CONST;
-					n->address->tag = OFFSET;
-					n->address->u.offset = n->leaf->ival;
-					break;
-				}
-				case STRINGLIT: {
-
-					n->address = newtemp(1);
-					n->address->region = R_CONST;
-					n->address->tag = NAME;
-					n->address->u.name = strdup(n->leaf->sval);
-
-					break;
-				}
-				case REALLIT: {
-
-					n->address = newtemp(1);
-					n->address->region = R_CONST;
-					n->address->tag = DVAL;
-					n->address->u.dval = n->leaf->dval;
-					break;
-				}
-				case BOOLLIT:
-				case CHARLIT: {
-
-					n->address = newtemp(1);
-					n->address->region = R_CONST;
-					n->address->tag = NAME;
-					n->address->u.name = strdup(n->leaf->text);
-					break;
-				}
-			}
-
+			gentoken(n);
 			break;
 		}
 
@@ -311,6 +314,103 @@ void genfirst(struct tree *t) {
 
 }
 
+int set_identifier_addr(struct tree *n) {
+
+	SymbolTableEntry search = lookup_st(n->stab ,n->leaf->text);
+
+	if (search) {
+		n->address = search->address;
+		return 1;
+	} else {
+		printf("Could not find address for %s from Symboltable\n", n->leaf->text);
+		printf("table name: %s\n", n->stab->table_name);
+		return 0;
+	}
+}
+
+void gentoken(struct tree *n) {
+
+	n->icode = NULL;
+	switch (n->leaf->category) {
+
+		case IDENTIFIER: {
+			// printf("Indentifier address %s\n", n->leaf->text);
+			set_identifier_addr(n);
+
+			// SymbolTableEntry search = lookup_st(n->stab ,n->leaf->text);
+			//
+			// if (search) {
+			// 	// printf("\tfound in SymbolTable\n");
+			// 	n->address = search->address;
+			// 	//print_addr(*n->address);
+			// } else {
+			// 	printf("Could not find address for %s from Symboltable\n", n->leaf->text);
+			// 	printf("table name: %s\n", n->stab->table_name);
+			// }
+			break;
+		}
+		case INTLIT: {
+
+			n->address = newtemp(1);
+			n->address->region = R_CONST;
+			n->address->tag = OFFSET;
+			n->address->u.offset = n->leaf->ival;
+			break;
+		}
+		case STRINGLIT: {
+
+			n->address = newtemp(1);
+			n->address->region = R_CONST;
+			n->address->tag = NAME;
+			n->address->u.name = strdup(n->leaf->sval);
+
+			break;
+		}
+		case REALLIT: {
+
+			n->address = newtemp(1);
+			n->address->region = R_CONST;
+			n->address->tag = DVAL;
+			n->address->u.dval = n->leaf->dval;
+			break;
+		}
+		case BOOLLIT:
+		case CHARLIT: {
+
+			n->address = newtemp(1);
+			n->address->region = R_CONST;
+			n->address->tag = NAME;
+			n->address->u.name = strdup(n->leaf->text);
+			break;
+		}
+	}
+}
+
+struct instr *gen_arglist(struct tree *arglist) {
+
+	struct instr *first_param;
+	struct instr *second_param;
+	struct instr *combined;
+
+	if (arglist->kids[0]->nkids == 0) {
+
+		gentoken(arglist->kids[0]);
+		gentoken(arglist->kids[1]);
+
+		first_param = gen(O_PARM, *arglist->kids[0]->address, empty_address,
+			 empty_address);
+		second_param = gen(O_PARM, *arglist->kids[1]->address, empty_address,
+			 empty_address);
+		combined = append(second_param, first_param);
+
+	} else {
+		second_param = gen(O_PARM, *arglist->kids[1]->address,
+			 empty_address, empty_address);
+		first_param = gen_arglist(arglist->kids[0]);
+		combined = append(second_param, first_param);
+	}
+	return combined;
+}
 
 // int get_region(struct tree *n) {
 // 	switch (n->prodrule) {

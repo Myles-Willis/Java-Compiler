@@ -624,7 +624,7 @@ void check_types(struct tree *t) {
 
 			if (t->kids[0]->nkids == 2) { //prodrule == prodR_MulExpr
 				left = get_type(t->kids[0]->kids[0]);
-				line_number = t->kids[0]->kids[0]->leaf->lineno;
+				line_number = t->kids[1]->leaf->lineno;
 			} else {
 				left = get_type(t->kids[0]);
 				line_number = t->kids[0]->leaf->lineno;
