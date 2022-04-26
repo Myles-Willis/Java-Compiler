@@ -75,6 +75,7 @@ typeptr alcfunctype(struct sym_table * st);
 typeptr alcarraytype(typeptr elemtype, int size);
 typeptr determinetype(struct tree *t);
 void check_types(struct tree *t);
+struct tree *get_last_name(struct tree *name_head);
 void assigntype(typeptr t);
 
 extern typeptr integer_typeptr;

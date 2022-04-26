@@ -1,6 +1,7 @@
 #include "intermediate.h"
 
 struct addr empty_address = {R_NONE, OFFSET, {0}};
+// struct instr instructions = NULL;
 
 
 int print_intermediate_tree(struct tree* tree, int depth) {
@@ -40,11 +41,23 @@ void gen_intermediate_code(struct tree *n) {
 	int i;
 	if (n == NULL) return;
 
-	for (i = 0; i < n->nkids; i++) { gen_intermediate_code(n->kids[i]); }
+	for (i = 0; i < n->nkids; i++) {
+		if (n->kids[i]->prodrule == prodR_QualifiedName) {
+			// printf("Qualified name found here \n");
+			gen_qualified_addr(n->kids[i]);
+
+		} else {
+			 // n->kids[i]->icode
+			 // struct instr *child = gen_intermediate_code(n->kids[i]);
+			 // n->icode->next = child;
+			 gen_intermediate_code(n->kids[i]);
+		}
+	 }
 
 	if (n->symbolname) {
 		/* code */
-		// printf("\n********** current node is %s\n", n->symbolname);
+		printf("\n********** current node is %s\n", n->symbolname);
+		// printf("\n********** kids %d\n", n->nkids);
 	}
 
 	switch (n->prodrule) {
@@ -274,7 +287,15 @@ void gen_intermediate_code(struct tree *n) {
 				method_params = gen_arglist(n->kids[1]);
 			}
 
-			SymbolTableEntry method = check_if_undeclared(n->stab, n->kids[0]->leaf->text);
+			SymbolTableEntry method;
+
+			if (n->kids[0]->prodrule == prodR_QualifiedName) {
+				struct tree *last_name = get_last_name(n->kids[0]);
+				method = check_if_undeclared(last_name->stab, last_name->leaf->text);
+
+			} else {
+				method = check_if_undeclared(n->stab, n->kids[0]->leaf->text);
+			}
 
 			if (method != NULL) {
 				char* method_name = method->type->u.f.name;
@@ -313,6 +334,12 @@ void gen_intermediate_code(struct tree *n) {
 			gentoken(n);
 			break;
 		}
+
+		default:
+			n->icode = NULL;
+			for (int i=0; i < n->nkids; i++) {
+				n->icode = concat(n->icode, n->kids[i]->icode);
+			}
 
 	}
 
@@ -438,6 +465,47 @@ struct instr *gen_arglist(struct tree *arglist) {
 		combined = append(second_param, first_param);
 	}
 	return combined;
+}
+
+/**
+ * Initialize symbol tables for each token in a qualified name
+ * @param  name_head the first name in a qualified name
+ */
+void gen_qualified_addr(struct tree *name_head) {
+
+	struct tree *current = name_head;
+	SymbolTableEntry outer_addr = NULL;
+	SymbolTableEntry addr_check = NULL;
+
+	if (name_head->nkids == 0) {
+		// printf("Name: %s\n", name_head->leaf->text);
+		addr_check = check_if_undeclared(name_head->stab, name_head->leaf->text);
+		name_head->stab = addr_check->table;
+		// printf("Has table %s\n", addr_check->table->table_name);
+
+	}
+
+	// printf("Name: %s\n", name_head->kids[0]->leaf->text);
+	outer_addr = check_if_undeclared(name_head->stab, name_head->kids[0]->leaf->text);
+	SymbolTable inner_name_table = outer_addr->type->type_sym_table;
+	// printf("Has table %s\n", outer_addr->table->table_name);
+	name_head->kids[0]->stab = outer_addr->table;
+
+
+	while (current->kids[1]->nkids != 0) {
+		current = current->kids[1];
+		// printf("Name: %s\n", current->kids[0]->leaf->text);
+		addr_check = check_if_undeclared(inner_name_table, current->kids[0]->leaf->text);
+		// printf("Has table %s\n", addr_check->table->table_name);
+		current->kids[0]->stab = addr_check->table;
+		inner_name_table = addr_check->type->type_sym_table;
+
+	}
+	current = current->kids[1];
+	// printf("Name: %s\n", current->leaf->text);
+	addr_check = check_if_undeclared(inner_name_table, current->leaf->text);
+	// printf("Has table %s\n", addr_check->table->table_name);
+	current->stab = addr_check->table;
 }
 
 // int get_region(struct tree *n) {

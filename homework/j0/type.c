@@ -282,7 +282,7 @@ struct tree *get_last_name(struct tree *name_head) {
 
 	current = current->kids[1];
 
-	printf("Returning %s\n", current->leaf->text);
+	// printf("Returning %s\n", current->leaf->text);
 	return current;
 }
 
