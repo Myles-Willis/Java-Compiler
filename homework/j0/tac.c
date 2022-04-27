@@ -40,7 +40,7 @@ struct instr *gen(int op, struct addr a1, struct addr a2, struct addr a3) {
 	rv->dest = a1;
 	rv->src1 = a2;
 	rv->src2 = a3;
-	rv->next = NULL;
+	// rv->next = NULL;
 	rv->name = NULL;
 	rv->nparams = 0;
 
@@ -61,7 +61,7 @@ struct instr *gen_method(char* method_name, int nparams, struct addr a, int code
 	rv->dest = a;
 	rv->src1 = empty_address;
 	rv->src2 = empty_address;
-	rv->next = NULL;
+	// rv->next = NULL;
 	rv->name = method_name;
 	rv->nparams = nparams;
 
@@ -74,7 +74,19 @@ struct instr *gen_method(char* method_name, int nparams, struct addr a, int code
 struct instr *copylist(struct instr *l) {
 
 	if (l == NULL) return NULL;
-	struct instr *lcopy = gen(l->opcode, l->dest, l->src1, l->src2);
+
+	struct instr *lcopy;
+
+	if (l->opcode == D_PROC) {
+		lcopy = gen_method(l->name, l->nparams, l->dest, D_PROC);
+		lcopy->code_type = DECLARATION;
+		lcopy->block_bytes = l->block_bytes;
+	} else if(l->opcode == O_CALL) {
+		lcopy = gen_method(l->name, l->nparams, l->dest, O_CALL);
+	} else {
+		lcopy = gen(l->opcode, l->dest, l->src1, l->src2);
+	}
+
 	lcopy->next = copylist(l->next);
 
 	return lcopy;
@@ -82,7 +94,12 @@ struct instr *copylist(struct instr *l) {
 
 struct instr *append(struct instr *l1, struct instr *l2) {
 
-	if (l1 == NULL) return l2;
+	if (l1 == NULL) {
+		return l2;
+	} else if (l2 == NULL) {
+		return l1;
+	}
+
 	struct instr *ltmp = l1;
 	while(ltmp->next != NULL) ltmp = ltmp->next;
 	ltmp->next = l2;
@@ -104,22 +121,26 @@ void print_instr(struct instr *rv) {
 
 	switch (rv->code_type) {
 
-		case DECLARATION:
+		case DECLARATION: {
+			// printf("Declaration in print\n");
 			opcode_name = pseudoname(rv->opcode);
 			printf("%s\t", opcode_name);
 			break;
+		}
 
-		default:
+		default: {
 			opcode_name = opcodename(rv->opcode);
 			printf("\t%s\t", opcode_name);
 			break;
+		}
 	}
 
 	if (rv->opcode == O_CALL) {
-		 printf("%s,%d,", rv->name, rv->nparams);
-		 print_addr(rv->dest);
 
+		printf("%s,%d,", rv->name, rv->nparams);
+		print_addr(rv->dest);
 	} else if (rv->opcode == D_PROC) {
+
 		print_proc(rv);
 	} else {
 
@@ -139,6 +160,7 @@ void print_instr(struct instr *rv) {
 void tacprint(struct instr *head) {
 
 	struct instr *temp = head;
+
 	while (temp->next != NULL) {
 		print_instr(temp);
 		temp = temp->next;

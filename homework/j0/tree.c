@@ -39,6 +39,7 @@ struct tree *create_branch(prodrule prodrule, char *symbolname, int nkids, ...) 
 	branch->prodrule = prodrule;
 	branch->nkids = nkids;
 	branch->symbolname = symbolname;
+	branch->icode = NULL;
 
 	for(int i = 0; i < nkids; i++) {
 		branch->kids[i] = va_arg(kids, struct tree *);

@@ -80,6 +80,8 @@ int main(int argc, char *argv[]) {
 				// print_intermediate_tree(root, 0);
 
 				gen_intermediate_code(root);
+				printf("\n\n_____Final Tac Print_____\n\n");
+				tacprint(root->icode);
 				printf("\n");
 				exit(0);
 				//free_tree(root, 0);

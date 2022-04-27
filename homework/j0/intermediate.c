@@ -56,7 +56,7 @@ void gen_intermediate_code(struct tree *n) {
 
 	if (n->symbolname) {
 		/* code */
-		printf("\n********** current node is %s\n", n->symbolname);
+		// printf("\n********** current node is %s\n", n->symbolname);
 		// printf("\n********** kids %d\n", n->nkids);
 	}
 
@@ -82,15 +82,15 @@ void gen_intermediate_code(struct tree *n) {
 				n->address->region = R_LOCAL;
 			}
 
-			n->icode = append(other_instr, current_instr);
-			tacprint(n->icode);
+			n->icode = concat(other_instr, current_instr);
+			// //tacprint(n->icode);
 
 			break;
 		}
 
-		case prodR_UnaryAssignment: {
-			break;
-		}
+		// case prodR_UnaryAssignment: {
+		// 	break;
+		// }
 
 		case prodR_Assignment: {
 
@@ -105,8 +105,8 @@ void gen_intermediate_code(struct tree *n) {
 			current_instr = gen(O_ASN, *n->kids[0]->address, *n->kids[2]->address, empty_address);
 			other_instr = n->kids[2]->icode;
 
-			n->icode = append(other_instr, current_instr);
-			tacprint(n->icode);
+			n->icode = concat(other_instr, current_instr);
+			//tacprint(n->icode);
 
 			break;
 		}
@@ -132,56 +132,54 @@ void gen_intermediate_code(struct tree *n) {
 			}
 
 			other_instr = n->kids[1]->icode;
-			n->icode = append(other_instr, current_instr);
-			tacprint(n->icode);
+			n->icode = concat(other_instr, current_instr);
+			//tacprint(n->icode);
 
 			break;
 		}
 
-		case prodR_RelExpr: {
-			printf("The symbol is: %d\n", n->kids[1]->leaf->category);
-			switch (n->kids[1]->leaf->category) {
-				case 60:
-					break;
-				case 62:
-					break;
-				case 293:
-					break;
-				case 294:
-					break;
-			}
-			break;
-		}
+		// case prodR_RelExpr: {
+		// 	printf("The symbol is: %d\n", n->kids[1]->leaf->category);
+		// 	switch (n->kids[1]->leaf->category) {
+		// 		case 60:
+		// 			break;
+		// 		case 62:
+		// 			break;
+		// 		case 293:
+		// 			break;
+		// 		case 294:
+		// 			break;
+		// 	}
+		// 	break;
+		// }
 
-		case prodR_EqExpr: {
-			break;
-		}
-
-		case prodR_CondAndExpr:
-		case prodR_CondOrExpr: {
-			break;
-		}
-
-		case prodR_MethodDecl: {
-			// printf("%s\n", n->symbolname);
-			break;
-		}
+		// case prodR_EqExpr: {
+		// 	break;
+		// }
+		//
+		// case prodR_CondAndExpr:
+		// case prodR_CondOrExpr: {
+		// 	break;
+		// }
+		//
+		// case prodR_MethodDecl: {
+		// 	// printf("%s\n", n->symbolname);
+		// 	break;
+		// }
 
 		case prodR_MethodDeclarator: {
 			// printf("%s\n", n->kids[0]->leaf->text);
 
 			n->address = newtemp(1);
 			n->address->region = R_PROCNAME;
-			// gen_method(n->kids[0]->leaf->text, int nparams, struct addr a, int code)
-			// n->icode = gen_method(n->kids[0]->leaf->text, );
-			//
-
 
 			SymbolTableEntry method = check_if_undeclared(n->stab, n->kids[0]->leaf->text);
 
 			if (method != NULL) {
+
 				char* method_name = method->type->u.f.name;
 				int params = method->type->u.f.nparams;
+
 				n->icode = gen_method(method_name, params, *method->address, D_PROC);
 				n->icode->code_type = DECLARATION;
 				n->icode->block_bytes = method->table->byte_words * 8;
@@ -215,9 +213,9 @@ void gen_intermediate_code(struct tree *n) {
 					 *n->kids[1]->address);
 			}
 
-			other_instr = append(n->kids[0]->icode, n->kids[1]->icode);
-			n->icode = append(other_instr, current_instr);
-			tacprint(n->icode);
+			other_instr = concat(n->kids[0]->icode, n->kids[1]->icode);
+			n->icode = concat(other_instr, current_instr);
+			//tacprint(n->icode);
 
  			break;
 		}
@@ -246,9 +244,9 @@ void gen_intermediate_code(struct tree *n) {
 					 *n->kids[1]->address);
 			}
 
-			other_instr = append(n->kids[0]->icode, n->kids[1]->icode);
-			n->icode = append(other_instr, current_instr);
-			tacprint(n->icode);
+			other_instr = concat(n->kids[0]->icode, n->kids[1]->icode);
+			n->icode = concat(other_instr, current_instr);
+			//tacprint(n->icode);
 			break;
 		}
 
@@ -266,7 +264,7 @@ void gen_intermediate_code(struct tree *n) {
 
 						if (set == 1) {
 							method_params = gen(O_PARM, *n->kids[1]->address, empty_address, empty_address);
-							// tacprint(method_params);
+							// //tacprint(method_params);
 						}
 						break;
 					}
@@ -302,8 +300,8 @@ void gen_intermediate_code(struct tree *n) {
 				int params = method->type->u.f.nparams;
 				method_call = gen_method(method_name, params, *method->address, O_CALL);
 
-				n->icode = append(method_params, method_call);
-				tacprint(n->icode);
+				n->icode = concat(method_params, method_call);
+				//tacprint(n->icode);
 
 			} else {
 				printf("Method not found in symtab!\n");
@@ -312,22 +310,22 @@ void gen_intermediate_code(struct tree *n) {
 			break;
 		}
 
-		case prodR_MethodCallPrimary: {
-			// printf("METHODCALLPRIMARY*****\n");
-			break;
-		}
+		// case prodR_MethodCallPrimary: {
+		// 	// printf("METHODCALLPRIMARY*****\n");
+		// 	break;
+		// }
+		//
+		// case prodR_QualifiedName: {
+		// 	// printf("$$$$$$$$$$$ QualifiedName HERE ******\n");
+		// 	break;
+		// }
 
-		case prodR_QualifiedName: {
-			// printf("$$$$$$$$$$$ QualifiedName HERE ******\n");
-			break;
-		}
-
-		case prodR_FieldDecl:
-		case prodR_LocalVarDecl:
-		case prodR_StaticFieldDecl: {
-			// int region;
-			break;
-		}
+		// case prodR_FieldDecl:
+		// case prodR_LocalVarDecl:
+		// case prodR_StaticFieldDecl: {
+		// 	// int region;
+		// 	break;
+		// }
 
 		case TOKEN: {
 			// printf("intermediate token %s\n", n->leaf->text);
@@ -336,8 +334,11 @@ void gen_intermediate_code(struct tree *n) {
 		}
 
 		default:
+
 			n->icode = NULL;
+
 			for (int i=0; i < n->nkids; i++) {
+				printf("%s --> %s\n", n->kids[i]->symbolname,n->symbolname);
 				n->icode = concat(n->icode, n->kids[i]->icode);
 			}
 
@@ -396,7 +397,7 @@ int set_identifier_addr(struct tree *n) {
 
 void gentoken(struct tree *n) {
 
-	n->icode = NULL;
+	// n->icode = NULL;
 	switch (n->leaf->category) {
 
 		case IDENTIFIER: {
@@ -456,13 +457,13 @@ struct instr *gen_arglist(struct tree *arglist) {
 			 empty_address);
 		second_param = gen(O_PARM, *arglist->kids[1]->address, empty_address,
 			 empty_address);
-		combined = append(second_param, first_param);
+		combined = concat(second_param, first_param);
 
 	} else {
 		second_param = gen(O_PARM, *arglist->kids[1]->address,
 			 empty_address, empty_address);
 		first_param = gen_arglist(arglist->kids[0]);
-		combined = append(second_param, first_param);
+		combined = concat(second_param, first_param);
 	}
 	return combined;
 }
