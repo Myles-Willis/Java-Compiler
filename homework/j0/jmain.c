@@ -81,6 +81,7 @@ int main(int argc, char *argv[]) {
 
 				gen_intermediate_code(root);
 				printf("\n\n_____Final Tac Print_____\n\n");
+				printf(".code\n");
 				tacprint(root->icode);
 				printf("\n");
 				exit(0);

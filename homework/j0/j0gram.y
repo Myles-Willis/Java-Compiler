@@ -303,7 +303,6 @@ Stmt:
 		{}
 	| ReturnStmt
 		{}
-
 	| IfThenStmt
 		{}
 	| IfThenElseStmt
@@ -402,7 +401,8 @@ BreakStmt:
 	;
 ReturnStmt:
 	RETURN ExprOpt ';'
-		{$$ = $2;}
+		/* {$$ = $2;} */
+		{$$ = create_branch(prodR_ReturnStmt,"ReturnStmt",1, $2);}
 	;
 
 Primary:

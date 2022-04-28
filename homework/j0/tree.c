@@ -102,6 +102,7 @@ char* humanreadable(prodrule rule) {
 		case prodR_UnaryAssignment: return "UnaryAssignment";
 		case prodR_TypeAssignment: return "TypeAssignment";
 		case prodR_MethodCallPrimary: return "MethodCallPrimary";
+		case prodR_ReturnStmt: return "ReturnStmt";
 		default: return "";
 
 	}

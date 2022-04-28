@@ -11,27 +11,41 @@ public class hello {
 	}
 
    public static void main(String argv[]) {
-	   int x;
-	   x = 10;
-
-	   int a = 18;
-	   int v = 9;
-	   boolean b = ("hello" == "goodbye");
-	   boolean c = (123 != 456);
-	   boolean d = (b && c);
-	   boolean e = ( (b && c || true) || c);
+	   // int x;
+	   // x = 10;
+	   //
+	   // int a = 18;
+	   // int v = 9;
+	   // boolean b = ("hello" == "goodbye");
+	   // boolean c = (123 != 456);
+	   // boolean d = (b && c);
+	   // boolean e = ( (b && c || true) || c);
 
 	   String g = "Hello";
-	   char i = 'i';
+	   int i = 2;
 	   int h = 1;
-	   int j = 1;
-	   int k = 1;
-	   int l = 1;
+	   // int j = 1;
+	   // int k = 1;
+	   // int l = 1;
+	   //
+	   // // char q, w, e, t;
+	   //
+	   // a = 4 - 56 * 4;
+	   i = -h;
+	   i = (4 + 7);
+	   test(h, 'c', g);
 
-	   // char q, w, e, t;
 
-	   a = 4 - 56 * 'c';
-	   i = test(h, i, g);
+	   if (i < 2) {
+	   		h = 10;
+	   }
+
+
+
+
+
+
+
    }
 
 

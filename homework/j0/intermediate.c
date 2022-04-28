@@ -42,6 +42,10 @@ void gen_intermediate_code(struct tree *n) {
 	if (n == NULL) return;
 
 	for (i = 0; i < n->nkids; i++) {
+		if(n->kids[i] == NULL) {
+			printf("null child\n");
+			continue;
+		}
 		if (n->kids[i]->prodrule == prodR_QualifiedName) {
 			// printf("Qualified name found here \n");
 			gen_qualified_addr(n->kids[i]);
@@ -56,7 +60,7 @@ void gen_intermediate_code(struct tree *n) {
 
 	if (n->symbolname) {
 		/* code */
-		// printf("\n********** current node is %s\n", n->symbolname);
+		printf("\n********** current node is %s\n", n->symbolname);
 		// printf("\n********** kids %d\n", n->nkids);
 	}
 
@@ -84,6 +88,25 @@ void gen_intermediate_code(struct tree *n) {
 
 			n->icode = concat(other_instr, current_instr);
 			// //tacprint(n->icode);
+
+			break;
+		}
+
+		case prodR_ReturnStmt: {
+			printf("return statement found\n");
+			if (n->stab) {
+				printf("and has stab %s\n", n->stab->table_name);
+			}
+
+			if (n->kids[0] == NULL) {
+				printf("Empty return statement\n");
+				n->address = newtemp(1);
+				n->icode = gen(O_RET, *n->address, empty_address, empty_address);
+
+			} else {
+				printf("Return statement has an expresstion\n");
+			}
+
 
 			break;
 		}
@@ -120,19 +143,19 @@ void gen_intermediate_code(struct tree *n) {
 			n->stab->byte_words++;
 
 			struct instr *current_instr;
-			struct instr *other_instr;
+			// struct instr *other_instr;
 
-			if (neg) {
-				current_instr = gen(O_NEG, *n->address, *n->kids[0]->address,
-					 *n->kids[1]->address);
+			if (neg == 0) {
+				current_instr = gen(O_NEG, *n->address, *n->kids[1]->address,
+					 empty_address);
 			} else {
 				//Exclamation
-				current_instr = gen(O_NOT, *n->address, *n->kids[0]->address,
-					 *n->kids[1]->address);
+				current_instr = gen(O_NOT, *n->address, *n->kids[1]->address,
+					 empty_address);
 			}
 
-			other_instr = n->kids[1]->icode;
-			n->icode = concat(other_instr, current_instr);
+			// other_instr = n->kids[1]->icode;
+			n->icode = current_instr;
 			//tacprint(n->icode);
 
 			break;
@@ -183,7 +206,7 @@ void gen_intermediate_code(struct tree *n) {
 				n->icode = gen_method(method_name, params, *method->address, D_PROC);
 				n->icode->code_type = DECLARATION;
 				n->icode->block_bytes = method->table->byte_words * 8;
-				tacprint(n->icode);
+				// tacprint(n->icode);
 
 			} else {
 				printf("Method not found in symtab!\n");
@@ -338,7 +361,7 @@ void gen_intermediate_code(struct tree *n) {
 			n->icode = NULL;
 
 			for (int i=0; i < n->nkids; i++) {
-				printf("%s --> %s\n", n->kids[i]->symbolname,n->symbolname);
+				// printf("%s --> %s\n", n->kids[i]->symbolname,n->symbolname);
 				n->icode = concat(n->icode, n->kids[i]->icode);
 			}
 
@@ -367,7 +390,7 @@ void genfirst(struct tree *t) {
 			case prodR_AddExpr:
 			case prodR_MulExpr: {
 
-				if (t->kids[0]->first != 0) {
+				if (t->kids[0]->first != NULL) {
 					t->first = t->kids[0]->first;
 				} else if (t->kids[1]->first != NULL) {
 					t->first = t->kids[1]->first;
@@ -376,6 +399,14 @@ void genfirst(struct tree *t) {
 					t->first = temp;
 				}
 			}
+
+
+
+
+
+
+
+			
 		}
 	}
 
@@ -416,7 +447,7 @@ void gentoken(struct tree *n) {
 		case STRINGLIT: {
 
 			n->address = newtemp(1);
-			n->address->region = R_CONST;
+			n->address->region = R_STRING;
 			n->address->tag = NAME;
 			n->address->u.name = strdup(n->leaf->sval);
 
