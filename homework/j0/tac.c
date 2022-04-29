@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "tac.h"
 
-char *regionnames[] = {"global", "loc", "class", "label", "const", "name", "none", "procname"};
+char *regionnames[] = {"global", "loc", "class", "L", "const", "name", "none", "procname"};
 char *regionname(int i) { return regionnames[i-R_GLOBAL]; }
 
 char *opcodenames[] = {
@@ -124,6 +125,9 @@ void print_instr(struct instr *rv) {
 		case DECLARATION: {
 			// printf("Declaration in print\n");
 			opcode_name = pseudoname(rv->opcode);
+			if (strcmp(opcode_name, "lab") == 0) {
+				break;
+			}
 			printf("%s\t", opcode_name);
 			break;
 		}
@@ -142,6 +146,10 @@ void print_instr(struct instr *rv) {
 	} else if (rv->opcode == D_PROC) {
 
 		print_proc(rv);
+
+	} else if (strcmp(opcode_name, "lab") == 0) {
+		print_addr(rv->dest);
+
 	} else {
 
 		print_addr(rv->dest);
@@ -174,6 +182,7 @@ void tacprint(struct instr *head) {
 char print_addr(struct addr a) {
 
 	if (a.region == R_NONE) { return 0; }
+
 
 	char *r = regionname(a.region);
 

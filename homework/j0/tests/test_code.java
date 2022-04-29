@@ -1,15 +1,11 @@
-public class foo {
-
-	public static void increment(int x, int y) {
-	 	x = x + 1;
-  	}
-
-	public static void main(String[]argv) {
-   		int i = 5;
-   		i = i * i + 1;
-   		increment(i, 3);
-		// System.out.println(i);
-   		// boolean b = i < 5;
-   		return;
-   	}
+public class hello {
+   public static void main(String argv[]) {
+      int x;
+      x = 1;
+      x = x + 2;
+      if (x > 3) {
+         System.out.println("hello, jzero!");
+         x = x - 1;
+      }
+   }
 }

@@ -1,13 +1,13 @@
 public class hello {
 
-	public static int z;
-	public static int s = 3;
+	// public static int z;
+	// public static int s = 3;
 
 	public static int test(int a, char b, String c) {
 		// a = 1;
 		// b = 'x';
 		// c = 3;
-		s = 2;
+		a = 2;
 	}
 
    public static void main(String argv[]) {
@@ -33,13 +33,19 @@ public class hello {
 	   // a = 4 - 56 * 4;
 	   i = -h;
 	   i = 4 + 7;
+	   boolean t = true;
+	   boolean f = false;
 	   // test(h, 'c', g);
 
-	   if (i < 2) {
+	   // if (i < 2) {
+	   // 		h = 10;
+		// 	h = 10 - 10;
+	   // } else {
+		//    h = 2;
+	   // }
+
+	   if (i < h) {
 	   		h = 10;
-			h = 10 - 10;
-	   } else {
-		   h = 2;
 	   }
 
    }

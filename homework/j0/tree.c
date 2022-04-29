@@ -135,30 +135,6 @@ int print_tree(struct tree* tree, int depth) {
 
 }
 
-// void genfirst(struct tree *t) {
-//
-// 	if (t->kids != NULL) {
-// 		for (int i = 0; i < t->nkids; i++) {
-// 			genfirst(t->kids[i]);
-// 		}
-//
-// 		switch (t->prodrule) {
-//
-// 			case prodR_AddExpr:
-// 			case prodR_MulExpr: {
-//
-// 				if (t->kids[0]->first != NULL) {
-// 					t->first = t-
-// 				}
-// 			}
-// 		}
-//
-//
-//
-// 	}
-//
-// }
-
 // int free_tree(struct tree* tree, int depth) {
 //
 // 	if (tree == NULL) {
