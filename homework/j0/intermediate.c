@@ -384,7 +384,7 @@ void genfirst(struct tree *t) {
 		for (int i = 0; i < t->nkids; i++) {
 			genfirst(t->kids[i]);
 		}
-
+		// printf("________ %s ________\n\n", t->symbolname);
 		switch (t->prodrule) {
 
 			case prodR_AddExpr:
@@ -398,18 +398,157 @@ void genfirst(struct tree *t) {
 					struct addr *temp = genlabel();
 					t->first = temp;
 				}
+
+				break;
+			}
+
+			case prodR_UnaryExpr: {
+
+				if (t->kids[1]->first != NULL) {
+					t->first = t->kids[1]->first;
+				} else {
+					t->first = genlabel();
+				}
+
+				break;
+			}
+
+			case prodR_Assignment: {
+
+				if (t->kids[0]->first != NULL) {
+					t->first = t->kids[0]->first;
+				} else if (t->kids[1]->first != NULL) {
+					t->first = t->kids[1]->first;
+				} else {
+					struct addr *temp = genlabel();
+					t->first = temp;
+				}
+				break;
+			}
+
+			case prodR_TypeAssignment:
+			case prodR_FieldDeclAssign: {
+
+				if (t->kids[1]->first != NULL) {
+					t->first = t->kids[1]->first;
+				} else if (t->kids[3]->first != NULL) {
+					t->first = t->kids[3]->first;
+				} else {
+					struct addr *temp = genlabel();
+					t->first = temp;
+				}
+				break;
+			}
+
+			case prodR_RelExpr: {
+
+				if (t->kids[0]->first != NULL) {
+					t->first = t->kids[0]->first;
+				} else if (t->kids[2]->first != NULL) {
+					t->first = t->kids[2]->first;
+				} else {
+					struct addr *temp = genlabel();
+					t->first = temp;
+				}
+
+				break;
+			}
+
+			case prodR_EqExpr:
+			case prodR_CondAndExpr:
+			case prodR_CondOrExpr: {
+
+				if (t->kids[0]->first != NULL) {
+					t->first = t->kids[0]->first;
+				} else if (t->kids[1]->first != NULL) {
+					t->first = t->kids[1]->first;
+				} else {
+					struct addr *temp = genlabel();
+					t->first = temp;
+				}
+
+				break;
+			}
+
+			case prodR_WhileStmt: {
+
+				if (t->kids[0]->first != NULL) {
+					t->first = t->kids[0]->first;
+				} else {
+					t->first = genlabel();
+				}
+				break;
+			}
+
+			case prodR_IfThenStmt:
+			case prodR_IfThenElseStmt:
+			case prodR_IfThenElseIfStmt:
+			case prodR_IfThenElseIfElseStmt: {
+
+				if (t->kids[0]->first != NULL) {
+					t->first = t->kids[0]->first;
+				} else {
+					t->first = genlabel();
+				}
+
+				break;
+			}
+
+			case prodR_BlockStmts: {
+
+				// printf("Hit Block stmt\n");
+				if (t->kids[1]->first == NULL) {t->kids[1]->first = genlabel();}
+
+				if (t->kids[0]->first != NULL) {
+					t->first = t->kids[0]->first;
+				} else {
+					t->first = t->kids[1]->first;
+				}
+				// printf("And assigned FIRST\n");
+				break;
 			}
 
 
+			default: {
+				if (t->nkids != 0) {
+					for (int i=0; i < t->nkids; i++) {
+						if (t->kids[i] != NULL) {
+							t->first = t->kids[i]->first;
+							break;
+						}
+					}
+				}
+			}
 
-
-
-
-
-			
 		}
 	}
 
+}
+
+void genfollow(struct tree *t) {
+
+	if (t == NULL) { return; }
+
+	switch (t->prodrule) {
+
+		case prodR_MethodDecl: {
+			t->kids[1]->follow = genlabel();
+			break;
+		}
+
+		case prodR_BlockStmts: {
+			t->kids[0]->follow = t->kids[1]->first;
+			t->kids[1]->follow = t->follow;
+			break;
+		}
+
+		if (t->nkids != 0) {
+			for (int i=0; i < t->nkids; i++) {
+				genfollow(t->kids[i]);
+			}
+		}
+
+	}
 }
 
 int set_identifier_addr(struct tree *n) {
@@ -539,63 +678,3 @@ void gen_qualified_addr(struct tree *name_head) {
 	// printf("Has table %s\n", addr_check->table->table_name);
 	current->stab = addr_check->table;
 }
-
-// int get_region(struct tree *n) {
-// 	switch (n->prodrule) {
-//
-// 		case prodR_TypeAssignment:
-//
-// 			break
-// 		case prodR_FieldDeclAssign:
-//
-// 			break
-// 		case prodR_UnaryAssignment:
-//
-// 			break
-// 		case prodR_Assignment:
-//
-// 			break
-// 		case prodR_UnaryExpr:
-//
-// 			break
-// 		case prodR_RelExpr:
-//
-// 			break
-// 		case prodR_EqExpr:
-//
-// 			break
-// 		case prodR_CondAndExpr:
-//
-// 			break
-// 		case prodR_CondOrExpr:
-//
-// 			break
-// 		case prodR_AddExpr:
-//
-// 			break
-// 		case prodR_MulExpr:
-//
-// 			break
-// 		case prodR_MethodCall:
-//
-// 			break
-// 		case prodR_MethodCallPrimary:
-//
-// 			break
-// 		case prodR_FieldDecl:
-//
-// 			break
-// 		case prodR_LocalVarDecl:
-//
-// 			break
-// 		case prodR_StaticFieldDecl:
-//
-// 			break
-// 		case prodR_AddExpr:
-//
-// 			break
-// 		case prodR_MulExpr:
-//
-// 			break
-// 	}
-// }

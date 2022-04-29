@@ -32,19 +32,15 @@ public class hello {
 	   //
 	   // a = 4 - 56 * 4;
 	   i = -h;
-	   i = (4 + 7);
-	   test(h, 'c', g);
-
+	   i = 4 + 7;
+	   // test(h, 'c', g);
 
 	   if (i < 2) {
 	   		h = 10;
+			h = 10 - 10;
+	   } else {
+		   h = 2;
 	   }
-
-
-
-
-
-
 
    }
 

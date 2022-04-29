@@ -343,7 +343,7 @@ IfThenElseIfStmt:
 		{$$ = create_branch(prodR_IfThenElseIfStmt,"IfThenElseIfStmt",3,$5,$6);}
 
   |  IF '(' Expr ')' Block ElseIfSequence ELSE Block
-		{$$ = create_branch(prodR_IfThenElseIfStmt,"IfThenElseIf_Else_Stmt",4, $3,$5,$6,$8);}
+		{$$ = create_branch(prodR_IfThenElseIfElseStmt,"IfThenElseIf_Else_Stmt",4, $3,$5,$6,$8);}
   ;
 
 ElseIfSequence:

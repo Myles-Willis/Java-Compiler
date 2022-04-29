@@ -31,6 +31,7 @@ typedef enum {
 	prodR_IfThenStmt,
 	prodR_IfThenElseStmt,
 	prodR_IfThenElseIfStmt,
+	prodR_IfThenElseIfElseStmt,
 	prodR_ElseIfSequence,
 	prodR_WhileStmt,
 	prodR_ForStmt,

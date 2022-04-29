@@ -78,12 +78,13 @@ int main(int argc, char *argv[]) {
 				check_types(root);
 
 				// print_intermediate_tree(root, 0);
-
+				genfirst(root);
+				genfollow(root);
 				gen_intermediate_code(root);
-				printf("\n\n_____Final Tac Print_____\n\n");
-				printf(".code\n");
-				tacprint(root->icode);
-				printf("\n");
+				// printf("\n\n_____Final Tac Print_____\n\n");
+				// printf(".code\n");
+				// tacprint(root->icode);
+				// printf("\n");
 				exit(0);
 				//free_tree(root, 0);
 			}
