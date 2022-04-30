@@ -1,8 +1,10 @@
 #ifndef TAC_H
 #define TAC_H
 
+#include <stdio.h>
+
 enum ADDR_UNION {OFFSET, DVAL, NAME};
-enum  CODE_TYPE {OPCODE, DECLARATION};
+enum  CODE_TYPE {OPCODE, DECLARATION, LABEL};
 
 struct addr {
 
@@ -79,9 +81,9 @@ char *regionname(int i);
 char *opcodename(int i);
 char *pseudoname(int i);
 struct addr *genlabel();
-void print_instr(struct instr *rv);
-void print_proc(struct instr *rv);
-void tacprint(struct instr *head);
-char print_addr(struct addr a);
+void print_instr(struct instr *rv, FILE *icn_out);
+void print_proc(struct instr *rv, FILE *icn_out);
+void tacprint(struct instr *head, char* icn_file_name);
+char print_addr(struct addr a, FILE *icn_out);
 
 #endif

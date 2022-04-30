@@ -33,7 +33,7 @@ public class hello {
 	   // a = 4 - 56 * 4;
 	   i = -h;
 	   i = 4 + 7;
-	   boolean t = true;
+	   boolean t = (1 < 3);
 	   boolean f = false;
 	   // test(h, 'c', g);
 
@@ -44,7 +44,7 @@ public class hello {
 		//    h = 2;
 	   // }
 
-	   if (i < h) {
+	   if (i <= h) {
 	   		h = 10;
 	   }
 

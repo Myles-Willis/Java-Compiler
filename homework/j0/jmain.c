@@ -53,9 +53,13 @@ int main(int argc, char *argv[]) {
 			} else {
 
 	    		filename = *argv;
+				char* simplified_name = strrchr(filename, '/') + 1;
+				char* icn_file_name = strdup(simplified_name);
+				icn_file_name[strlen(icn_file_name)-4] = 0;
+				strcat(icn_file_name, "icn");
 
 				printf("\n\n---------------------------------------\n");
-				printf("Opened File: %s\n", filename);
+				printf("Opened File: %s\n", simplified_name);
 				printf("---------------------------------------\n");
 				// yydebug = 1;
 				yyparse();
@@ -84,9 +88,8 @@ int main(int argc, char *argv[]) {
 				gen_intermediate_code(root);
 				// print_intermediate_tree(root, 0);
 
-				printf("\n\n_____Final Tac Print_____\n\n");
-				printf(".code\n");
-				tacprint(root->icode);
+				// printf("\n\n_____Final Tac Print_____\n\n");
+				tacprint(root->icode, icn_file_name);
 				printf("\n");
 				exit(0);
 				//free_tree(root, 0);

@@ -634,8 +634,13 @@ void check_types(struct tree *t) {
 
 			if ((left != NULL) && (right != NULL)) {
 
+				if (left->basetype == STRING_TYPE && right->basetype == STRING_TYPE) {
+					t->type = alctype(STRING_TYPE);
+					break;
+				}
+
 				if (!(is_number(left) && is_number(right))) {
-					char* msg = "expression requires numerical values\n";
+					char* msg = "expression requires numerical or String-only values\n";
 					throw_semantic_error(msg, line_number);
 				}
 
@@ -646,7 +651,7 @@ void check_types(struct tree *t) {
 					t->type = type_promotion(left, right);
 				} else {
 					int line_number = t->kids[0]->leaf->lineno;
-					char* msg = "expression requires numerical values\n";
+					char* msg = "expression requires numerical or String-only values\n";
 					throw_semantic_error(msg, line_number);
 				}
 			}

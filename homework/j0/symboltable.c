@@ -190,9 +190,9 @@ void printsymbols(SymbolTable st, int level) {
       	for (ste = st->tbl[i]; ste; ste=ste->next) {
 
 			for (j=0; j < level; j++) printf("   ");
-			printf("%s [%s] ", typename(ste->type),ste->s);
-			print_addr(*ste->address);
-			printf("\n");
+			// printf("%s [%s] ", typename(ste->type),ste->s);
+			// print_addr(*ste->address);
+			// printf("\n");
 			// for (j=0; j < level; j++) printf("  ");
 
 			/* if this symbol has a subscope,

@@ -1,0 +1,17 @@
+.code
+proc	test, 24, 16 
+	ASN	loc:24,const:2
+proc	main, 8, 16 
+	ASN	loc:8,ADD:Hello
+	ASN	loc:16,const:2
+	ASN	loc:24,const:1
+	NEG	loc:40,loc:24
+	ASN	loc:48,loc:40
+	ADD	loc:56,const:4,const:7
+	ASN	loc:64,loc:56
+	ASN	loc:32,const:false
+	BLE	L:10,loc:64,loc:24
+L:10
+
+	ASN	loc:72,const:10
+

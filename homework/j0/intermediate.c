@@ -105,18 +105,21 @@ void gen_intermediate_code(struct tree *n) {
 		}
 
 		case prodR_ReturnStmt: {
-			printf("return statement found\n");
-			if (n->stab) {
-				printf("and has stab %s\n", n->stab->table_name);
-			}
+			// printf("return statement found\n");
+			// if (n->stab) {
+			// 	printf("and has stab %s\n", n->stab->table_name);
+			// }
 
 			if (n->kids[0] == NULL) {
-				printf("Empty return statement\n");
+				// printf("Empty return statement\n");
 				n->address = newtemp(1);
 				n->icode = gen(O_RET, *n->address, empty_address, empty_address);
 
 			} else {
-				printf("Return statement has an expresstion\n");
+				// printf("Return statement has an expresstion\n");
+				n->address = newtemp(1);
+				n->icode = gen(O_RET, *n->kids[0]->address, empty_address, empty_address);
+				// printf("%s\n", );
 			}
 
 
@@ -175,7 +178,7 @@ void gen_intermediate_code(struct tree *n) {
 
 		case prodR_RelExpr: {
 
-			printf("The symbol is: %d\n", n->kids[1]->leaf->category);
+			// printf("The symbol is: %d\n", n->kids[1]->leaf->category);
 			struct instr *current_instr = NULL;
 			struct instr *other_instr = NULL;
 
@@ -206,23 +209,23 @@ void gen_intermediate_code(struct tree *n) {
 
 			other_instr = concat(n->kids[0]->icode, n->kids[2]->icode);
 			n->icode = concat(current_instr, other_instr);
-			printf("\n");
-			printf("Region %d\n", n->icode->dest.region);
-			tacprint(n->icode);
+			// printf("\n");
+			// printf("Region %d\n", n->icode->dest.region);
+			// tacprint(n->icode);
 			break;
 		}
 
-		// case prodR_EqExpr: {
-		// 	break;
-		// }
-		//
-		// case prodR_CondAndExpr:
-		// case prodR_CondOrExpr: {
-		// 	break;
-		// }
-		//
 		// case prodR_MethodDecl: {
-		// 	// printf("%s\n", n->symbolname);
+		// 	n->address = newtemp(1);
+		// 	n->address->region = R_LOCAL;
+		//
+		// 	struct instr *label = gen(D_LABEL, *n->first, empty_address, empty_address);
+		// 	label = concat(label, n->kids[1]->icode);
+		// 	label->code_type = DECLARATION;
+		// 	n->icode = concat(n->icode, label);
+		//
+		// 	tacprint(n->icode);
+		//
 		// 	break;
 		// }
 
@@ -369,35 +372,7 @@ void gen_intermediate_code(struct tree *n) {
 			break;
 		}
 
-		// case prodR_MethodCallPrimary: {
-		// 	// printf("METHODCALLPRIMARY*****\n");
-		// 	break;
-		// }
-		//
-		// case prodR_QualifiedName: {
-		// 	// printf("$$$$$$$$$$$ QualifiedName HERE ******\n");
-		// 	break;
-		// }
-
-		// case prodR_FieldDecl:
-		// case prodR_LocalVarDecl:
-		// case prodR_StaticFieldDecl: {
-		// 	// int region;
-		// 	break;
-		// }
-		//
-
-		// case prodR_CondAndExpr:
-		// case prodR_CondOrExpr: {
-		// 	n->address = newtemp(1);
-		// 	n->address->region = R_LOCAL;
-		// }
-
 		case prodR_IfThenStmt: {
-
-			// n->kids[0]->onTrue = n->kids[1]->first;
-			// n->kids[0]->onFalse = n->follow;
-			// n->kids[1]->follow = n->follow;
 
 			if (n->kids[0]->icode != NULL) {
 				n->icode = n->kids[0]->icode;
@@ -428,7 +403,6 @@ void gen_intermediate_code(struct tree *n) {
 
 
 		case TOKEN: {
-			// printf("intermediate token %s\n", n->leaf->text);
 			gentoken(n);
 			break;
 		}
@@ -476,7 +450,7 @@ void genfirst(struct tree *t) {
 					t->first = temp;
 				}
 
-				printf("L%d %s\n", t->first->u.offset, t->symbolname);
+				// printf("L%d %s\n", t->first->u.offset, t->symbolname);
 
 				break;
 			}
@@ -489,7 +463,7 @@ void genfirst(struct tree *t) {
 					t->first = genlabel();
 				}
 
-				printf("L%d %s\n", t->first->u.offset, t->symbolname);
+				// printf("L%d %s\n", t->first->u.offset, t->symbolname);
 				break;
 			}
 
@@ -504,7 +478,7 @@ void genfirst(struct tree *t) {
 					t->first = temp;
 				}
 
-				printf("L%d %s\n", t->first->u.offset, t->symbolname);
+				// printf("L%d %s\n", t->first->u.offset, t->symbolname);
 				break;
 			}
 
@@ -519,7 +493,7 @@ void genfirst(struct tree *t) {
 					struct addr *temp = genlabel();
 					t->first = temp;
 				}
-				printf("L%d %s\n", t->first->u.offset, t->symbolname);
+				// printf("L%d %s\n", t->first->u.offset, t->symbolname);
 				break;
 			}
 
@@ -533,7 +507,7 @@ void genfirst(struct tree *t) {
 					struct addr *temp = genlabel();
 					t->first = temp;
 				}
-				printf("L%d %s\n", t->first->u.offset, t->symbolname);
+				// printf("L%d %s\n", t->first->u.offset, t->symbolname);
 				break;
 			}
 
@@ -549,7 +523,7 @@ void genfirst(struct tree *t) {
 					struct addr *temp = genlabel();
 					t->first = temp;
 				}
-				printf("L%d %s\n", t->first->u.offset, t->symbolname);
+				// printf("L%d %s\n", t->first->u.offset, t->symbolname);
 				break;
 			}
 
@@ -560,7 +534,7 @@ void genfirst(struct tree *t) {
 				} else {
 					t->first = genlabel();
 				}
-				printf("L%d %s\n", t->first->u.offset, t->symbolname);
+				// printf("L%d %s\n", t->first->u.offset, t->symbolname);
 				break;
 			}
 
@@ -574,7 +548,7 @@ void genfirst(struct tree *t) {
 				} else {
 					t->first = genlabel();
 				}
-				printf("L%d %s\n", t->first->u.offset, t->symbolname);
+				// printf("L%d %s\n", t->first->u.offset, t->symbolname);
 				break;
 			}
 
@@ -589,7 +563,18 @@ void genfirst(struct tree *t) {
 					t->first = t->kids[1]->first;
 				}
 				// printf("And assigned FIRST\n");
-				printf("L%d %s\n", t->first->u.offset, t->symbolname);
+				// printf("L%d %s\n", t->first->u.offset, t->symbolname);
+				break;
+			}
+
+			case prodR_MethodDecl: {
+
+				if (t->kids[1]->first == NULL) {t->kids[1]->first = genlabel();}
+
+				t->first = t->kids[1]->first;
+				// printf("And assigned FIRST\n");
+				// printf("L%d %s\n", t->first->u.offset, t->symbolname);
+
 				break;
 			}
 
@@ -617,8 +602,8 @@ void genfollow(struct tree *t) {
 	if (t == NULL) return;
 
 	if (t->symbolname) {
-		printf("\n_______________________________\n");
-		printf("GENFOLLOW %s\n", t->symbolname);
+		// printf("\n_______________________________\n");
+		// printf("GENFOLLOW %s\n", t->symbolname);
 
 	}
 	switch (t->prodrule) {
@@ -626,7 +611,7 @@ void genfollow(struct tree *t) {
 		case prodR_MethodDecl: {
 			// printf("GENFOLLOW %s\n", t->symbolname);
 			t->kids[1]->follow = genlabel();
-			printf("FL%d %s\n", t->kids[1]->follow->u.offset, t->kids[1]->symbolname);
+			// printf("FL%d %s\n", t->kids[1]->follow->u.offset, t->kids[1]->symbolname);
 
 			break;
 		}
@@ -635,7 +620,7 @@ void genfollow(struct tree *t) {
 			// printf("GENFOLLOW %s\n", t->symbolname);
 			t->kids[0]->follow = t->kids[1]->first;
 			t->kids[1]->follow = t->follow;
-			printf("FL%d %s\n", t->follow->u.offset, t->symbolname);
+			// printf("FL%d %s\n", t->follow->u.offset, t->symbolname);
 			break;
 		}
 
@@ -643,7 +628,7 @@ void genfollow(struct tree *t) {
 			// printf("GENFOLLOW %s\n", t->symbolname);
 			t->kids[0]->follow = t->kids[1]->first;
 			t->kids[1]->follow = t->follow;
-			printf("FL%d %s\n", t->follow->u.offset, t->symbolname);
+			// printf("FL%d %s\n", t->follow->u.offset, t->symbolname);
 			break;
 		}
 
@@ -667,8 +652,8 @@ void gentargets(struct tree *t) {
 		case prodR_IfThenStmt: {
 			t->kids[0]->onTrue = t->kids[1]->first;
 			t->kids[0]->onFalse = t->follow;
-			printf("%s onTrue->L%d, onFalse->L%d\n", t->symbolname,
-			 t->kids[0]->onTrue->u.offset, t->kids[0]->onFalse->u.offset);
+			// printf("%s onTrue->L%d, onFalse->L%d\n", t->symbolname,
+			 // t->kids[0]->onTrue->u.offset, t->kids[0]->onFalse->u.offset);
 
 
 			break;

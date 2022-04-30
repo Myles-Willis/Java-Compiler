@@ -1,0 +1,17 @@
+.code
+proc	main, 8, 8 
+	ASN	loc:16,ADD:h
+	ADD	loc:24,loc:16,ADD:3
+	ASN	loc:32,loc:24
+	ADD	loc:40,loc:32,ADD:l
+	ASN	loc:48,loc:40
+	ADD	loc:56,loc:48,ADD:l
+	ASN	loc:64,loc:56
+	ADD	loc:72,loc:64,ADD:o
+	ASN	loc:80,loc:72
+	ADD	loc:88,loc:80,ADD:0
+	ASN	loc:96,loc:88
+	PARM	loc:96
+	PARM	ADD:
+	CALL	println,1,loc:8
+
