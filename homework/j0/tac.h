@@ -83,7 +83,7 @@ char *pseudoname(int i);
 struct addr *genlabel();
 void print_instr(struct instr *rv, FILE *icn_out);
 void print_proc(struct instr *rv, FILE *icn_out);
-void tacprint(struct instr *head, char* icn_file_name);
+void tacprint(struct instr *head, FILE *icn_out);
 char print_addr(struct addr a, FILE *icn_out);
 
 #endif

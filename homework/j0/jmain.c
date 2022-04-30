@@ -7,6 +7,7 @@
 extern int yydebug;
 char *filename;
 extern struct tree *root;
+extern struct icn_string *icn_strings;
 
 //Flag set boolean values
 int symtab_print_flag = 0;
@@ -89,8 +90,11 @@ int main(int argc, char *argv[]) {
 				// print_intermediate_tree(root, 0);
 
 				// printf("\n\n_____Final Tac Print_____\n\n");
-				tacprint(root->icode, icn_file_name);
+				FILE *icn_out = fopen(icn_file_name, "w");
+				print_icn_strings(icn_strings, icn_out);
+				tacprint(root->icode, icn_out);
 				printf("\n");
+				fclose(icn_out);
 				exit(0);
 				//free_tree(root, 0);
 			}

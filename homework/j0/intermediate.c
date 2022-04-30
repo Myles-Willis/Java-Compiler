@@ -1,6 +1,9 @@
 #include "intermediate.h"
 
 struct addr empty_address = {R_NONE, OFFSET, {0}};
+
+struct icn_string *icn_strings = NULL;
+
 // struct instr instructions = NULL;
 
 
@@ -399,9 +402,6 @@ void gen_intermediate_code(struct tree *n) {
 			break;
 		}
 
-
-
-
 		case TOKEN: {
 			gentoken(n);
 			break;
@@ -690,6 +690,54 @@ int set_identifier_addr(struct tree *n) {
 	}
 }
 
+void add_icn_string(struct tree *t) {
+	t->address = newtemp(1);
+	t->address->region = R_CONST;
+	t->address->tag = NAME;
+	t->address->u.name = strdup(t->leaf->sval);
+
+	struct icn_string *new_str = malloc(sizeof(struct icn_string));
+	memset(new_str, 0, sizeof(struct icn_string));
+
+	new_str->node = t;
+	new_str->address = t->address;
+
+	if (icn_strings == NULL) {
+		// printf("Set initial string %s\n", t->leaf->text);
+		new_str->str_bytes = 16;
+		icn_strings = new_str;
+		icn_strings->total_bytes = icn_strings->total_bytes + 16;
+	} else {
+		struct icn_string *current = icn_strings;
+		while (current->next != NULL) {
+			current = current->next;
+		}
+		// printf("last should be %s\n", current->node->leaf->text);
+		new_str->str_bytes = current->str_bytes + 16;
+		icn_strings->total_bytes = icn_strings->total_bytes + 16;
+		// printf("with %d bytes\n", new_str->str_bytes);
+		current->next = new_str;
+	}
+}
+
+void print_icn_strings(struct icn_string *head, FILE *icn_out) {
+
+	if (head == NULL) {
+		return;
+	}
+
+	// printf(".string [%d]\n", head->total_bytes);
+	fprintf(icn_out, ".string [%d]\n", head->total_bytes);
+
+	struct icn_string *current = head;
+
+	while (current->next != NULL) {
+		// printf("\t%s:%d\n", current->node->leaf->text, current->str_bytes);
+		fprintf(icn_out, "\t%s:%d\n", current->node->leaf->text, current->str_bytes);
+		current = current->next;
+	}
+}
+
 void gentoken(struct tree *n) {
 
 	// n->icode = NULL;
@@ -710,10 +758,7 @@ void gentoken(struct tree *n) {
 		}
 		case STRINGLIT: {
 
-			n->address = newtemp(1);
-			n->address->region = R_STRING;
-			n->address->tag = NAME;
-			n->address->u.name = strdup(n->leaf->sval);
+			add_icn_string(n);
 
 			break;
 		}
