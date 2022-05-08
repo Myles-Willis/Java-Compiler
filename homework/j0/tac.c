@@ -21,6 +21,7 @@ int labelcounter;
 struct addr *genlabel() {
 
    struct addr *a = malloc(sizeof(struct addr));
+   memset(a, 0, sizeof(struct addr));
    a->region = R_LABEL;
    a->u.offset = labelcounter++;
    // // *printf("generated a label %d\n", a->u.offset);
@@ -31,6 +32,7 @@ struct addr *genlabel() {
 struct instr *gen(int op, struct addr a1, struct addr a2, struct addr a3) {
 
   	struct instr *rv = malloc(sizeof (struct instr));
+	memset(rv, 0, sizeof(struct instr));
 
 	if (rv == NULL) {
 		fprintf(stderr, "out of memory\n");
@@ -51,6 +53,7 @@ struct instr *gen(int op, struct addr a1, struct addr a2, struct addr a3) {
 struct instr *gen_method(char* method_name, int nparams, struct addr a, int code) {
 
 	struct instr *rv = malloc(sizeof (struct instr));
+	memset(rv, 0, sizeof(struct instr));
 
 	if (rv == NULL) {
 		fprintf(stderr, "out of memory\n");
