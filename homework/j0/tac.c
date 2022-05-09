@@ -7,7 +7,7 @@ char *regionnames[] = {"global", "loc", "class", "L", "const", "name", "none", "
 char *regionname(int i) {
 	if (i == 0) {
 		return regionnames[1];
-	} else {	
+	} else {
 		return regionnames[i-R_GLOBAL];
 	}
  }
@@ -195,7 +195,7 @@ void tacprint(struct instr *head, FILE *icn_out) {
 	struct instr *temp = head;
 
 	while (temp->next != NULL) {
-		printf("icode: %d\n", temp->opcode);
+		// printf("icode: %d\n", temp->opcode);
 		print_instr(temp, icn_out);
 		temp = temp->next;
 	}

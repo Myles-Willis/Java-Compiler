@@ -77,18 +77,18 @@
 
 // ** working
 
-// public class exprs {
-// public static void main() {
-//    int i;
-//    int j;
-//    int k;
-//    i = 5;
-//    j = i + i;
-//    k = j + j * i;
-//    i = k / j;
-//    i = k / (j + 1);
-// }
-// }
+public class exprs {
+public static void main() {
+   int i;
+   int j;
+   int k;
+   i = 5;
+   j = i + i;
+   k = j + j * i;
+   i = k / j;
+   i = k / (j + 1);
+}
+}
 
 
 //***runs
@@ -167,14 +167,14 @@
 // **working
 //
 // filnam: "btest.java"
-public class btest {
-public static void main(String [] argv) {
-    int j;
-    int i;
-    j = 1;
-    i = 10+(2 + j);
-}
-}
+// public class btest {
+// public static void main(String [] argv) {
+//     int j;
+//     int i;
+//     j = 1;
+//     i = 10+(2 + j);
+// }
+// }
 
 // public class list {
 // public static void main(String [] argv) {
