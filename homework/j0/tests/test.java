@@ -1,6 +1,12 @@
-public class HelloWorld {
+public class IfTest {
    public static void main(String args[]) {
-      System.out.println("Hello, World");
-	  xcc = 1 + 2 * 3 / 4 - 5;
+	  int a;
+	  int b;
+
+	  if(a < b) {
+		  a = 5;
+	  }
+
+	  b = 3;
    }
 }

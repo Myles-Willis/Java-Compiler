@@ -54,13 +54,23 @@ int main(int argc, char *argv[]) {
 			} else {
 
 	    		filename = *argv;
-				char* simplified_name = strrchr(filename, '/') + 1;
-				char* icn_file_name = strdup(simplified_name);
-				icn_file_name[strlen(icn_file_name)-4] = 0;
-				strcat(icn_file_name, "icn");
+				char* simplified_name = NULL;
+				char* icn_file_name=  NULL;
+
+				if (strstr(filename, "/")) {
+					simplified_name = strrchr(filename, '/') + 1;
+					icn_file_name = strdup(simplified_name);
+					icn_file_name[strlen(icn_file_name)-4] = 0;
+					strcat(icn_file_name, "icn");
+				} else {
+					simplified_name = filename;
+					icn_file_name = strdup(simplified_name);
+					icn_file_name[strlen(icn_file_name)-4] = 0;
+					strcat(icn_file_name, "icn");
+				}
 
 				printf("\n\n---------------------------------------\n");
-				printf("Opened File: %s\n", simplified_name);
+				printf("Opened File: %s\n", filename);
 				printf("---------------------------------------\n");
 				// yydebug = 1;
 				yyparse();
@@ -80,7 +90,7 @@ int main(int argc, char *argv[]) {
 					printf("---------------------------------------\n\n");
 					printsymbols(globals, 1);
 				}
-				check_types(root);
+				// check_types(root);
 
 				// print_intermediate_tree(root, 0);
 				genfirst(root);

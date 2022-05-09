@@ -4,11 +4,17 @@
 #include "tac.h"
 
 char *regionnames[] = {"global", "loc", "class", "L", "const", "name", "none", "procname"};
-char *regionname(int i) { return regionnames[i-R_GLOBAL]; }
+char *regionname(int i) {
+	if (i == 0) {
+		return regionnames[1];
+	} else {	
+		return regionnames[i-R_GLOBAL];
+	}
+ }
 
 char *opcodenames[] = {
    "ADD","SUB", "MUL", "DIV","NEG", "ASN", "ADDR", "LCONT", "SCONT", "GOTO",
-   "BLT", "BLE", "BGT", "BGE", "BEQ", "BNE", "BIF", "BNIF", "PARM", "CALL",
+   "LT", "LE", "GT", "GE", "BEQ", "NE", "IF", "NIF", "PARM", "CALL",
    "RETURN", "MOD", "NOT"
    };
 
@@ -189,6 +195,7 @@ void tacprint(struct instr *head, FILE *icn_out) {
 	struct instr *temp = head;
 
 	while (temp->next != NULL) {
+		printf("icode: %d\n", temp->opcode);
 		print_instr(temp, icn_out);
 		temp = temp->next;
 	}

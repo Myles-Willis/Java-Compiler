@@ -620,14 +620,14 @@ void check_types(struct tree *t) {
 			// printf("prodR_MulExpr/prodR_AddExpr found\n");
 
 			typeptr left, right;
-			int line_number;
+			// int line_number;
 
 			if (t->kids[0]->nkids == 2) { //prodrule == prodR_MulExpr
 				left = get_type(t->kids[0]->kids[0]);
-				line_number = t->kids[1]->leaf->lineno;
+				// line_number = t->kids[1]->leaf->lineno;
 			} else {
 				left = get_type(t->kids[0]);
-				line_number = t->kids[0]->leaf->lineno;
+				// line_number = t->kids[0]->leaf->lineno;
 			}
 
 			right = get_type(t->kids[1]);
@@ -640,8 +640,9 @@ void check_types(struct tree *t) {
 				}
 
 				if (!(is_number(left) && is_number(right))) {
-					char* msg = "expression requires numerical or String-only values\n";
-					throw_semantic_error(msg, line_number);
+					// char* msg = "expression requires numerical or String-only values\n";
+					// throw_semantic_error(msg, line_number);
+					// line_number = line_number;
 				}
 
 				typeptr promo = type_promotion(left, right);
@@ -650,9 +651,10 @@ void check_types(struct tree *t) {
 				if(is_number(promo)) {
 					t->type = type_promotion(left, right);
 				} else {
-					int line_number = t->kids[0]->leaf->lineno;
-					char* msg = "expression requires numerical or String-only values\n";
-					throw_semantic_error(msg, line_number);
+					// int line_number = t->kids[0]->leaf->lineno;
+					// char* msg = "expression requires numerical or String-only values\n";
+					// throw_semantic_error(msg, line_number);
+					// line_number = line_number;
 				}
 			}
 			break;

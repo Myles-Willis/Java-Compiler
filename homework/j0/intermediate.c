@@ -58,7 +58,7 @@ void gen_intermediate_code(struct tree *n) {
 
 	for (i = 0; i < n->nkids; i++) {
 		if(n->kids[i] == NULL) {
-			printf("null child\n");
+			// printf("null child\n");
 			continue;
 		}
 		if (n->kids[i]->prodrule == prodR_QualifiedName) {
@@ -135,6 +135,10 @@ void gen_intermediate_code(struct tree *n) {
 
 		case prodR_Assignment: {
 
+			if (n->kids[0]->prodrule == prodR_PostBracketArray) {
+				break;
+			}
+
 			n->address = n->kids[0]->address;
 			n->address->region = R_LOCAL;
 			n->address->u.offset = n->stab->byte_words *  8;
@@ -143,10 +147,16 @@ void gen_intermediate_code(struct tree *n) {
 			struct instr *current_instr;
 			struct instr *other_instr;
 
-			current_instr = gen(O_ASN, *n->kids[0]->address, *n->kids[2]->address, empty_address);
-			other_instr = n->kids[2]->icode;
+			if (n->kids[2]->prodrule == prodR_ArrayInstantiation) {
+				current_instr = gen(O_ASN, *n->kids[0]->address, empty_address, empty_address);
+				n->icode = current_instr;
+			} else {
+				current_instr = gen(O_ASN, *n->kids[0]->address, *n->kids[2]->address, empty_address);
+				other_instr = n->kids[2]->icode;
 
-			n->icode = concat(other_instr, current_instr);
+				n->icode = concat(other_instr, current_instr);
+			}
+
 			//tacprint(n->icode);
 
 			break;
@@ -186,26 +196,29 @@ void gen_intermediate_code(struct tree *n) {
 			struct instr *other_instr = NULL;
 
 			n->address = newtemp(1);
+			n->address->region = R_LOCAL;
+			n->address->u.offset = n->stab->byte_words *  8;
+			n->stab->byte_words++;
 
 			switch (n->kids[1]->leaf->category) {
 				case 60:
 					// <
-					current_instr = gen(O_BLT, *n->onTrue,
+					current_instr = gen(O_BLT, *n->address,
 						 *n->kids[0]->address, *n->kids[2]->address);
 					break;
 				case 62:
 					// >
-					current_instr = gen(O_BGT, *n->onTrue,
+					current_instr = gen(O_BGT, *n->address,
 						 *n->kids[0]->address, *n->kids[2]->address);
 					break;
 				case 293:
 					// >=
-					current_instr = gen(O_BGE, *n->onTrue,
+					current_instr = gen(O_BGE, *n->address,
 						 *n->kids[0]->address, *n->kids[2]->address);
 					break;
 				case 294:
 					// <=
-					current_instr = gen(O_BLE, *n->onTrue,
+					current_instr = gen(O_BLE, *n->address,
 						 *n->kids[0]->address, *n->kids[2]->address);
 					break;
 			}
@@ -315,7 +328,38 @@ void gen_intermediate_code(struct tree *n) {
 			break;
 		}
 
+		case prodR_EqExpr: {
+
+			int isEqual = strcmp(n->symbolname, "EqExpr_isequal");
+
+			n->address = newtemp(1);
+			n->address->region = R_LOCAL;
+			n->address->u.offset = n->stab->byte_words *  8;
+			n->stab->byte_words++;
+
+			struct instr *current_instr;
+			struct instr *other_instr;
+
+			if (isEqual == 0) {
+				current_instr = gen(O_BEQ, *n->address, *n->kids[0]->address,
+					 *n->kids[1]->address);
+			} else {
+				current_instr = gen(O_BNE, *n->address, *n->kids[0]->address,
+					 *n->kids[1]->address);
+			}
+
+			other_instr = concat(n->kids[0]->icode, n->kids[1]->icode);
+			n->icode = concat(other_instr, current_instr);
+			//tacprint(n->icode);
+			break;
+		}
+
 		case prodR_MethodCall: {
+
+			n->address = newtemp(1);
+			n->address->region = R_LOCAL;
+			n->address->u.offset = n->stab->byte_words *  8;
+			n->stab->byte_words++;
 
 			struct instr *method_params;
 			struct instr *method_call;
@@ -384,7 +428,7 @@ void gen_intermediate_code(struct tree *n) {
 					 *n->kids[0]->address, empty_address);
 			}
 
-			struct instr *label = gen(D_LABEL, *n->kids[0]->onTrue, empty_address, empty_address);
+			struct instr *label = gen(D_LABEL, *n->kids[0]->address, empty_address, empty_address);
 			label = concat(label, n->kids[1]->icode);
 			label->code_type = DECLARATION;
 			n->icode = concat(n->icode, label);
@@ -430,6 +474,8 @@ struct addr *newtemp(int num_bytes) {
 
 
 void genfirst(struct tree *t) {
+
+	if (t == NULL) return;
 
 	if (t->nkids != 0) {
 		for (int i = 0; i < t->nkids; i++) {
@@ -660,6 +706,7 @@ void gentargets(struct tree *t) {
 		}
 
 		case prodR_CondAndExpr: {
+			printf("**************CONDAND in gentargets\n");
 			t->kids[0]->onTrue = t->kids[1]->first;
 			t->kids[0]->onFalse = t->onFalse;
 			t->kids[1]->onTrue = t->onTrue;
@@ -791,7 +838,10 @@ struct instr *gen_arglist(struct tree *arglist) {
 	if (arglist->kids[0]->nkids == 0) {
 
 		gentoken(arglist->kids[0]);
-		gentoken(arglist->kids[1]);
+
+		if (arglist->kids[1]->nkids == 0) {
+			gentoken(arglist->kids[1]);
+		}
 
 		first_param = gen(O_PARM, *arglist->kids[0]->address, empty_address,
 			 empty_address);
